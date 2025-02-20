@@ -1,0 +1,44 @@
+"use client"; 
+// 클라이언트 컴포넌트로 지정해 클라이언트 사이드에서 실행되도록 함
+// 그래야지 클라이언트 사이드에서만 실행되는 훅(useState) 사용 가능
+
+import { useParams } from "next/navigation";
+// URL 파라미터(slug 등)를 가져오기 위한 훅입니다.
+import Link from "next/link";
+// 클라이언트 사이드 네비게이션을 제공하는 컴포넌트입니다.
+
+// 타입 주석 제거 (순수 자바스크립트 구문)
+const pages = {
+  nvidia: { name: "NVIDIA", content: "NVIDIA is a technology company specializing in GPUs." },
+  wm: { name: "Walmart", content: "Walmart is a multinational retail corporation." },
+  visa: { name: "Visa", content: "Visa is a global payments technology company." },
+  // 추가 페이지들은 여기에 추가
+};
+
+export default function SubPage() {
+  const params = useParams();  // ✅ useParams로 slug 가져오기
+  const slug = params?.slug;
+
+  const page = pages[slug];
+
+  if (!page) {
+    return (
+      <div className="p-6">
+        <h1 className="text-2xl font-bold">404 - Page Not Found</h1>
+        <Link href="/" className="text-blue-500 hover:underline">
+          Go back to Home
+        </Link>
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold">{page.name}</h1>
+      <p className="mt-4">{page.content}</p>
+      <Link href="/" className="text-blue-500 hover:underline mt-4 block">
+        Back to Home
+      </Link>
+    </div>
+  );
+}
