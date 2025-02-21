@@ -29,11 +29,17 @@ export default function SubPage() {
     const fetchPythonOutput = async () => {
       setLoading(true);
       try {
-        const res = await fetch('http://localhost:5000/run-python');
+        const res = await fetch('https://python-api.onrender.com/run-python');
+
+        if (!res.ok) {
+          throw new Error(`API error: ${res.status}`);
+        }
+
         const data = await res.json();
-        setPythonOutput(data.result);
+        setPythonOutput(data.result || "No output from Python");
       } catch (error) {
-        setPythonOutput("Error fetching Python output");
+        console.error("Error fetching Python output:", error);
+        setPythonOutput(`Error: ${error.message}`);
       } finally {
         setLoading(false);
       }
