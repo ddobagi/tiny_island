@@ -29,7 +29,7 @@ export default function SubPage() {
     const fetchPythonOutput = async () => {
       setLoading(true);
       try {
-        const res = await fetch('https://python-api-cjea.onrender.com/run-python');
+        const res = await fetch('https://python-island.onrender.com/run-python');
 
         if (!res.ok) {
           throw new Error(`API error: ${res.status}`);
