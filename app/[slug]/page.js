@@ -29,7 +29,8 @@ export default function SubPage() {
     const fetchPythonOutput = async () => {
       setLoading(true);
       try {
-        const res = await fetch('https://python-island.onrender.com/run-python');
+        const res = await fetch(`https://python-island.onrender.com/run-python/${slug}`);
+        //slug가 변경될 때마다 API 호출 
 
         if (!res.ok) {
           throw new Error(`API error: ${res.status}`);
@@ -45,8 +46,10 @@ export default function SubPage() {
       }
     };
 
-    fetchPythonOutput();
-  }, []);
+    if (slug) {
+      fetchPythonOutput();
+    } 
+}, [slug]);
 
   if (!page) {
     return (
