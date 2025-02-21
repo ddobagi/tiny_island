@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 // URL 파라미터(slug 등)를 가져오기 위한 훅입니다.
 import Link from "next/link";
 // 클라이언트 사이드 네비게이션을 제공하는 컴포넌트입니다.
+import { useEffect, useState } from "react";
 
 // 타입 주석 제거 (순수 자바스크립트 구문)
 const pages = {
@@ -19,7 +20,27 @@ export default function SubPage() {
   const params = useParams();  // ✅ useParams로 slug 가져오기
   const slug = params?.slug;
 
+  const [pythonOutput, setPythonOutput] = useState(null);
+  const [loading, setLoading] = useState(false);
+
   const page = pages[slug];
+
+  useEffect(() => {
+    const fetchPythonOutput = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch('http://localhost:5000/run-python');
+        const data = await res.json();
+        setPythonOutput(data.result);
+      } catch (error) {
+        setPythonOutput("Error fetching Python output");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPythonOutput();
+  }, []);
 
   if (!page) {
     return (
@@ -36,6 +57,14 @@ export default function SubPage() {
     <div className="p-6">
       <h1 className="text-2xl font-bold">{page.name}</h1>
       <p className="mt-4">{page.content}</p>
+
+      <h2 className="text-xl font-bold mt-6">Python Output:</h2>
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <p className="mt-2">{pythonOutput}</p>
+      )}
+
       <Link href="/" className="text-blue-500 hover:underline mt-4 block">
         Back to Home
       </Link>
