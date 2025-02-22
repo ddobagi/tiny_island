@@ -176,36 +176,25 @@ export default function SubPage() {
   }
   // 404 에러와 메인 페이지로 돌아가는 버튼을 표시합니다 
 
+  //정적 데이터(딕셔너리)에서 추출한 name과 content를 화면에 표시합니다
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold">{page.name}</h1>
       <p className="mt-4">{page.content}</p>
-      {/* 정적 데이터(딕셔너리)에서 추출한 name과 content를 화면에 표시합니다 */}
 
-      {/* ✅ Google Sheets 데이터 표시 */}
+
       <h2 className="text-xl font-bold mt-6">Google Sheets Data:</h2>
-      {/*text-xl → 텍스트 크기를 Extra Large로 설정 (Tailwind CSS 클래스)*/}
-      {/* font-bold → 글자를 굵게 표시. */}
-      {/* mt-6 → 상단에 **여백(margin-top)**을 추가 (크기 6 = 1.5rem) (Tailwind CSS 클래스)*/}
         {pageData ? (
       // pageData 값이 존재하면 다음 코드를 실행합니다. 그렇지 않으면 Fetch Failed를 표시합니다
         <div className="mt-2 p-4 bg-gray-100 rounded-lg">
-        {/* mt-2 → 상단 여백 추가 (0.5rem).
-        p-4 → 안쪽 여백 추가 (padding 1rem).
-        bg-gray-100 → 배경색을 연한 회색으로 설정.
-        rounded-lg → 모서리를 둥글게 만듭니다.*/}
           <p><strong>Slug:</strong> {pageData.slug}</p>
-          {/* pageData 딕셔너리의 slug key에 해당하는 value를 표시합니다 */}
           <p><strong>Name:</strong> {pageData.name}</p>
-          {/* pageData 딕셔너리의 name key에 해당하는 value를 표시합니다 */}
           <p><strong>Content:</strong> {pageData.content}</p>
-          {/* pageData 딕셔너리의 content key에 해당하는 value를 표시합니다 */}
         </div>
       ) : (
         <p className="mt-2">Mang...</p>
       )}
 
-      {/* ✅ Python Output 표시 */}
       <h2 className="text-xl font-bold mt-6">Python Output:</h2>
       {loading ? (
         <p>Loading...</p>
@@ -215,7 +204,6 @@ export default function SubPage() {
       )}
 
       <Link href="/" className="text-blue-500 hover:underline mt-4 block">
-      {/*메인 페이지(URL: ~/)로 돌아가는 링크가 걸린 텍스트 */}
         Back to Home
       </Link>
     </div>
