@@ -134,7 +134,7 @@ export default function SubPage() {
           <p><strong>Content:</strong> {pageData.content}</p>
         </div>
       ) : (
-        <p className="mt-2">No Google Sheets data available for this slug.</p>
+        <p className="mt-2">Loading...</p>
       )}
 
       {/* ✅ Python Output 표시 */}
