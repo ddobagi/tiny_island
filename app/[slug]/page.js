@@ -39,8 +39,16 @@ export default function SubPage() {
         }
 
         const data = await res.json();
+        console.log("API Response Data:", data);
+
         const rows = data.values;
 
+        if (!rows || rows.length === 0) {
+          console.error("No rows returned from API.");
+          setPageData(null);
+          return;
+        }
+        
         // ✅ 헤더 파싱 및 슬러그 필터링
         const headers = rows[0];
         const slugIndex = headers.indexOf("slug");
@@ -49,7 +57,9 @@ export default function SubPage() {
         // 스프레드시트와 대소문자만 달라도 fetch하지 못할 수 있음. 꼼꼼히 확인인
 
         const matchedRow = rows.find(
-          (row, index) => index !== 0 && row[slugIndex] === slug
+          (row, index) =>
+            index !== 0 &&
+            row[slugIndex]?.toString().trim().toLowerCase() === slug.toLowerCase().trim()
         );
 
         if (matchedRow) {
