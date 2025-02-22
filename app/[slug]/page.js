@@ -149,7 +149,8 @@ export default function SubPage() {
       } catch (error) {
         console.error("Error fetching Python output:", error);
         setPythonOutput(`Error: ${error.message}`);
-        // 에러 발생 시 에러 메시지를 출력합니다 
+         // 에러 발생 시 에러 메시지를 출력합니다 
+      } finally {
         setLoading(false);
         // 로딩 상태를 종료합니다 
       }
