@@ -31,7 +31,7 @@ export default function SubPage() {
     const fetchGoogleSheetsData = async () => {
       try {
         const res = await fetch(
-          `https://sheets.googleapis.com/v4/spreadsheets/1cwsuVehsWlSwF-s-fv5MLqZv9hIl5IbLyzk3RROMDj4/values/sheet1!A1:C100?key=AIzaSyB4zCKQwQtyrEyN2UV6WpueYvPTDEZblOM`
+          `https://python-island.onrender.com/google-sheets/${slug}`
         );
 
         if (!res.ok) {
