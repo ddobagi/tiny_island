@@ -134,7 +134,7 @@ export default function SubPage() {
         const res = await fetch(`https://python-island.onrender.com/run-python/${slug}`); 
         // 앞서 slug 변수를 설정했음. 해당 slug 변수에 해당하는 데이터를 fetch해서 res 변수에 저장 
         // 이때 slug 변수의 값이 동적으로 fetch되는 URL에 삽입됨 
-        // ❓❓ index.js(백엔드)에서 정의한 경로 (app.get('/run-python/:slug', ... )에서 fetch 진행 
+        // ❓❓ index.js(백엔드)에서 정의한 경로 (app.get('/run-python/:slug', ... )로 fetch를 요청!!함 
         // await: async 함수의 병렬 작업이 끝날 때까지 기다림 
         if (!res.ok) {
           throw new Error(`API error: ${res.status}`);
