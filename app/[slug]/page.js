@@ -185,7 +185,6 @@ export default function SubPage() {
 
       <h2 className="text-xl font-bold mt-6">Google Sheets Data:</h2>
         {pageData ? (
-      // pageData 값이 존재하면 다음 코드를 실행합니다. 그렇지 않으면 Fetch Failed를 표시합니다
         <div className="mt-2 p-4 bg-gray-100 rounded-lg">
           <p><strong>Slug:</strong> {pageData.slug}</p>
           <p><strong>Name:</strong> {pageData.name}</p>
@@ -200,7 +199,6 @@ export default function SubPage() {
         <p>Loading...</p>
       ) : (
         <p className="mt-2">{pythonOutput}</p>
-        // pythonOutput 변수에 저장된 값을 출력합니다 
       )}
 
       <Link href="/" className="text-blue-500 hover:underline mt-4 block">
