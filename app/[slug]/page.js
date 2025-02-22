@@ -33,13 +33,14 @@ export default function SubPage() {
         const res = await fetch(
           `https://python-island.onrender.com/google-sheets/${slug}`
         );
+        console.log("API Response Status:", res.status);
 
         if (!res.ok) {
           throw new Error(`Google Sheets API error: ${res.status}`);
         }
 
         const data = await res.json();
-        console.log("API Response Data:", data);
+        console.log("Fetched Data:", data); // ✅ API 응답 데이터 확인
 
         const rows = data.values;
 
@@ -48,7 +49,7 @@ export default function SubPage() {
           setPageData(null);
           return;
         }
-        
+
         // ✅ 헤더 파싱 및 슬러그 필터링
         const headers = rows[0];
         const slugIndex = headers.indexOf("slug");
