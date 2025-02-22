@@ -20,11 +20,57 @@ export default function SubPage() {
   const params = useParams();  // ✅ useParams로 slug 가져오기
   const slug = params?.slug;
 
+  const [pageData, setPageData] = useState(null);
   const [pythonOutput, setPythonOutput] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const page = pages[slug];
 
+  // google sheets 데이터 가져오기 
+  useEffect(() => {
+    const fetchGoogleSheetsData = async () => {
+      try {
+        const res = await fetch(
+          `https://sheets.googleapis.com/v4/spreadsheets/1cwsuVehsWlSwF-s-fv5MLqZv9hIl5IbLyzk3RROMDj4/values/sheet1!A1:C100?key=AIzaSyB4zCKQwQtyrEyN2UV6WpueYvPTDEZblOM`
+        );
+
+        if (!res.ok) {
+          throw new Error(`Google Sheets API error: ${res.status}`);
+        }
+
+        const data = await res.json();
+        const rows = data.values;
+
+        // ✅ 헤더 파싱 및 슬러그 필터링
+        const headers = rows[0];
+        const slugIndex = headers.indexOf("Slug");
+        const nameIndex = headers.indexOf("Name");
+        const contentIndex = headers.indexOf("Content");
+
+        const matchedRow = rows.find(
+          (row, index) => index !== 0 && row[slugIndex] === slug
+        );
+
+        if (matchedRow) {
+          setPageData({
+            slug: matchedRow[slugIndex],
+            name: matchedRow[nameIndex],
+            content: matchedRow[contentIndex],
+          });
+        } else {
+          setPageData(null);
+        }
+      } catch (error) {
+        console.error("Error fetching Google Sheets data:", error);
+      }
+    };
+
+    if (slug) {
+      fetchGoogleSheetsData();
+    }
+  }, [slug]);
+
+  // python 데이터 가져오기 
   useEffect(() => {
     const fetchPythonOutput = async () => {
       setLoading(true);
@@ -67,6 +113,19 @@ export default function SubPage() {
       <h1 className="text-2xl font-bold">{page.name}</h1>
       <p className="mt-4">{page.content}</p>
 
+      {/* ✅ Google Sheets 데이터 표시 */}
+      <h2 className="text-xl font-bold mt-6">Google Sheets Data:</h2>
+      {pageData ? (
+        <div className="mt-2 p-4 bg-gray-100 rounded-lg">
+          <p><strong>Slug:</strong> {pageData.slug}</p>
+          <p><strong>Name:</strong> {pageData.name}</p>
+          <p><strong>Content:</strong> {pageData.content}</p>
+        </div>
+      ) : (
+        <p className="mt-2">No Google Sheets data available for this slug.</p>
+      )}
+
+      {/* ✅ Python Output 표시 */}
       <h2 className="text-xl font-bold mt-6">Python Output:</h2>
       {loading ? (
         <p>Loading...</p>
