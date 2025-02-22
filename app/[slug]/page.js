@@ -202,7 +202,7 @@ export default function SubPage() {
           {/* pageData 딕셔너리의 content key에 해당하는 value를 표시합니다 */}
         </div>
       ) : (
-        <p className="mt-2">Loading...</p>
+        <p className="mt-2">Mang...</p>
       )}
 
       {/* ✅ Python Output 표시 */}
