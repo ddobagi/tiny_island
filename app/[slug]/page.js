@@ -43,9 +43,10 @@ export default function SubPage() {
 
         // ✅ 헤더 파싱 및 슬러그 필터링
         const headers = rows[0];
-        const slugIndex = headers.indexOf("Slug");
-        const nameIndex = headers.indexOf("Name");
-        const contentIndex = headers.indexOf("Content");
+        const slugIndex = headers.indexOf("slug");
+        const nameIndex = headers.indexOf("name");
+        const contentIndex = headers.indexOf("content");
+        // 스프레드시트와 대소문자만 달라도 fetch하지 못할 수 있음. 꼼꼼히 확인인
 
         const matchedRow = rows.find(
           (row, index) => index !== 0 && row[slugIndex] === slug
