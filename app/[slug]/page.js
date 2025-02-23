@@ -81,24 +81,24 @@ export default function SubPage() {
 
         if (matchedRow) {
         // 만약 match되는 행이 있다면, 
-        const pageDataObject = headers.reduce((acc, header, idx) => {
-          const toggleValue = toggles[idx]?.toLowerCase().trim();
+          const pageDataObject = headers.reduce((acc, header, idx) => {
+            const toggleValue = toggles[idx]?.toLowerCase().trim();
 
-          if (toggleValue === "on") {
-            acc[header] = matchedRow[idx] || "";
-          }
-          return acc;
-        }, {});
+            if (toggleValue === "on") {
+              acc[header] = matchedRow[idx] || "";
+            }
+            return acc;
+          }, {});
 
-        setPageData(pageDataObject);
-      } else {
+          setPageData(pageDataObject);
+        } else {
+          setPageData(null);
+        }
+      }  catch (error) {
+        console.error("Error fetching Google Sheets data: ", error);
         setPageData(null);
       }
-    } catch (error) {
-      console.error("Error fetching Google Sheets data: ", error);
-      setPageData(null);
-    }
-  };
+    };
 
     if (slug) {
       fetchGoogleSheetsData();
