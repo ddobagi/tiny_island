@@ -57,7 +57,7 @@ export default function SubPage() {
 
         const rows = data.values;
         // json 파일의 value들을 추출해 rows 변수에 담음. 이때 rows는 '배열'이 됨.
-        if (!rows || rows.length < 2) {
+        if (!rows || rows.length < 3) {
           console.error("Insufficient rows returned from API");
           setPageData(null);
           return;
