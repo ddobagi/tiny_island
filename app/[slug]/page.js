@@ -170,8 +170,6 @@ export default function SubPage() {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold">{pageData.name}</h1>
-      <p className="mt-4">{pageData.content}</p>
-
 
       <h2 className="text-xl font-bold mt-6">Google Sheets Data:</h2>
       <div className="mt-2 p-4 bg-gray-100 rounded-lg">
