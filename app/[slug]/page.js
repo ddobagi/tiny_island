@@ -73,7 +73,7 @@ export default function SubPage() {
           // row와 index를 변수로 삼아, 다음 코드를 실행합니다.
             index !== 0 &&
             // 조건 1. header에 해당하는 1행은 제외하고, 
-            row[headers.indexOF("slug")]?.toString().trim().toLowerCase() === slug.toLowerCase().trim()
+            row[headers.indexOf("slug")]?.toString().trim().toLowerCase() === slug.toLowerCase().trim()
             // 조건 2. slug 변수에 저장된, 현재 페이지의 slug와 같은 값이 있는 셀이
             // slugIndex 열, 몇 번째 헹이 있는지 찾습니다
         );
@@ -85,12 +85,12 @@ export default function SubPage() {
           return acc;
         }, {});
 
-        setPageData(pageDataOBject);
+        setPageData(pageDataObject);
       } else {
         setPageData(null);
       }
     } catch (error) {
-      console.error("Error feching Google Sheets dats: ", error);
+      console.error("Error fetching Google Sheets data: ", error);
       setPageData(null);
     }
   };
@@ -168,7 +168,7 @@ export default function SubPage() {
       // ex. { slug: "example", name: "Test", content: "Some content" }를
       // [["slug", "example"], ["name", "Test"], ["content", "Some content"]]로 반환환
         <div key={index}>
-          <h2 className="text-xl font bold mt-6">{header}</h2>
+          <h2 className="text-xl font-bold mt-6">{header}</h2>
           <div className="mt-2 p-4 bg-gray-100 rounded-lg">
             <p>{value}</p>
           </div>
