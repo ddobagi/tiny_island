@@ -10,14 +10,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 // 전체 새로 고침 대신, 필요한 데이터만 불러와 빠르게 페이지를 전환하는 컴포넌트
 
-//📌📌📌 "정적" 데이터를 저장하는 객체, slug를 키로 사용하는 딕셔너리리 📌📌📌//
-const pages = {
-  nvidia: { name: "NVIDIA", content: "NVIDIA is a technology company specializing in GPUs." },
-  wm: { name: "Walmart", content: "Walmart is a multinational retail corporation." },
-  visa: { name: "Visa", content: "Visa is a global payments technology company." },
-  // 추가 페이지들은 여기에 추가하면 됨 
-};
-
 export default function SubPage() {
 // Subpage라는 컴포넌트를 정의
 // export default를 사용하면 다른 파일에서도 Subpage 컴포넌트를 사용 가능 
@@ -38,9 +30,6 @@ export default function SubPage() {
   const [loading, setLoading] = useState(false);
   // loading: 로딩 여부를 저장함
   // 초기값: false
-
-  const page = pages[slug];
-  // 정적 데이터(pages 딕셔너리)에서 slug에 해당하는 값을 찾아 page 변수에 저장함
 
   // 📌📌📌 google sheets 데이터 가져오기 📌📌📌//
   useEffect(() => {
@@ -109,6 +98,7 @@ export default function SubPage() {
         }
       } catch (error) {
         console.error("Error fetching Google Sheets data:", error);
+        setPageData(null);
         // Subpage 함수를 실행하는 과정에서 에러가 발생했다면, 에러 메시지를 출력합니다 
       }
     };
@@ -164,8 +154,7 @@ export default function SubPage() {
 // 뜬금없어 보이지만, 사실 useEffect의 의존성 배열(괄호)의 뒷부분에 해당합니다
 // useEffect 훅의 작동이 slug에 의존한다는 뜻으로, 페이지의 slug 값이 변경될 때마다 훅이 작동합니다. 
 
-  if (!page) {
-  // pages 딕셔너리에 현재 페이지의 slug에 해당하는 key가 없다면 
+  if (!pageData) {
     return (
       <div className="p-6">
         <h1 className="text-2xl font-bold">404 - Page Not Found</h1>
@@ -180,20 +169,14 @@ export default function SubPage() {
   //정적 데이터(딕셔너리)에서 추출한 name과 content를 화면에 표시합니다
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold">{page.name}</h1>
-      <p className="mt-4">{page.content}</p>
-
+      <h1 className="text-2xl font-bold">{pageData.name}</h1>
 
       <h2 className="text-xl font-bold mt-6">Google Sheets Data:</h2>
-        {pageData ? (
-        <div className="mt-2 p-4 bg-gray-100 rounded-lg">
-          <p><strong>Slug:</strong> {pageData.slug}</p>
-          <p><strong>Name:</strong> {pageData.name}</p>
-          <p><strong>Content:</strong> {pageData.content}</p>
-        </div>
-      ) : (
-        <p className="mt-2">Mang...</p>
-      )}
+      <div className="mt-2 p-4 bg-gray-100 rounded-lg">
+        <p><strong>Slug:</strong> {pageData.slug}</p>
+        <p><strong>Name:</strong> {pageData.name}</p>
+        <p><strong>Content:</strong> {pageData.content}</p>
+      </div>
 
       <h2 className="text-xl font-bold mt-6">Python Output:</h2>
       {loading ? (

@@ -169,14 +169,19 @@ export default function SubPage() {
   //정적 데이터(딕셔너리)에서 추출한 name과 content를 화면에 표시합니다
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold">{pageData.name}</h1>
+      <h1 className="text-2xl font-bold">{pageData.name || "Page Details"}</h1>
 
-      <h2 className="text-xl font-bold mt-6">Google Sheets Data:</h2>
-      <div className="mt-2 p-4 bg-gray-100 rounded-lg">
-        <p><strong>Slug:</strong> {pageData.slug}</p>
-        <p><strong>Name:</strong> {pageData.name}</p>
-        <p><strong>Content:</strong> {pageData.content}</p>
-      </div>
+      {pageData && Object.entries(pageData).map(([header,value], index) => (
+      // Object.entires(pageData) : pageData 객체의 [key,value] 쌍을 배열로 반환함
+      // ex. { slug: "example", name: "Test", content: "Some content" }를
+      // [["slug", "example"], ["name", "Test"], ["content", "Some content"]]로 반환환
+        <div key={index}>
+          <h2 className="text-xl font bold mt-6">{header}</h2>
+          <div className="mt-2 p-4 bg-gray-100 rounded-lg">
+            <p>{value}</p>
+          </div>
+        </div>
+      ))}
 
       <h2 className="text-xl font-bold mt-6">Python Output:</h2>
       {loading ? (
