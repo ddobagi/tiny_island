@@ -66,11 +66,6 @@ export default function SubPage() {
 
         const headers = rows[0];
         // 스프레드시트에서 첫 번째 행은 header로 인식하도록 설정합니다.
-        const slugIndex = headers.indexOf("slug");
-        const nameIndex = headers.indexOf("name");
-        const contentIndex = headers.indexOf("content");
-        // 각각의 header들이 몇 번째 열에 해당하는지 index를 추출합니다 
-        // 스프레드시트에 기입된 것과 대소문자만 달라도 index를 추출할 수 없으니 주의합니다.
 
         const matchedRow = rows.find(
         // 다음 조건을 만족하는 row가 몇 행인지 찾습니다 
@@ -78,30 +73,27 @@ export default function SubPage() {
           // row와 index를 변수로 삼아, 다음 코드를 실행합니다.
             index !== 0 &&
             // 조건 1. header에 해당하는 1행은 제외하고, 
-            row[slugIndex]?.toString().trim().toLowerCase() === slug.toLowerCase().trim()
+            row[headers.indexOf("slug")]?.toString().trim().toLowerCase() === slug.toLowerCase().trim()
             // 조건 2. slug 변수에 저장된, 현재 페이지의 slug와 같은 값이 있는 셀이
             // slugIndex 열, 몇 번째 헹이 있는지 찾습니다
         );
 
         if (matchedRow) {
         // 만약 match되는 행이 있다면, 
-          setPageData({
-          // pageData를 다음과 같은 딕셔너리의 형태로 구조화합니다 
-            slug: matchedRow[slugIndex],
-            name: matchedRow[nameIndex],
-            content: matchedRow[contentIndex],
-          });
-          // matchedRow행, ~Index 열에 해당하는 셀의 값 
-        } else {
-          setPageData(null);
-          // 만약 match되는 행이 없다면, pageData 값을 null로 설정합니다. 
-        }
-      } catch (error) {
-        console.error("Error fetching Google Sheets data:", error);
+        const pageDataObject = headers.reduce((acc, header, idx) => {
+          acc[header] = matchedRow[idx] || "";
+          return acc;
+        }, {});
+
+        setPageData(pageDataObject);
+      } else {
         setPageData(null);
-        // Subpage 함수를 실행하는 과정에서 에러가 발생했다면, 에러 메시지를 출력합니다 
       }
-    };
+    } catch (error) {
+      console.error("Error fetching Google Sheets data: ", error);
+      setPageData(null);
+    }
+  };
 
     if (slug) {
       fetchGoogleSheetsData();
@@ -169,14 +161,19 @@ export default function SubPage() {
   //정적 데이터(딕셔너리)에서 추출한 name과 content를 화면에 표시합니다
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold">{pageData.name}</h1>
+      <h1 className="text-2xl font-bold">{pageData.name || "Page Details"}</h1>
 
-      <h2 className="text-xl font-bold mt-6">Google Sheets Data:</h2>
-      <div className="mt-2 p-4 bg-gray-100 rounded-lg">
-        <p><strong>Slug:</strong> {pageData.slug}</p>
-        <p><strong>Name:</strong> {pageData.name}</p>
-        <p><strong>Content:</strong> {pageData.content}</p>
-      </div>
+      {pageData && Object.entries(pageData).map(([header,value], index) => (
+      // Object.entires(pageData) : pageData 객체의 [key,value] 쌍을 배열로 반환함
+      // ex. { slug: "example", name: "Test", content: "Some content" }를
+      // [["slug", "example"], ["name", "Test"], ["content", "Some content"]]로 반환환
+        <div key={index}>
+          <h2 className="text-xl font-bold mt-6">{header}</h2>
+          <div className="mt-2 p-4 bg-gray-100 rounded-lg">
+            <p>{value}</p>
+          </div>
+        </div>
+      ))}
 
       <h2 className="text-xl font-bold mt-6">Python Output:</h2>
       {loading ? (

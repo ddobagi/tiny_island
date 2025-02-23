@@ -57,22 +57,23 @@ export default function SubPage() {
 
         const rows = data.values;
         // json 파일의 value들을 추출해 rows 변수에 담음. 이때 rows는 '배열'이 됨.
-        if (!rows || rows.length === 0) {
-          console.error("No rows returned from API.");
+        if (!rows || rows.length < 2) {
+          console.error("Insufficient rows returned from API");
           setPageData(null);
           return;
         }
         // 이때 rows 배열이 비어있다면 에러를 발생시키고 pageData를 null로 설정 
 
         const headers = rows[0];
+        const toggles = rows[1];
         // 스프레드시트에서 첫 번째 행은 header로 인식하도록 설정합니다.
 
         const matchedRow = rows.find(
         // 다음 조건을 만족하는 row가 몇 행인지 찾습니다 
           (row, index) =>
           // row와 index를 변수로 삼아, 다음 코드를 실행합니다.
-            index !== 0 &&
-            // 조건 1. header에 해당하는 1행은 제외하고, 
+            index > 1 &&
+            // index가 0인 것은 header, index가 1인 것은 toggle 
             row[headers.indexOf("slug")]?.toString().trim().toLowerCase() === slug.toLowerCase().trim()
             // 조건 2. slug 변수에 저장된, 현재 페이지의 slug와 같은 값이 있는 셀이
             // slugIndex 열, 몇 번째 헹이 있는지 찾습니다
@@ -81,7 +82,11 @@ export default function SubPage() {
         if (matchedRow) {
         // 만약 match되는 행이 있다면, 
         const pageDataObject = headers.reduce((acc, header, idx) => {
-          acc[header] = matchedRow[idx] || "";
+          const toggleValue = toggles[idx]?.toLowerCase().trim();
+
+          if (toggleValue === "on") {
+            acc[header] = matchedRow[idx] || "";
+          }
           return acc;
         }, {});
 
