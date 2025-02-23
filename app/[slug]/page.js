@@ -76,6 +76,8 @@ export default function SubPage() {
           console.error("Slug header not found in headers: ", headers);
           setPageData(null);
           return
+        } else {
+          console.log("Slug index found at position: ", slugIndex);
         }
 
         const matchedRow = rows.find(
