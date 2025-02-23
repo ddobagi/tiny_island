@@ -10,8 +10,8 @@ export default function Home() {
   const [search, setSearch] = useState("");
   // useState를 사용해 search라는 상태 변수 생성성
   const [pages, setPages] = useState([]); // 스프레드시트 데이터를 저장할 상태
-  const [loading, setLoading] = useState(true); // 로딩 상태
-  const [error, setError] = useState(null); // 에러 상태태
+  const [loading, setLoading] = useState(true); // 로딩 상태 
+  const [error, setError] = useState(null); // 에러 상태 
 
   // Google Sheets 데이터 가져오기
   useEffect(() => {
@@ -36,9 +36,9 @@ export default function Home() {
         const contentIndex = headers.indexOf("content");
 
         const parsedPages = rows.slice(1).map((row) => ({
-          slug: rows[slugIndex],
-          name: rows[nameIndex],
-          content: rows[contentIndex],
+          slug: row[slugIndex],
+          name: row[nameIndex],
+          content: row[contentIndex],
         }));
 
         setPages(parsedPages);
