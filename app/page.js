@@ -43,9 +43,9 @@ export default function Home() {
 
         setPages(parsedPages);
         setLoading(false);
-      } catch (Err) {
-        console.error("Error fetching Google Sheets data: ", err);
-        setError(err.message);
+      } catch (error) {
+        console.error("Error fetching Google Sheets data: ", error);
+        setError(error.message);
         setLoading(false);
       }
     };
@@ -69,7 +69,7 @@ export default function Home() {
         onChange={(e) => setSearch(e.target.value)}
         // 사용자가 입력하려고 하면(변화 있으면) setSearch로 상태 업데이트 
       />
-      
+
       <ul>
         {filteredPages.map((page) => (
           <li key={page.slug}> 
