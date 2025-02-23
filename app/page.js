@@ -30,15 +30,15 @@ export default function Home() {
           throw new Error("No data found in Google Sheets");
         }
 
-        const headers = row[0];
+        const headers = rows[0];
         const slugIndex = headers.indexOf("slug");
         const nameIndex = headers.indexOf("name");
         const contentIndex = headers.indexOf("content");
 
         const parsedPages = rows.slice(1).map((row) => ({
-          slug: row[slugIndex],
-          name: row[nameIndex],
-          content: row[contentIndex],
+          slug: rows[slugIndex],
+          name: rows[nameIndex],
+          content: rows[contentIndex],
         }));
 
         setPages(parsedPages);
