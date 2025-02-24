@@ -200,7 +200,7 @@ export default function SubPage() {
                 width="560"
                 height="315"
                 src={value.replace("watch?v=", "embed/")}
-                allow="accelerometer; autoplay; clipboard-write; encrypted media; gyroscope; picture-in-picture"
+                allow="autoplay; accelerometer; clipboard-write; encrypted media; gyroscope; picture-in-picture"
                 allowFullScreen
               ></iframe>
             ) : null}
