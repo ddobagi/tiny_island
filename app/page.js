@@ -34,13 +34,14 @@ export default function Home() {
         const parsedVideos = rows.slice(1).map((row) => {
           return {
             video: row[videoIndex],
-            thumbnail: row[thumbnailIndex] || "", // Use provided thumbnail or empty string
+            thumbnail: row[thumbnailIndex] || "",
             name: row[nameIndex],
             channel: row[channelIndex],
             view: row[viewIndex],
             date: row[dateIndex],
             profile: row[profileIndex],
             length: row[lengthIndex],
+            slug: row[nameIndex]?.toLowerCase().replace(/\s+/g, "-") || `video-${Math.random()}`,
           };
         });
 
@@ -75,25 +76,25 @@ export default function Home() {
 
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
         {filteredVideos.map((video, index) => (
-          <div key={index} style={{ width: '300px', border: '1px solid #ddd', borderRadius: '8px', overflow: 'hidden' }}>
-            <div style={{ position: 'relative' }}>
-              <Link href={video.video}>
+          <Link href={`/videos/${video.slug}`} key={index} style={{ textDecoration: 'none', color: 'inherit' }}>
+            <div style={{ width: '300px', border: '1px solid #ddd', borderRadius: '8px', overflow: 'hidden', cursor: 'pointer' }}>
+              <div style={{ position: 'relative' }}>
                 <img src={video.thumbnail} alt={video.name} style={{ width: '100%', height: '170px', objectFit: 'cover' }} />
                 <span style={{ position: 'absolute', bottom: '8px', right: '8px', backgroundColor: 'rgba(0,0,0,0.7)', color: '#fff', padding: '2px 5px', borderRadius: '3px', fontSize: '12px' }}>{video.length}</span>
-              </Link>
-            </div>
-
-            <div style={{ padding: '10px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <img src={video.profile} alt={video.channel} style={{ width: '36px', height: '36px', borderRadius: '50%' }} />
-                <div>
-                  <h3 style={{ margin: '0', fontSize: '16px' }}>{video.name}</h3>
-                  <p style={{ margin: '0', fontSize: '14px', color: '#555' }}>{video.channel}</p>
-                </div>
               </div>
-              <p style={{ margin: '5px 0 0', fontSize: '12px', color: '#777' }}>{video.view} · {video.date}</p>
+
+              <div style={{ padding: '10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <img src={video.profile} alt={video.channel} style={{ width: '36px', height: '36px', borderRadius: '50%' }} />
+                  <div>
+                    <h3 style={{ margin: '0', fontSize: '16px' }}>{video.name}</h3>
+                    <p style={{ margin: '0', fontSize: '14px', color: '#555' }}>{video.channel}</p>
+                  </div>
+                </div>
+                <p style={{ margin: '5px 0 0', fontSize: '12px', color: '#777' }}>{video.view} · {video.date}</p>
+              </div>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
 
