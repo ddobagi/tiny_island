@@ -93,7 +93,7 @@ export default function Home() {
                     <p style={{ margin: '0', fontSize: '14px', color: '#555' }}>{video.channel}</p>
                   </div>
                 </div>
-                <p style={{ margin: '5px 0 0', fontSize: '12px', color: '#777' }}>{video.view} · {video.date}</p>
+                <p style={{ margin: '5px 0 0', fontSize: '12px', color: '#777' }}>{video.view} views · {video.date}</p>
               </div>
             </div>
           </Link>
