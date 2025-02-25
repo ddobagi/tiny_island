@@ -77,42 +77,44 @@ export default function VideoPage() {
   }
 
   return (
-    <div className="p-6 max-w-4xl mx-auto flex flex-col items-center">
-      <div className="relative w-full pb-[56.25%] h-0 mb-4">
-        <iframe
-          src={pageData.video?.replace("watch?v=", "embed/")}
-          frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-          className="absolute top-0 left-0 w-full h-full rounded-lg"
-        ></iframe>
-      </div>
-
-      <h1 className="text-2xl font-bold mb-2 text-center">{pageData.name}</h1>
-
-      <div className="flex items-center mb-4 w-full justify-center">
-        <img
-          src={pageData.profile}
-          alt="Channel Profile"
-          className="w-12 h-12 rounded-full mr-4"
-        />
-        <div>
-          <h2 className="text-lg font-semibold text-center md:text-left">{pageData.channel}</h2>
-          <p className="text-gray-500 text-center md:text-left">구독자 {pageData.subscribers}</p>
+    <div className="p-6 max-w-6xl mx-auto">
+      <div className="w-full">
+        <div className="relative w-full aspect-video mb-4">
+          <iframe
+            src={pageData.video?.replace("watch?v=", "embed/")}
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            className="absolute top-0 left-0 w-full h-full"
+          ></iframe>
         </div>
+
+        <h1 className="text-2xl font-bold mb-2">{pageData.name}</h1>
+
+        <div className="flex items-center mb-4">
+          <img
+            src={pageData.profile}
+            alt="Channel Profile"
+            className="w-12 h-12 rounded-full mr-4"
+          />
+          <div>
+            <h2 className="text-lg font-semibold">{pageData.channel}</h2>
+            <p className="text-gray-500">구독자 {pageData.subscribers}</p>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap text-gray-600 mb-4 gap-4">
+          <p>조회수 {pageData.view}</p>
+          <p>게시일 {pageData.date}</p>
+        </div>
+
+        <p className="text-gray-700 mb-2">영상 길이: {pageData.length}</p>
+        <p className="text-gray-700 mb-4">좋아요: {pageData.likes}</p>
+
+        <Link href="/" className="text-blue-500 hover:underline mt-4">
+          Back to Home
+        </Link>
       </div>
-
-      <div className="flex flex-wrap justify-center text-gray-600 mb-4 gap-4">
-        <p>조회수 {pageData.view}</p>
-        <p>게시일 {pageData.date}</p>
-      </div>
-
-      <p className="text-gray-700 mb-2">영상 길이: {pageData.length}</p>
-      <p className="text-gray-700 mb-4">좋아요: {pageData.likes}</p>
-
-      <Link href="/" className="text-blue-500 hover:underline mt-4">
-        Back to Home
-      </Link>
     </div>
   );
 }
