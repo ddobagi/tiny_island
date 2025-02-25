@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 // useEffect: 컴포넌트가 DOM에 추가 or 업데이트되어 렌더링될 때(화면에 나타날 때) 작업을 수행하는 React Hook
 // useState: 컴포넌트의 상태를 관리하는 React Hook
 import Link from "next/link";
+import { isJsxFragment } from "typescript";
 // 전체 새로 고침 대신, 필요한 데이터만 불러와 빠르게 페이지를 전환하는 컴포넌트
 
 export default function SubPage() {
@@ -189,7 +190,22 @@ export default function SubPage() {
         <div key={index}>
           <h2 className="text-xl font-bold mt-6">{header}</h2>
           <div className="mt-2 p-4 bg-gray-100 rounded-lg">
-            <p>{value}</p>
+
+            {header.toLowerCase().includes("image") && value ? (
+              <img src={value} alt={header} className="w-full max-w-md" />
+            ) : null}
+
+            {header.toLowerCase().includes("video") ? (
+              <iframe
+                width="560"
+                height="315"
+                src={value.replace("watch?v=", "embed/")}
+                allow="autoplay; accelerometer; clipboard-write; encrypted media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
+            ) : null}
+
+            {!header.toLowerCase().includes("image") && !header.toLowerCase().includes("vide") && (<p>{value}</p>)}
           </div>
         </div>
       ))}
