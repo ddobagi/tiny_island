@@ -1,51 +1,50 @@
-"use client"; 
-// 클라이언트 컴포넌트로 지정해 클라이언트 사이드에서 실행되도록 함
-// 그래야지 클라이언트 사이드에서만 실행되는 훅(useState) 사용 가능
+"use client";
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
 
 export default function Home() {
-// 메인 컴포넌트 함수 
   const [search, setSearch] = useState("");
-  // useState를 사용해 search라는 상태 변수 생성성
-  const [pages, setPages] = useState([]); // 스프레드시트 데이터를 저장할 상태
-  const [loading, setLoading] = useState(true); // 로딩 상태 
-  const [error, setError] = useState(null); // 에러 상태 
+  const [videos, setVideos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Google Sheets 데이터 가져오기
   useEffect(() => {
     const fetchGoogleSheetsData = async () => {
       try {
         const res = await fetch("https://python-island.onrender.com/google-sheets/all");
 
-        if (!res.ok) {
-          throw new Error(`Google Sheets API error: ${res.status}`);
-        }
+        if (!res.ok) throw new Error(`Google Sheets API error: ${res.status}`);
 
         const data = await res.json();
         const rows = data.values;
 
-        if (!rows || rows.length === 0) {
-          throw new Error("No data found in Google Sheets");
-        }
+        if (!rows || rows.length === 0) throw new Error("No data found in Google Sheets");
 
         const headers = rows[0];
-        const slugIndex = headers.indexOf("slug");
+        const videoIndex = headers.indexOf("video");
         const nameIndex = headers.indexOf("name");
-        const contentIndex = headers.indexOf("content");
+        const channelIndex = headers.indexOf("channel");
+        const viewIndex = headers.indexOf("view");
+        const dateIndex = headers.indexOf("date");
+        const profileIndex = headers.indexOf("profile");
+        const lengthIndex = headers.indexOf("length");
 
-        const parsedPages = rows.slice(1).map((row) => ({
-          slug: row[slugIndex],
+        const parsedVideos = rows.slice(1).map((row) => ({
+          video: row[videoIndex],
           name: row[nameIndex],
-          content: row[contentIndex],
+          channel: row[channelIndex],
+          view: row[viewIndex],
+          date: row[dateIndex],
+          profile: row[profileIndex],
+          length: row[lengthIndex],
         }));
 
-        setPages(parsedPages);
-        setLoading(false);
+        setVideos(parsedVideos);
       } catch (error) {
         console.error("Error fetching Google Sheets data: ", error);
         setError(error.message);
+      } finally {
         setLoading(false);
       }
     };
@@ -53,31 +52,48 @@ export default function Home() {
     fetchGoogleSheetsData();
   }, []);
 
-  const filteredPages = pages.filter((page) =>
-  // 입력된 검색어에 따라 pages 배열을 필터링 
-    page.name.toLowerCase().includes(search.toLowerCase())
-    // page.name을 소문자로 변환하고, 입력된 search 값과 비교 
+  const filteredVideos = videos.filter((video) =>
+    video.name.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
     <div>
-      <h1>Searchable Subpages</h1>
-      <input // 검색창 
+      <h1>Video Gallery</h1>
+      <input
         type="text"
         placeholder="Search..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        // 사용자가 입력하려고 하면(변화 있으면) setSearch로 상태 업데이트 
       />
 
-      <ul>
-        {filteredPages.map((page) => (
-          <li key={page.slug}> 
-            <Link href={`/${page.slug}`}>{page.name}</Link> 
-          </li>
-          // Link 컴포넌트를 사용하여 해당 slug로 이동
+      {loading && <p>Loading...</p>}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+        {filteredVideos.map((video, index) => (
+          <div key={index} style={{ width: '300px', border: '1px solid #ddd', borderRadius: '8px', overflow: 'hidden' }}>
+            <div style={{ position: 'relative' }}>
+              <Link href={video.video}>
+                <img src={video.video} alt={video.name} style={{ width: '100%', height: '170px', objectFit: 'cover' }} />
+                <span style={{ position: 'absolute', bottom: '8px', right: '8px', backgroundColor: 'rgba(0,0,0,0.7)', color: '#fff', padding: '2px 5px', borderRadius: '3px', fontSize: '12px' }}>{video.length}</span>
+              </Link>
+            </div>
+
+            <div style={{ padding: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <img src={video.profile} alt={video.channel} style={{ width: '36px', height: '36px', borderRadius: '50%' }} />
+                <div>
+                  <h3 style={{ margin: '0', fontSize: '16px' }}>{video.name}</h3>
+                  <p style={{ margin: '0', fontSize: '14px', color: '#555' }}>{video.channel}</p>
+                </div>
+              </div>
+              <p style={{ margin: '5px 0 0', fontSize: '12px', color: '#777' }}>{video.view} · {video.date}</p>
+            </div>
+          </div>
         ))}
-      </ul>
+      </div>
+
+      {!loading && filteredVideos.length === 0 && <p>No videos found.</p>}
     </div>
   );
 }
