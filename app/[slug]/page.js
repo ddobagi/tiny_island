@@ -31,16 +31,22 @@ export default function VideoPage() {
         }
 
         const headers = rows[0];
+        const toggles = rows[1];
+
+        const slugIndex = headers.indexOf("slug");
         const matchedRow = rows.find(
           (row, index) =>
-            index > 0 &&
-            row[headers.indexOf("slug")]?.toString().trim().toLowerCase() ===
+            index > 1 &&
+            row[slugIndex]?.toString().trim().toLowerCase() ===
               slug.toLowerCase().trim()
         );
 
         if (matchedRow) {
           const pageDataObject = headers.reduce((acc, header, idx) => {
-            acc[header] = matchedRow[idx] || "";
+            const toggleValue = toggles[idx]?.toLowerCase().trim();
+            if (toggleValue === "on") {
+              acc[header] = matchedRow[idx] || "";
+            }
             return acc;
           }, {});
 
@@ -100,8 +106,7 @@ export default function VideoPage() {
         <p className="mr-4">조회수 {pageData.view}</p>
         <p>게시일 {pageData.date}</p>
       </div>
-
-      <p className="text-gray-700 mb-4">영상 길이: {pageData.length}</p>
+      
       <p className="text-gray-700 mb-4">좋아요: {pageData.likes}</p>
 
       <Link href="/" className="text-blue-500 hover:underline">
