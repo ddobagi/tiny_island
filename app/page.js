@@ -25,6 +25,7 @@ export default function Home() {
         const videoIndex = headers.indexOf("video");
         const thumbnailIndex = headers.indexOf("thumbnail");
         const nameIndex = headers.indexOf("name");
+        const slugIndex = headers.indexOf("slug");
         const channelIndex = headers.indexOf("channel");
         const viewIndex = headers.indexOf("view");
         const dateIndex = headers.indexOf("date");
@@ -36,12 +37,12 @@ export default function Home() {
             video: row[videoIndex],
             thumbnail: row[thumbnailIndex] || "",
             name: row[nameIndex],
+            slug: row[slugIndex], // Use slug directly from Google Sheets
             channel: row[channelIndex],
             view: row[viewIndex],
             date: row[dateIndex],
             profile: row[profileIndex],
             length: row[lengthIndex],
-            slug: row[nameIndex]?.toLowerCase().replace(/\s+/g, "-") || `video-${Math.random()}`,
           };
         });
 
