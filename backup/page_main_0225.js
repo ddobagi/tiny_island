@@ -37,7 +37,7 @@ export default function Home() {
             video: row[videoIndex],
             thumbnail: row[thumbnailIndex] || "",
             name: row[nameIndex],
-            slug: row[slugIndex],
+            slug: row[slugIndex], // Use slug directly from Google Sheets
             channel: row[channelIndex],
             view: row[viewIndex],
             date: row[dateIndex],
@@ -63,29 +63,28 @@ export default function Home() {
   );
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>
+    <div>
       <h1>Video Gallery</h1>
       <input
         type="text"
         placeholder="Search..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        style={{ width: '100%', maxWidth: '400px', padding: '10px', marginBottom: '20px', borderRadius: '4px', border: '1px solid #ccc' }}
       />
 
       {loading && <p>Loading...</p>}
       {error && <p style={{ color: 'red' }}>{error}</p>}
 
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', justifyContent: 'center' }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
         {filteredVideos.map((video, index) => (
           <Link href={`/${video.slug}`} key={index} style={{ textDecoration: 'none', color: 'inherit' }}>
-            <div style={{ width: '300px', border: '1px solid #ddd', borderRadius: '8px', overflow: 'hidden', cursor: 'pointer', transition: 'transform 0.2s', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ width: '300px', border: '1px solid #ddd', borderRadius: '8px', overflow: 'hidden', cursor: 'pointer' }}>
               <div style={{ position: 'relative' }}>
                 <img src={video.thumbnail} alt={video.name} style={{ width: '100%', height: '170px', objectFit: 'cover' }} />
                 <span style={{ position: 'absolute', bottom: '8px', right: '8px', backgroundColor: 'rgba(0,0,0,0.7)', color: '#fff', padding: '2px 5px', borderRadius: '3px', fontSize: '12px' }}>{video.length}</span>
               </div>
 
-              <div style={{ padding: '10px', flex: '1' }}>
+              <div style={{ padding: '10px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <img src={video.profile} alt={video.channel} style={{ width: '36px', height: '36px', borderRadius: '50%' }} />
                   <div>
@@ -101,17 +100,6 @@ export default function Home() {
       </div>
 
       {!loading && filteredVideos.length === 0 && <p>No videos found.</p>}
-
-      <style jsx>{`
-        @media (max-width: 600px) {
-          div[style*='width: 300px'] {
-            width: 100% !important;
-          }
-          img[alt] {
-            height: auto !important;
-          }
-        }
-      `}</style>
     </div>
   );
 }
