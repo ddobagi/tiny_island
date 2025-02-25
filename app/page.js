@@ -76,7 +76,7 @@ export default function Home() {
 
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
         {filteredVideos.map((video, index) => (
-          <Link href={`/videos/${video.slug}`} key={index} style={{ textDecoration: 'none', color: 'inherit' }}>
+          <Link href={`/${video.slug}`} key={index} style={{ textDecoration: 'none', color: 'inherit' }}>
             <div style={{ width: '300px', border: '1px solid #ddd', borderRadius: '8px', overflow: 'hidden', cursor: 'pointer' }}>
               <div style={{ position: 'relative' }}>
                 <img src={video.thumbnail} alt={video.name} style={{ width: '100%', height: '170px', objectFit: 'cover' }} />
