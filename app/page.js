@@ -23,6 +23,7 @@ export default function Home() {
 
         const headers = rows[0];
         const videoIndex = headers.indexOf("video");
+        const thumbnailIndex = headers.indexOf("thumbnail");
         const nameIndex = headers.indexOf("name");
         const channelIndex = headers.indexOf("channel");
         const viewIndex = headers.indexOf("view");
@@ -30,15 +31,18 @@ export default function Home() {
         const profileIndex = headers.indexOf("profile");
         const lengthIndex = headers.indexOf("length");
 
-        const parsedVideos = rows.slice(1).map((row) => ({
-          video: row[videoIndex],
-          name: row[nameIndex],
-          channel: row[channelIndex],
-          view: row[viewIndex],
-          date: row[dateIndex],
-          profile: row[profileIndex],
-          length: row[lengthIndex],
-        }));
+        const parsedVideos = rows.slice(1).map((row) => {
+          return {
+            video: row[videoIndex],
+            thumbnail: row[thumbnailIndex] || "", // Use provided thumbnail or empty string
+            name: row[nameIndex],
+            channel: row[channelIndex],
+            view: row[viewIndex],
+            date: row[dateIndex],
+            profile: row[profileIndex],
+            length: row[lengthIndex],
+          };
+        });
 
         setVideos(parsedVideos);
       } catch (error) {
@@ -74,7 +78,7 @@ export default function Home() {
           <div key={index} style={{ width: '300px', border: '1px solid #ddd', borderRadius: '8px', overflow: 'hidden' }}>
             <div style={{ position: 'relative' }}>
               <Link href={video.video}>
-                <img src={video.video} alt={video.name} style={{ width: '100%', height: '170px', objectFit: 'cover' }} />
+                <img src={video.thumbnail} alt={video.name} style={{ width: '100%', height: '170px', objectFit: 'cover' }} />
                 <span style={{ position: 'absolute', bottom: '8px', right: '8px', backgroundColor: 'rgba(0,0,0,0.7)', color: '#fff', padding: '2px 5px', borderRadius: '3px', fontSize: '12px' }}>{video.length}</span>
               </Link>
             </div>
