@@ -91,20 +91,30 @@ export default function Dashboard() {
 
   const extractSheetsId = (url) => {
     const match = url.match(/\/d\/([a-zA-Z0-9-_]+)\/edit/);
-    return match ? match[1] : null;
+    if (match) {
+      setSheetsId(match[1]);
+      return match[1];
+    } 
+    return null;
   };
 
   const handleSaveSheetsUrl = () => {
     if (user) {
-      const extractedId = extractSheetsId(sheetsUrl);
+      try{
+        localStorage.setItem(`sheetsUrl_${user.uid}`, sheetsUrl);
 
-      if (extractedId) {
-        router.push(`/dashboard?sheet=${extractedId}`)
-      } else {
-        alert("올바른 URL을 입력하세요.");
+        const extractedId = extractSheetsId(sheetsUrl);
+
+        if (extractedId) {
+          localStorage.setItem("sheetsId", extractedId);
+          setSheetsId(extractedId);
+        }
+      } catch (error) {
+        console.error("localStorage 저장 중 오류 발생, 크롬 확장 프로그램을 꺼주세요")
       }
-    };
-  }
+    }
+    setIsEditing(false);
+  };
 
   return (
     <div className="flex flex-col items-center w-full p-6">
