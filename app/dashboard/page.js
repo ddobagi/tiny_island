@@ -59,7 +59,7 @@ export default function Dashboard() {
       setSpreadsheetId(match[1]);
     } else {
       setSpreadsheetId("");
-      setError("잘못된 Google Sheets URL입니다. ID를 확인하세요.");
+      setError("잘못된 Google Sheets URL입니다.URL을 확인하세요.");
     }
   };
 
@@ -68,7 +68,7 @@ export default function Dashboard() {
 
     const fetchGoogleSheetsData = async () => {
       try {
-        const res = await fetch(`https://python-island.onrender.com/google-sheets/${spreadsheetId}?range=${encodeURIComponent(range)}`);
+        const res = await fetch(`https://python-island.onrender.com/google-sheets/${spreadsheetId}/${slug}?range=${encodeURIComponent(range)}`);
         if (!res.ok) throw new Error(`Google Sheets API error: ${res.status}`);
 
         const data = await res.json();
