@@ -135,7 +135,7 @@ export default function Dashboard() {
         />
         <Input 
           type="text" 
-          placeholder="Range (예: data!A1:Z100)" 
+          placeholder="Range (예: data!A1:Z99)" 
           value={range} 
           onChange={(e) => setRange(e.target.value)} 
           disabled={!isEditing}
@@ -164,7 +164,7 @@ export default function Dashboard() {
                 <img src={video.thumbnail} alt={video.name} className="w-full rounded-t-lg aspect-video object-cover" />
                 <CardContent className="p-4">
                   <h3 className="text-lg font-bold truncate">{video.name}</h3>
-                  <p className="text-sm text-gray-500 truncate">{video.channel} · {video.view} 조회 · {video.date}</p>
+                  <p className="text-sm text-gray-500 truncate">{video.channel} · {video.view} views · {video.date}</p>
                 </CardContent>
               </Card>
             </Link>
