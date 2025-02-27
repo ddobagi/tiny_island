@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 
 // ✅ 스프레드시트 ID 고정 (변수화 X, 그냥 하드코딩)
 const API_URL = "https://python-island.onrender.com/google-sheets/";
-const spreadsheetId = "1SqlqUq05SyMU3BC2BYYIT67fdW5M5vgq4y41bByR3iE";
 const range = "data!A1:Z100";
 
 export default function VideoDetail() {
@@ -16,9 +15,20 @@ export default function VideoDetail() {
   const [video, setVideo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [sheetsId, setSheetsId] = useState(null);
 
   useEffect(() => {
-    if (!slug) return;
+    const storedSheetsId = localStorage.getItem("sheetsId");
+    if (storedSheetsId) {
+      setSheetsId(storedSheetsId);
+    } else {
+      setError("Google Sheets ID를 찾을 수 없습니다.");
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!slug || !sheetsId) return;
 
     const fetchVideoData = async () => {
       try {
@@ -53,7 +63,7 @@ export default function VideoDetail() {
     };
 
     fetchVideoData();
-  }, [slug]);
+  }, [slug, sheetsId]);
 
   if (loading) return <p className="text-center mt-10">로딩 중...</p>;
   if (error) return <p className="text-center mt-10 text-red-500">{error}</p>;
