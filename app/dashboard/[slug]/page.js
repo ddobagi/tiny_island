@@ -23,6 +23,8 @@ export default function VideoDetail() {
       setSheetsId(storedSheetsId);
     } else {
       setError("Google Sheets ID를 찾을 수 없습니다.");
+      alert("Google Sheets ID를 찾을 수 없습니다. 대시보드에서 다시 입력해주세요.");
+      window.location.href = "/dashboard";
       setLoading(false);
     }
   }, []);

@@ -96,13 +96,17 @@ export default function Dashboard() {
 
   const handleSaveSheetsUrl = () => {
     if (user) {
-      localStorage.setItem(`sheetsUrl_${user.uid}`, sheetsUrl);
+      try{
+        localStorage.setItem(`sheetsUrl_${user.uid}`, sheetsUrl);
 
-      const extractedId = extractSheetsId(sheetsUrl);
+        const extractedId = extractSheetsId(sheetsUrl);
 
-      if (extractedId) {
-      localStorage.setItem("sheetsId", extractedId);
-      setSheetsId(extractedId);
+        if (extractedId) {
+          localStorage.setItem("sheetsId", extractedId);
+          setSheetsId(extractedId);
+        }
+      } catch (error) {
+        console.error("localStorage 저장 중 오류 발생, 크롬 확장 프로그램을 꺼주세요")
       }
     }
     setIsEditing(false);
