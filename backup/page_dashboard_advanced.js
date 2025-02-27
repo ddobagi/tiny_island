@@ -12,13 +12,16 @@ import { Input } from "@/components/ui/input";
 export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [sheetsUrl, setSheetsUrl] = useState("");
-  const [sheetsId, setSheetsId] = useState("");
+  const [range, setRange] = useState("data!A1:Z100");
   const [isEditing, setIsEditing] = useState(false);
   const [videos, setVideos] = useState([]);
   const [error, setError] = useState(null);
   const [search, setSearch] = useState("");
   const router = useRouter();
+
+  // ✅ 스프레드시트 URL & ID 고정
+  const spreadsheetId = "1SqlqUq05SyMU3BC2BYYIT67fdW5M5vgq4y41bByR3iE";
+  const sheetsUrl = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/edit?gid=0#gid=0`;
 
   useEffect(() => {
     if (!auth) return;
@@ -26,11 +29,8 @@ export default function Dashboard() {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
-        const savedSheetsUrl = localStorage.getItem(`sheetsUrl_${currentUser.uid}`);
-        if (savedSheetsUrl) {
-          setSheetsUrl(savedSheetsUrl);
-          extractSheetsId(savedSheetsUrl);
-        }
+        const savedRange = localStorage.getItem(`range_${currentUser.uid}`);
+        if (savedRange) setRange(savedRange);
       } else {
         router.push("/");
       }
@@ -50,12 +50,12 @@ export default function Dashboard() {
   }, [router]);
 
   useEffect(() => {
-    if (!sheetsId) return;
+    if (!spreadsheetId) return;
 
     const fetchGoogleSheetsData = async () => {
       try {
         const res = await fetch(
-          `https://python-island.onrender.com/google-sheets/${sheetsId}?range=data!A1:Z100`
+          `https://python-island.onrender.com/google-sheets/${spreadsheetId}?range=${encodeURIComponent(range)}`
         );
         if (!res.ok) throw new Error(`Google Sheets API error: ${res.status}`);
 
@@ -94,20 +94,7 @@ export default function Dashboard() {
     };
 
     fetchGoogleSheetsData();
-  }, [sheetsId]);
-
-  const extractSheetsId = (url) => {
-    const match = url.match(/\/d\/([a-zA-Z0-9-_]+)\/edit/);
-    if (match) setSheetsId(match[1]);
-  };
-
-  const handleSaveSheetsUrl = () => {
-    if (user) {
-      localStorage.setItem(`sheetsUrl_${user.uid}`, sheetsUrl);
-      extractSheetsId(sheetsUrl);
-    }
-    setIsEditing(false);
-  };
+  }, [spreadsheetId, range]);
 
   return (
     <div className="flex flex-col items-center w-full p-6">
@@ -122,20 +109,23 @@ export default function Dashboard() {
         <Button onClick={() => signInWithPopup(auth, provider)}>Google 로그인</Button>
       )}
 
+      {/* ✅ 고정된 Google Sheets URL 표시 */}
       <div className="flex flex-col gap-2 w-full max-w-lg">
-        <p className="text-sm text-gray-500">🔗 Google Sheets URL 입력</p>
+        <p className="text-sm text-gray-500">🔗 <a href={sheetsUrl} target="_blank" rel="noopener noreferrer" className="underline text-blue-500">Google Sheets 열기</a></p>
+        
         <Input 
           type="text" 
-          placeholder="Google Sheets URL을 입력하세요" 
-          value={sheetsUrl} 
-          onChange={(e) => setSheetsUrl(e.target.value)} 
+          placeholder="Range (예: data!A1:Z100)" 
+          value={range} 
+          onChange={(e) => setRange(e.target.value)} 
           disabled={!isEditing}
         />
-        <Button onClick={() => (isEditing ? handleSaveSheetsUrl() : setIsEditing(true))}>
+        <Button onClick={() => setIsEditing(!isEditing)}>
           {isEditing ? "저장" : "수정"}
         </Button>
       </div>
 
+      {/* 검색 */}
       <Input 
         type="text" 
         placeholder="Search..." 
@@ -144,6 +134,7 @@ export default function Dashboard() {
         className="mt-4 w-full max-w-lg"
       />
 
+      {/* 비디오 리스트 */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-6 w-full max-w-6xl">
         {videos
           .filter(video => video.name.toLowerCase().includes(search.toLowerCase()))
