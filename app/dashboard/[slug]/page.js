@@ -1,39 +1,41 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
-// ✅ 스프레드시트 ID 고정 (변수화 X, 그냥 하드코딩)
 const API_URL = "https://python-island.onrender.com/google-sheets/";
 const range = "data!A1:Z100";
 
 export default function VideoDetail() {
   const { slug } = useParams(); // URL에서 slug 가져오기
+  const searchParams = useSearchParams(); // ✅ URL에서 `sheet` 값 가져오기
   const [video, setVideo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [sheetsId, setSheetsId] = useState(null);
 
+  // ✅ URL에서 `sheetsId` 가져오기
   useEffect(() => {
-    const storedSheetsId = localStorage.getItem("sheetsId");
-    if (storedSheetsId) {
-      setSheetsId(storedSheetsId);
+    const sheetIdFromUrl = searchParams.get("sheet");
+    if (sheetIdFromUrl) {
+      setSheetsId(sheetIdFromUrl);
     } else {
       setError("Google Sheets ID를 찾을 수 없습니다.");
       alert("Google Sheets ID를 찾을 수 없습니다. 대시보드에서 다시 입력해주세요.");
       setLoading(false);
     }
-  }, []);
+  }, [searchParams]);
 
+  // ✅ Google Sheets에서 특정 비디오 정보 불러오기
   useEffect(() => {
     if (!slug || !sheetsId) return;
 
     const fetchVideoData = async () => {
       try {
-        const res = await fetch(`${API_URL}${spreadsheetId}?range=${encodeURIComponent(range)}`);
+        const res = await fetch(`${API_URL}${sheetsId}?range=${encodeURIComponent(range)}`);
         if (!res.ok) throw new Error(`Google Sheets API error: ${res.status}`);
 
         const data = await res.json();
