@@ -8,7 +8,7 @@ import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useSheets } from "@/context/SheetsContext";
+import { useSheets } from "../context/SheetsContext";
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
