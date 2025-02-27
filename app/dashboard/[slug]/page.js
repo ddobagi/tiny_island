@@ -18,6 +18,18 @@ export default function VideoDetail() {
   const [error, setError] = useState(null);
   const [sheetsId, setSheetsId] = useState(null);
 
+  // ✅ Firebase 사용자 인증 상태 확인
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+      } else {
+        setError("로그인이 필요합니다.");
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
   useEffect(() => {
     if (!user) return;
   
