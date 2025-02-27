@@ -20,7 +20,7 @@ export default function Dashboard() {
   const [error, setError] = useState(null);
   const [search, setSearch] = useState("");
   const router = useRouter();
-  const {slug} = router.query;
+  const slug = params?.slug;
 
   useEffect(() => {
     if (!auth) return;
