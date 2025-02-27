@@ -139,7 +139,7 @@ export default function Dashboard() {
         {videos
           .filter(video => video.name.toLowerCase().includes(search.toLowerCase()))
           .map((video, index) => (
-            <Link href={`/${video.slug}`} key={index} className="w-full">
+            <Link href={`/dashboard/${video.slug}`} key={index} className="w-full">
               <Card className="rounded-lg shadow-lg hover:shadow-2xl transition">
                 <img src={video.thumbnail} alt={video.name} className="w-full rounded-t-lg aspect-video object-cover" />
                 <CardContent className="p-4">
