@@ -12,41 +12,10 @@ const range = "data!A1:Z100";
 
 export default function VideoDetail() {
   const { slug } = useParams(); // URL에서 slug 가져오기
-  const [user, setUser] = useState(null);
   const [video, setVideo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [sheetsId, setSheetsId] = useState(null);
-
-  // ✅ Firebase 사용자 인증 상태 확인
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      if (currentUser) {
-        setUser(currentUser);
-      } else {
-        setError("로그인이 필요합니다.");
-      }
-    });
-    return () => unsubscribe();
-  }, []);
-
-  useEffect(() => {
-    if (!user) return;
-  
-    const fetchSheetsId = async () => {
-      const res = await fetch(`/api/sheets?userId=${user.uid}`);
-      const data = await res.json();
-      if (data.sheetsId) {
-        setSheetsId(data.sheetsId);
-      } else {
-        setError("Google Sheets ID를 찾을 수 없습니다.");
-        alert("Google Sheets ID를 찾을 수 없습니다. 대시보드에서 다시 입력해주세요.");
-        setLoading(false);
-      }
-    };
-  
-    fetchSheetsId();
-  }, [user]);
 
   useEffect(() => {
     const storedSheetsId = localStorage.getItem("sheetsId");

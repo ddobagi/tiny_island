@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { auth, provider } from "@/lib/firebase";
-import {onAuthStateChanged } from "firebase/auth";
 import { signInWithPopup, getRedirectResult, onAuthStateChanged, signOut } from "firebase/auth";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
@@ -99,21 +98,23 @@ export default function Dashboard() {
     return null;
   };
 
-  const handleSaveSheetsUrl = async () => {
+  const handleSaveSheetsUrl = () => {
     if (user) {
-      try {
+      try{
+        localStorage.setItem(`sheetsUrl_${user.uid}`, sheetsUrl);
+
         const extractedId = extractSheetsId(sheetsUrl);
+
         if (extractedId) {
-          await saveSheetsIdToServer(user.uid, extractedId); // 🔹 서버에 저장
-          setSheetsId(extractedId); // 🔹 상태 업데이트
+          localStorage.setItem("sheetsId", extractedId);
+          setSheetsId(extractedId);
         }
       } catch (error) {
-        console.error("서버 저장 중 오류 발생:", error);
+        console.error("localStorage 저장 중 오류 발생, 크롬 확장 프로그램을 꺼주세요")
       }
     }
     setIsEditing(false);
   };
-  
 
   return (
     <div className="flex flex-col items-center w-full p-6">
