@@ -8,7 +8,8 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [sheetsUrl, setSheetsUrl] = useState(""); // Google Sheets URL 상태 관리
+  const [sheetsUrl, setSheetsUrl] = useState(""); // Google Sheets URL 상태
+  const [isEditing, setIsEditing] = useState(true); // URL 편집 가능 여부
   const router = useRouter();
 
   useEffect(() => {
@@ -20,10 +21,11 @@ export default function Dashboard() {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
-        // 로컬 스토리지에서 저장된 URL 가져오기
+        // 저장된 URL이 있으면 불러옴
         const savedUrl = localStorage.getItem("sheetsUrl");
         if (savedUrl) {
           setSheetsUrl(savedUrl);
+          setIsEditing(false); // 저장된 URL이 있으면 편집 비활성화 상태로 시작
         }
       } else {
         router.push("/"); // 로그인 안 했으면 메인 페이지로 이동
@@ -50,9 +52,14 @@ export default function Dashboard() {
     setSheetsUrl(e.target.value);
   };
 
-  const saveUrl = () => {
-    localStorage.setItem("sheetsUrl", sheetsUrl);
-    alert("✅ Google Sheets URL이 저장되었습니다!");
+  const handleSaveOrEdit = () => {
+    if (isEditing) {
+      // URL 저장
+      localStorage.setItem("sheetsUrl", sheetsUrl);
+      alert("✅ Google Sheets URL이 저장되었습니다!");
+    }
+    // 편집 상태 토글
+    setIsEditing(!isEditing);
   };
 
   if (loading) {
@@ -80,6 +87,7 @@ export default function Dashboard() {
           value={sheetsUrl}
           onChange={handleUrlChange}
           placeholder="Google Sheets URL을 입력하세요"
+          disabled={!isEditing} // 편집 여부에 따라 입력창 활성화/비활성화
           style={{
             width: "80%",
             padding: "10px",
@@ -87,22 +95,23 @@ export default function Dashboard() {
             fontSize: "16px",
             border: "1px solid #ccc",
             borderRadius: "5px",
+            backgroundColor: isEditing ? "#fff" : "#f0f0f0", // 비활성화 시 색상 변경
           }}
         />
         <button
-          onClick={saveUrl}
+          onClick={handleSaveOrEdit}
           style={{
             marginLeft: "10px",
             padding: "10px 15px",
             fontSize: "16px",
             cursor: "pointer",
-            backgroundColor: "#007bff",
+            backgroundColor: isEditing ? "#007bff" : "#28a745",
             color: "#fff",
             border: "none",
             borderRadius: "5px",
           }}
         >
-          저장
+          {isEditing ? "저장" : "수정"}
         </button>
       </div>
 
