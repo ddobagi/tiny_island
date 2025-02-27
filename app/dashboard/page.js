@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { auth, signOut } from "@/lib/firebase";
-import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
@@ -11,6 +11,11 @@ export default function Dashboard() {
   const router = useRouter();
 
   useEffect(() => {
+    if (!auth) {
+      setLoading(false);
+      return;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
@@ -24,10 +29,12 @@ export default function Dashboard() {
   }, [router]);
 
   const handleLogout = async () => {
+    if (!auth) return;
+
     try {
-      await signOut(auth);
-      setUser(null); // 사용자 상태 초기화
-      router.push("/"); // 메인 페이지로 이동
+      await signOut(auth); // signOut을 올바르게 호출
+      setUser(null);
+      router.push("/"); // 로그아웃 후 메인 페이지로 이동
     } catch (error) {
       console.error("❌ 로그아웃 오류:", error);
     }
