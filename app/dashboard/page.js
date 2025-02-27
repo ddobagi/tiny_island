@@ -97,7 +97,13 @@ export default function Dashboard() {
   const handleSaveSheetsUrl = () => {
     if (user) {
       localStorage.setItem(`sheetsUrl_${user.uid}`, sheetsUrl);
-      extractSheetsId(sheetsUrl);
+
+      const extractedId = extractSheetsId(sheetsUrl);
+
+      if (extractedId) {
+      localStorage.setItem("sheetsId", extractedId);
+      setSheetsId(extractedId);
+      }
     }
     setIsEditing(false);
   };
