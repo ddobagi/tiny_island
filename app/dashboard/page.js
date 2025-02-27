@@ -91,7 +91,10 @@ export default function Dashboard() {
 
   const extractSheetsId = (url) => {
     const match = url.match(/\/d\/([a-zA-Z0-9-_]+)\/edit/);
-    if (match) setSheetsId(match[1]);
+    if (match) {
+      setSheetsId(match[1]);
+      return match[1];
+    } return null;
   };
 
   const handleSaveSheetsUrl = () => {
