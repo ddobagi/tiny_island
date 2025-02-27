@@ -115,9 +115,20 @@ export default function Dashboard() {
         </button>
       </div>
 
+      {/* 입력된 URL 출력 */}
+      {sheetsUrl && (
+        <div style={{ marginTop: "20px" }}>
+          <p style={{ fontSize: "16px", fontWeight: "bold" }}>저장된 Google Sheets URL:</p>
+          <a href={sheetsUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: "16px", color: "#007bff" }}>
+            {sheetsUrl}
+          </a>
+        </div>
+      )}
+
       <button
         onClick={handleLogout}
         style={{
+          marginTop: "20px",
           padding: "10px 20px",
           fontSize: "16px",
           backgroundColor: "#dc3545",
