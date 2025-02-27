@@ -20,6 +20,7 @@ export default function Dashboard() {
   const [error, setError] = useState(null);
   const [search, setSearch] = useState("");
   const router = useRouter();
+  const {slug} = router.query;
 
   useEffect(() => {
     if (!auth) return;
@@ -64,7 +65,7 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    if (!spreadsheetId) return;
+    if (!spreadsheetId || !slug ) return;
 
     const fetchGoogleSheetsData = async () => {
       try {
