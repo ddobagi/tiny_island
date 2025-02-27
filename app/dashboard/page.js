@@ -7,6 +7,7 @@ import { onAuthStateChanged } from "firebase/auth";
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -16,22 +17,28 @@ export default function Dashboard() {
       } else {
         router.push("/"); // 로그인 안 했으면 메인 페이지로 이동
       }
+      setLoading(false);
     });
 
     return () => unsubscribe();
   }, [router]);
 
-  const handleLogout = () => {
-    signOut(auth)
-      .then(() => {
-        setUser(null);
-        router.push("/"); // 로그아웃 후 메인 페이지로 이동
-      })
-      .catch((error) => console.error("❌ 로그아웃 오류:", error));
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      setUser(null); // 사용자 상태 초기화
+      router.push("/"); // 메인 페이지로 이동
+    } catch (error) {
+      console.error("❌ 로그아웃 오류:", error);
+    }
   };
 
-  if (!user) {
+  if (loading) {
     return <p>Loading...</p>;
+  }
+
+  if (!user) {
+    return null; // 로그인 안 되어 있으면 아무것도 렌더링하지 않음 (router.push("/") 실행됨)
   }
 
   return (
