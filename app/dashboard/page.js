@@ -1,26 +1,18 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { auth, provider } from "@/lib/firebase";
 import { signInWithPopup, getRedirectResult, onAuthStateChanged, signOut } from "firebase/auth";
-import Link from "next/link";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 
-export default function Dashboard() {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [sheetsUrl, setSheetsUrl] = useState("");
-  const [spreadsheetId, setSpreadsheetId] = useState("");
-  const [range, setRange] = useState("data!A1:Z100");
-  const [isEditing, setIsEditing] = useState(false);
-  const [videos, setVideos] = useState([]);
-  const [error, setError] = useState(null);
+export default function Home() {
   const [search, setSearch] = useState("");
+  const [videos, setVideos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [user, setUser] = useState(null);
   const router = useRouter();
-  const [slug, setSlug] = useState(null)
 
   useEffect(() => {
     if (!auth) return;
@@ -28,52 +20,55 @@ export default function Dashboard() {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
-        const savedUrl = localStorage.getItem(`sheetsUrl_${currentUser.uid}`);
-        const savedRange = localStorage.getItem(`range_${currentUser.uid}`);
-
-        if (savedUrl) {
-          setSheetsUrl(savedUrl);
-          extractSpreadsheetId(savedUrl);
-        }
-        if (savedRange) setRange(savedRange);
-      } else {
-        router.push("/");
+        router.push("/dashboard"); // 로그인 후 대시보드로 이동
       }
-      setLoading(false);
     });
 
     getRedirectResult(auth)
       .then((result) => {
         if (result && result.user) {
           setUser(result.user);
-          router.push("/dashboard");
+          router.push("/dashboard"); // 로그인 후 대시보드로 이동
         }
       })
-      .catch((error) => console.error("로그인 오류:", error));
+      .catch((error) => {
+        console.error("로그인 오류:", error);
+      });
 
     return () => unsubscribe();
   }, [router]);
 
-  const extractSpreadsheetId = (url) => {
-    const match = url.match(/\/d\/([a-zA-Z0-9-_]+)/);
-    if (match && match[1]) {
-      setSpreadsheetId(match[1]);
-    } else {
-      setSpreadsheetId("");
-      setError("잘못된 Google Sheets URL입니다.URL을 확인하세요.");
+  const handleLogin = async () => {
+    try {
+      if (auth && provider) {
+        await signInWithPopup(auth, provider); // 팝업 로그인
+      }
+    } catch (error) {
+      console.error("로그인 오류:", error);
+    }
+  };
+
+  const handleLogout = () => {
+    if (auth) {
+      signOut(auth)
+        .then(() => {
+          setUser(null);
+          alert("로그아웃 되었습니다.");
+        })
+        .catch((error) => console.error("❌ 로그아웃 오류:", error));
     }
   };
 
   useEffect(() => {
-    if (!spreadsheetId || !slug ) return;
-
     const fetchGoogleSheetsData = async () => {
       try {
-        const res = await fetch(`https://python-island.onrender.com/google-sheets/${spreadsheetId}/${slug}?range=${encodeURIComponent(range)}`);
+        const res = await fetch("https://python-island.onrender.com/google-sheets/all");
+
         if (!res.ok) throw new Error(`Google Sheets API error: ${res.status}`);
 
         const data = await res.json();
         const rows = data.values;
+
         if (!rows || rows.length === 0) throw new Error("No data found in Google Sheets");
 
         const headers = rows[0];
@@ -103,76 +98,77 @@ export default function Dashboard() {
       } catch (error) {
         console.error("Error fetching Google Sheets data: ", error);
         setError(error.message);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchGoogleSheetsData();
-  }, [spreadsheetId, range]);
+  }, []);
+
+  const filteredVideos = videos.filter((video) =>
+    video.name.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
-    <div className="flex flex-col items-center w-full p-6">
-      <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
-      
+    <div style={{ textAlign: "center", padding: "20px" }}>
+      <h2>Firebase Google 로그인</h2>
+
+      {/* 🔹 로그인 UI */}
       {user ? (
-        <div className="mb-4">
-          <p className="text-lg">환영합니다, {user.displayName}! 🎉 ({user.email})</p>
-          <Button onClick={() => signOut(auth)} className="mt-2">로그아웃</Button>
+        <div>
+          <p>로그인한 사용자: {user.displayName} ({user.email})</p>
+          <button onClick={handleLogout}>로그아웃</button>
         </div>
       ) : (
-        <Button onClick={() => signInWithPopup(auth, provider)}>Google 로그인</Button>
+        <button onClick={handleLogin}>Google 로그인</button>
       )}
 
-      {/* 스프레드시트 입력 */}
-      <div className="flex flex-col gap-2 w-full max-w-lg">
-        <Input 
-          type="text" 
-          placeholder="Google Sheets URL" 
-          value={sheetsUrl} 
-          onChange={(e) => {
-            setSheetsUrl(e.target.value);
-            extractSpreadsheetId(e.target.value);
-          }} 
-          disabled={!isEditing}
+      {/* 🔹 비디오 검색 UI */}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>
+        <h1>Video Gallery</h1>
+        <input
+          type="text"
+          placeholder="Search..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          style={{ width: '100%', maxWidth: '400px', padding: '10px', marginBottom: '20px', borderRadius: '4px', border: '1px solid #ccc' }}
         />
-        <Input 
-          type="text" 
-          placeholder="Range (예: data!A1:Z100)" 
-          value={range} 
-          onChange={(e) => setRange(e.target.value)} 
-          disabled={!isEditing}
-        />
-        <Button onClick={() => setIsEditing(!isEditing)}>
-          {isEditing ? "저장" : "수정"}
-        </Button>
-      </div>
 
-      {/* 검색 */}
-      <Input 
-        type="text" 
-        placeholder="Search..." 
-        value={search} 
-        onChange={(e) => setSearch(e.target.value)} 
-        className="mt-4 w-full max-w-lg"
-      />
+        {loading && <p>Loading...</p>}
+        {error && <p style={{ color: 'red' }}>{error}</p>}
 
-      {/* 비디오 리스트 */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-6 w-full max-w-6xl">
-        {videos
-          .filter(video => video.name.toLowerCase().includes(search.toLowerCase()))
-          .map((video, index) => (
-            <Link href={`/dashboard/${video.slug}`} key={index} className="w-full">
-              <Card className="rounded-lg shadow-lg hover:shadow-2xl transition">
-                <img src={video.thumbnail} alt={video.name} className="w-full rounded-t-lg aspect-video object-cover" />
-                <CardContent className="p-4">
-                  <h3 className="text-lg font-bold truncate">{video.name}</h3>
-                  <p className="text-sm text-gray-500 truncate">{video.channel} · {video.view} 조회 · {video.date}</p>
-                </CardContent>
-              </Card>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', justifyContent: 'center' }}>
+          {filteredVideos.map((video, index) => (
+            <Link href={`/${video.slug}`} key={index} style={{ textDecoration: 'none', color: 'inherit' }}>
+              <div style={{
+                width: '300px',
+                border: '1px solid #ddd',
+                borderRadius: '8px',
+                overflow: 'hidden',
+                cursor: 'pointer',
+                transition: 'transform 0.2s',
+                display: 'flex',
+                flexDirection: 'column'
+              }}>
+                <div style={{ position: 'relative' }}>
+                  <img src={video.thumbnail} alt={video.name} style={{ width: '100%', height: '170px', objectFit: 'cover' }} />
+                </div>
+
+                <div style={{ padding: '10px', flex: '1' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <img src={video.profile} alt={video.channel} style={{ width: '36px', height: '36px', borderRadius: '50%' }} />
+                    <div>
+                      <h3 style={{ margin: '0', fontSize: '16px' }}>{video.name}</h3>
+                      <p style={{ margin: '0', fontSize: '14px', color: '#555' }}>{video.channel}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </Link>
           ))}
+        </div>
       </div>
-
-      {error && <p className="text-red-500 mt-4">{error}</p>}
     </div>
   );
 }
