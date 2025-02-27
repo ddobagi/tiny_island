@@ -101,6 +101,8 @@ export default function Dashboard() {
   const handleSaveSheetsUrl = () => {
     if (user) {
       try{
+        localStorage.setItem(`sheetsUrl_${user.uid}`, sheetsUrl);
+
         const extractedId = extractSheetsId(sheetsUrl);
 
         if (extractedId) {
