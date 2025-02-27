@@ -12,6 +12,7 @@ const range = "data!A1:Z100";
 
 export default function VideoDetail() {
   const { slug } = useParams(); // URL에서 slug 가져오기
+  const [user, setUser] = useState(null);
   const [video, setVideo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
