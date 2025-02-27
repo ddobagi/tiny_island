@@ -18,6 +18,24 @@ export default function VideoDetail() {
   const [sheetsId, setSheetsId] = useState(null);
 
   useEffect(() => {
+    if (!user) return;
+  
+    const fetchSheetsId = async () => {
+      const res = await fetch(`/api/sheets?userId=${user.uid}`);
+      const data = await res.json();
+      if (data.sheetsId) {
+        setSheetsId(data.sheetsId);
+      } else {
+        setError("Google Sheets ID를 찾을 수 없습니다.");
+        alert("Google Sheets ID를 찾을 수 없습니다. 대시보드에서 다시 입력해주세요.");
+        setLoading(false);
+      }
+    };
+  
+    fetchSheetsId();
+  }, [user]);
+
+  useEffect(() => {
     const storedSheetsId = localStorage.getItem("sheetsId");
     if (storedSheetsId) {
       setSheetsId(storedSheetsId);

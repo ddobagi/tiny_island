@@ -98,23 +98,21 @@ export default function Dashboard() {
     return null;
   };
 
-  const handleSaveSheetsUrl = () => {
+  const handleSaveSheetsUrl = async () => {
     if (user) {
-      try{
-        localStorage.setItem(`sheetsUrl_${user.uid}`, sheetsUrl);
-
+      try {
         const extractedId = extractSheetsId(sheetsUrl);
-
         if (extractedId) {
-          localStorage.setItem("sheetsId", extractedId);
-          setSheetsId(extractedId);
+          await saveSheetsIdToServer(user.uid, extractedId); // 🔹 서버에 저장
+          setSheetsId(extractedId); // 🔹 상태 업데이트
         }
       } catch (error) {
-        console.error("localStorage 저장 중 오류 발생, 크롬 확장 프로그램을 꺼주세요")
+        console.error("서버 저장 중 오류 발생:", error);
       }
     }
     setIsEditing(false);
   };
+  
 
   return (
     <div className="flex flex-col items-center w-full p-6">
