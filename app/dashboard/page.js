@@ -24,9 +24,13 @@ export default function Dashboard() {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
-        const savedId = localStorage.getItem(`spreadsheetId_${currentUser.uid}`);
+        const savedUrl = localStorage.getItem(`sheetsUrl_${currentUser.uid}`);
         const savedRange = localStorage.getItem(`range_${currentUser.uid}`);
-        if (savedId) setSpreadsheetId(savedId);
+
+        if (savedUrl) {
+          setSheetsUrl(savedUrl);
+          extractSpreadsheetId(savedUrl); // 📌 ID 자동 추출
+        }
         if (savedRange) setRange(savedRange);
         setIsEditing(false);
       } else {
@@ -46,6 +50,17 @@ export default function Dashboard() {
 
     return () => unsubscribe();
   }, [router]);
+
+  // 📌 Google Sheets URL에서 spreadsheetId만 추출하는 함수
+  const extractSpreadsheetId = (url) => {
+    const match = url.match(/\/d\/([a-zA-Z0-9-_]+)/);
+    if (match && match[1]) {
+      setSpreadsheetId(match[1]);
+    } else {
+      setSpreadsheetId("");
+      setError("잘못된 Google Sheets URL입니다. ID를 확인하세요.");
+    }
+  };
 
   useEffect(() => {
     if (!spreadsheetId) return;
@@ -103,13 +118,26 @@ export default function Dashboard() {
       ) : (
         <button onClick={() => signInWithPopup(auth, provider)}>Google 로그인</button>
       )}
+      
+      {/* Google Sheets URL 입력 필드 */}
       <input
         type="text"
-        placeholder="Spreadsheet ID"
-        value={spreadsheetId}
-        onChange={(e) => setSpreadsheetId(e.target.value)}
+        placeholder="Google Sheets URL"
+        value={sheetsUrl}
+        onChange={(e) => {
+          setSheetsUrl(e.target.value);
+          extractSpreadsheetId(e.target.value);
+        }}
         disabled={!isEditing}
       />
+
+      <input
+        type="text"
+        placeholder="Extracted Spreadsheet ID"
+        value={spreadsheetId}
+        disabled
+      />
+
       <input
         type="text"
         placeholder="Range (예: data!A1:Z100)"
@@ -117,6 +145,7 @@ export default function Dashboard() {
         onChange={(e) => setRange(e.target.value)}
         disabled={!isEditing}
       />
+      
       <button onClick={() => setIsEditing(!isEditing)}>{isEditing ? "저장" : "수정"}</button>
       <input
         type="text"
@@ -124,6 +153,7 @@ export default function Dashboard() {
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
+
       <div>
         {videos.map((video, index) => (
           <Link href={`/${video.slug}`} key={index}>
@@ -135,6 +165,7 @@ export default function Dashboard() {
           </Link>
         ))}
       </div>
+      
       {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
   );
