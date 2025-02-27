@@ -2,30 +2,8 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { initializeApp } from "firebase/app";
-import { 
-  getAuth, 
-  signInWithRedirect, 
-  getRedirectResult, 
-  GoogleAuthProvider, 
-  signOut, 
-  onAuthStateChanged 
-} from "firebase/auth";
-
-// 🔹 Firebase 설정
-const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
-};
-
-// 🔹 Firebase 초기화
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const provider = new GoogleAuthProvider();
+import { auth, provider } from "@/lib/firebase";
+import { signInWithRedirect, onAuthStateChanged, signOut } from "firebase/auth";
 
 export default function Home() {
   const [search, setSearch] = useState("");
@@ -35,16 +13,30 @@ export default function Home() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    // 🔹 Firebase 로그인 상태 감지
+    if (!auth) return;
+    
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
     });
 
-    return () => unsubscribe(); // Cleanup function
+    return () => unsubscribe();
   }, []);
 
+  const handleLogin = () => {
+    if (auth && provider) {
+      signInWithRedirect(auth, provider);
+    }
+  };
+
+  const handleLogout = () => {
+    if (auth) {
+      signOut(auth)
+        .then(() => alert("로그아웃 되었습니다."))
+        .catch((error) => console.error("❌ 로그아웃 오류:", error));
+    }
+  };
+
   useEffect(() => {
-    // 🔹 Google Sheets 데이터 가져오기
     const fetchGoogleSheetsData = async () => {
       try {
         const res = await fetch("https://python-island.onrender.com/google-sheets/all");
@@ -93,18 +85,6 @@ export default function Home() {
     fetchGoogleSheetsData();
   }, []);
 
-  const handleLogin = () => {
-    signInWithRedirect(auth, provider);
-  };
-
-  const handleLogout = () => {
-    signOut(auth).then(() => {
-      alert("로그아웃 되었습니다.");
-    }).catch((error) => {
-      console.error("❌ 로그아웃 오류:", error);
-    });
-  };
-
   const filteredVideos = videos.filter((video) =>
     video.name.toLowerCase().includes(search.toLowerCase())
   );
@@ -152,16 +132,6 @@ export default function Home() {
               }}>
                 <div style={{ position: 'relative' }}>
                   <img src={video.thumbnail} alt={video.name} style={{ width: '100%', height: '170px', objectFit: 'cover' }} />
-                  <span style={{
-                    position: 'absolute',
-                    bottom: '8px',
-                    right: '8px',
-                    backgroundColor: 'rgba(0,0,0,0.7)',
-                    color: '#fff',
-                    padding: '2px 5px',
-                    borderRadius: '3px',
-                    fontSize: '12px'
-                  }}>{video.length}</span>
                 </div>
 
                 <div style={{ padding: '10px', flex: '1' }}>
@@ -172,14 +142,11 @@ export default function Home() {
                       <p style={{ margin: '0', fontSize: '14px', color: '#555' }}>{video.channel}</p>
                     </div>
                   </div>
-                  <p style={{ margin: '5px 0 0', fontSize: '12px', color: '#777' }}>{video.view} views · {video.date}</p>
                 </div>
               </div>
             </Link>
           ))}
         </div>
-
-        {!loading && filteredVideos.length === 0 && <p>No videos found.</p>}
       </div>
     </div>
   );
