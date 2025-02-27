@@ -12,8 +12,6 @@ import { Input } from "@/components/ui/input";
 export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [sheetsUrl, setSheetsUrl] = useState("");
-  const [spreadsheetId, setSpreadsheetId] = useState("");
   const [range, setRange] = useState("data!A1:Z100");
   const [isEditing, setIsEditing] = useState(false);
   const [videos, setVideos] = useState([]);
@@ -21,19 +19,17 @@ export default function Dashboard() {
   const [search, setSearch] = useState("");
   const router = useRouter();
 
+  // ✅ 스프레드시트 URL & ID 고정
+  const spreadsheetId = "1SqlqUq05SyMU3BC2BYYIT67fdW5M5vgq4y41bByR3iE";
+  const sheetsUrl = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/edit?gid=0#gid=0`;
+
   useEffect(() => {
     if (!auth) return;
 
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
-        const savedUrl = localStorage.getItem(`sheetsUrl_${currentUser.uid}`);
         const savedRange = localStorage.getItem(`range_${currentUser.uid}`);
-
-        if (savedUrl) {
-          setSheetsUrl(savedUrl);
-          extractSpreadsheetId(savedUrl);
-        }
         if (savedRange) setRange(savedRange);
       } else {
         router.push("/");
@@ -53,22 +49,14 @@ export default function Dashboard() {
     return () => unsubscribe();
   }, [router]);
 
-  const extractSpreadsheetId = (url) => {
-    const match = url.match(/\/d\/([a-zA-Z0-9-_]+)/);
-    if (match && match[1]) {
-      setSpreadsheetId(match[1]);
-    } else {
-      setSpreadsheetId("");
-      setError("잘못된 Google Sheets URL입니다. ID를 확인하세요.");
-    }
-  };
-
   useEffect(() => {
     if (!spreadsheetId) return;
 
     const fetchGoogleSheetsData = async () => {
       try {
-        const res = await fetch(`https://python-island.onrender.com/google-sheets/${spreadsheetId}?range=${encodeURIComponent(range)}`);
+        const res = await fetch(
+          `https://python-island.onrender.com/google-sheets/${spreadsheetId}?range=${encodeURIComponent(range)}`
+        );
         if (!res.ok) throw new Error(`Google Sheets API error: ${res.status}`);
 
         const data = await res.json();
@@ -121,18 +109,10 @@ export default function Dashboard() {
         <Button onClick={() => signInWithPopup(auth, provider)}>Google 로그인</Button>
       )}
 
-      {/* 스프레드시트 입력 */}
+      {/* ✅ 고정된 Google Sheets URL 표시 */}
       <div className="flex flex-col gap-2 w-full max-w-lg">
-        <Input 
-          type="text" 
-          placeholder="Google Sheets URL" 
-          value={sheetsUrl} 
-          onChange={(e) => {
-            setSheetsUrl(e.target.value);
-            extractSpreadsheetId(e.target.value);
-          }} 
-          disabled={!isEditing}
-        />
+        <p className="text-sm text-gray-500">🔗 <a href={sheetsUrl} target="_blank" rel="noopener noreferrer" className="underline text-blue-500">Google Sheets 열기</a></p>
+        
         <Input 
           type="text" 
           placeholder="Range (예: data!A1:Z100)" 
