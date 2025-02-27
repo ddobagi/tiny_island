@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사용자 대시보드</title>
+    <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-auth-compat.js"></script>
+</head>
+<body>
+
+    <h2>사용자 대시보드</h2>
+    <p id="user-info">로그인 정보를 불러오는 중...</p>
+
+    <!-- ✅ 스프레드시트 URL 입력 폼 -->
+    <div id="spreadsheet-section">
+        <label for="spreadsheet-url">Google 스프레드시트 URL:</label>
+        <input type="url" id="spreadsheet-url" placeholder="스프레드시트 URL을 입력하세요" required>
+        <button id="save-url">저장</button>
+        <button id="edit-url" style="display: none;">수정</button>
+    </div>
+
+    <button id="logout">로그아웃</button>
+
+    <script>
+        // 🔹 1. Firebase 설정 (Firebase Console에서 복사한 값 입력)
+        const firebaseConfig = {
+            apiKey: process.env.FIREBASE_API_KEY,
+            authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+            projectId: process.env.FIREBASE_PROJECT_ID,
+            storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+            messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+            appId: process.env.FIREBASE_APP_ID
+        };
+
+        firebase.initializeApp(firebaseConfig);
+
+        // 현재 로그인한 사용자 정보 가져오기
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                document.getElementById("user-info").innerHTML = `
+                    환영합니다, ${user.displayName}!<br>
+                    이메일: ${user.email} <br>
+                    UID: ${user.uid}
+                `;
+
+                // 🔹 저장된 스프레드시트 URL 불러오기
+                const savedUrl = localStorage.getItem(`spreadsheet_url_${user.uid}`);
+                if (savedUrl) {
+                    document.getElementById("spreadsheet-url").value = savedUrl;
+                    document.getElementById("spreadsheet-url").disabled = true;
+                    document.getElementById("save-url").style.display = "none";
+                    document.getElementById("edit-url").style.display = "inline-block";
+                }
+            } else {
+                // 로그인 안 되어 있으면 로그인 페이지로 리디렉션
+                window.location.href = "login.html";
+            }
+        });
+
+        // 🔹 URL 저장 기능
+        document.getElementById("save-url").addEventListener("click", () => {
+            const user = firebase.auth().currentUser;
+            if (!user) return;
+
+            const urlInput = document.getElementById("spreadsheet-url").value.trim();
+            if (urlInput) {
+                localStorage.setItem(`spreadsheet_url_${user.uid}`, urlInput);
+                document.getElementById("spreadsheet-url").disabled = true;
+                document.getElementById("save-url").style.display = "none";
+                document.getElementById("edit-url").style.display = "inline-block";
+                alert("스프레드시트 URL이 저장되었습니다!");
+            } else {
+                alert("유효한 URL을 입력하세요.");
+            }
+        });
+
+        // 🔹 URL 수정 기능
+        document.getElementById("edit-url").addEventListener("click", () => {
+            document.getElementById("spreadsheet-url").disabled = false;
+            document.getElementById("save-url").style.display = "inline-block";
+            document.getElementById("edit-url").style.display = "none";
+        });
+
+        // 🔹 로그아웃 기능
+        document.getElementById("logout").addEventListener("click", () => {
+            firebase.auth().signOut().then(() => {
+                window.location.href = "login.html"; // 로그아웃 후 로그인 페이지로 이동
+            });
+        });
+    </script>
+
+</body>
+</html>

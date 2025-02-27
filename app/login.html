@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Google 로그인</title>
+    
+    <!-- ✅ Firebase SDK 추가 -->
+    <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-auth-compat.js"></script>
+
+</head>
+<body>
+
+    <h2>Firebase Google 로그인</h2>
+
+    <!-- 로그인 및 로그아웃 버튼 -->
+    <button id="google-login">Google 로그인</button>
+    <button id="logout" style="display: none;">로그아웃</button>
+
+    <!-- 사용자 정보 표시 -->
+    <p id="user-info">로그인한 사용자 정보가 없습니다.</p>
+
+    <script>
+        // 🔹 1. Firebase 설정 (Firebase Console에서 복사한 값 입력)
+        const firebaseConfig = {
+            apiKey: process.env.FIREBASE_API_KEY,
+            authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+            projectId: process.env.FIREBASE_PROJECT_ID,
+            storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+            messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+            appId: process.env.FIREBASE_APP_ID
+        };
+
+        firebase.initializeApp(firebaseConfig);
+
+        firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+
+        // 🔹 3. Google 로그인 프로바이더 생성
+        const provider = new firebase.auth.GoogleAuthProvider();
+
+        // 🔹 4. 로그인 버튼 클릭 이벤트
+        document.getElementById('google-login').addEventListener('click', () => {
+            firebase.auth().signInWithPopup(provider)
+                .then((result) => {
+                    const user = result.user;
+                    console.log("✅ 로그인 성공:", user);
+                    alert(`환영합니다, ${user.displayName}님!`); // ✅ 템플릿 리터럴 사용
+                    handleUserRedirect(user); // 로그인 후 자동 이동
+                })
+                .catch((error) => {
+                    console.error("❌ 로그인 오류:", error);
+                });
+        });
+
+        // 🔹 5. 로그아웃 버튼 클릭 이벤트
+        document.getElementById('logout').addEventListener('click', () => {
+            firebase.auth().signOut().then(() => {
+                alert("로그아웃 되었습니다.");
+                updateUI(null); // UI 업데이트
+            }).catch((error) => {
+                console.error("❌ 로그아웃 오류:", error);
+            });
+        });
+
+        // 🔹 6. 로그인 상태 변경 감지
+        firebase.auth().onAuthStateChanged((user) => {
+            updateUI(user);
+            if (user) {
+                handleUserRedirect(user); // 로그인 상태 감지 후 자동 이동
+            }
+        });
+
+        // 🔹 7. UI 업데이트 함수
+        function updateUI(user) {
+            const userInfo = document.getElementById('user-info');
+            const loginBtn = document.getElementById('google-login');
+            const logoutBtn = document.getElementById('logout');
+
+            if (user) {
+                userInfo.innerHTML = `로그인한 사용자: ${user.displayName} (${user.email})`; // ✅ 템플릿 리터럴 적용
+                loginBtn.style.display = 'none';
+                logoutBtn.style.display = 'block';
+            } else {
+                userInfo.innerHTML = "로그인한 사용자 정보가 없습니다.";
+                loginBtn.style.display = 'block';
+                logoutBtn.style.display = 'none';
+            }
+        }
+
+        // 🔹 8. 로그인 후 사용자별 페이지 이동 함수
+        function handleUserRedirect(user) {
+            if (!user) return;
+
+            const adminEmails = ["admin@example.com"]; // 🔥 관리자 계정 리스트
+            if (adminEmails.includes(user.email)) {
+                window.location.href = "/admin.html"; // ✅ 관리자 페이지로 이동
+            } else {
+                window.location.href = `/dashboard.html?uid=${user.uid}`; // ✅ 일반 사용자 개별 페이지 이동 (템플릿 리터럴 적용)
+            }
+        }
+    </script>
+
+</body>
+</html>
