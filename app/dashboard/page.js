@@ -111,7 +111,7 @@ export default function Dashboard() {
 
   return (
     <div className="flex flex-col items-center w-full p-6">
-      <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
+      <h1 className="text-2xl font-bold mb-4">{user.displayName}'s Dashboard</h1>
       
       {user ? (
         <div className="mb-4">
