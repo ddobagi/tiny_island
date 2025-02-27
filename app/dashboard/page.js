@@ -135,7 +135,7 @@ export default function Dashboard() {
         />
         <Input 
           type="text" 
-          placeholder="Range (예: data!A1:Z99)" 
+          placeholder="Range (예: data!A1:Z100)" 
           value={range} 
           onChange={(e) => setRange(e.target.value)} 
           disabled={!isEditing}
