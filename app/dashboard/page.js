@@ -37,15 +37,6 @@ export default function Dashboard() {
       setLoading(false);
     });
 
-    getRedirectResult(auth)
-      .then((result) => {
-        if (result && result.user) {
-          setUser(result.user);
-          router.push("/dashboard");
-        }
-      })
-      .catch((error) => console.error("로그인 오류:", error));
-
     return () => unsubscribe();
   }, [router]);
 
@@ -61,9 +52,10 @@ export default function Dashboard() {
 
         const data = await res.json();
         const rows = data.values;
-        if (!rows || rows.length === 0) throw new Error("No data found in Google Sheets");
+        if (!rows || rows.length <= 2) throw new Error("No data found in Google Sheets");
 
-        const headers = rows[0];
+        const headers = rows[0]; // 첫 번째 행은 헤더
+        
         const videoIndex = headers.indexOf("video");
         const thumbnailIndex = headers.indexOf("thumbnail");
         const nameIndex = headers.indexOf("name");
@@ -74,7 +66,8 @@ export default function Dashboard() {
         const profileIndex = headers.indexOf("profile");
         const lengthIndex = headers.indexOf("length");
 
-        const parsedVideos = rows.slice(1).map((row) => ({
+        // 3행부터 데이터를 가져오도록 설정
+        const parsedVideos = rows.slice(2).map((row) => ({
           video: row[videoIndex],
           thumbnail: row[thumbnailIndex] || "",
           name: row[nameIndex],
@@ -111,11 +104,13 @@ export default function Dashboard() {
 
   return (
     <div className="flex flex-col items-center w-full p-6">
-      <h1 className="text-2xl font-bold mb-4">{user.displayName}'s Dashboard</h1>
+      <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
       
       {user ? (
         <div className="mb-4">
-          <p className="text-lg">환영합니다, {user.displayName}! 🎉 ({user.email})</p>
+          <p className="text-lg">
+            환영합니다, {user.displayName ? user.displayName : "사용자"}! 🎉 ({user.email})
+          </p>
           <Button onClick={() => signOut(auth)} className="mt-2">로그아웃</Button>
         </div>
       ) : (
