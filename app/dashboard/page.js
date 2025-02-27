@@ -18,24 +18,7 @@ export default function Dashboard() {
   const [videos, setVideos] = useState([]);
   const [error, setError] = useState(null);
   const [search, setSearch] = useState("");
-  const router = useRouter();
-
-  useEffect(() => {
-    window.addEventListener("unhandledrejection", (event) => {
-      if (
-        event.reason &&
-        event.reason.message.includes("A listener indicated an asynchronous response")
-      ) {
-        console.warn("🚨 확장 프로그램 관련 오류 무시");
-        event.preventDefault(); // ✅ 오류를 무시하고 실행 계속
-      }
-    });
-  
-    return () => {
-      window.removeEventListener("unhandledrejection", () => {});
-    };
-  }, []);
-  
+  const router = useRouter(); 
 
   useEffect(() => {
     if (!auth) return;
@@ -118,8 +101,6 @@ export default function Dashboard() {
   const handleSaveSheetsUrl = () => {
     if (user) {
       try{
-        localStorage.setItem(`sheetsUrl_${user.uid}`, sheetsUrl);
-
         const extractedId = extractSheetsId(sheetsUrl);
 
         if (extractedId) {
