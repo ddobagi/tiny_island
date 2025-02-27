@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { auth, provider } from "@/lib/firebase";
+import {onAuthStateChanged } from "firebase/auth";
 import { signInWithPopup, getRedirectResult, onAuthStateChanged, signOut } from "firebase/auth";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
