@@ -5,6 +5,9 @@ import { useRouter } from "next/navigation";
 import { auth, provider } from "@/lib/firebase";
 import { signInWithPopup, getRedirectResult, onAuthStateChanged, signOut } from "firebase/auth";
 import Link from "next/link";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
@@ -12,7 +15,7 @@ export default function Dashboard() {
   const [sheetsUrl, setSheetsUrl] = useState("");
   const [spreadsheetId, setSpreadsheetId] = useState("");
   const [range, setRange] = useState("data!A1:Z100");
-  const [isEditing, setIsEditing] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
   const [videos, setVideos] = useState([]);
   const [error, setError] = useState(null);
   const [search, setSearch] = useState("");
@@ -29,10 +32,9 @@ export default function Dashboard() {
 
         if (savedUrl) {
           setSheetsUrl(savedUrl);
-          extractSpreadsheetId(savedUrl); // 📌 ID 자동 추출
+          extractSpreadsheetId(savedUrl);
         }
         if (savedRange) setRange(savedRange);
-        setIsEditing(false);
       } else {
         router.push("/");
       }
@@ -51,7 +53,6 @@ export default function Dashboard() {
     return () => unsubscribe();
   }, [router]);
 
-  // 📌 Google Sheets URL에서 spreadsheetId만 추출하는 함수
   const extractSpreadsheetId = (url) => {
     const match = url.match(/\/d\/([a-zA-Z0-9-_]+)/);
     if (match && match[1]) {
@@ -108,65 +109,69 @@ export default function Dashboard() {
   }, [spreadsheetId, range]);
 
   return (
-    <div style={{ textAlign: "center", padding: "20px" }}>
-      <h1>Dashboard</h1>
+    <div className="flex flex-col items-center w-full p-6">
+      <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
+      
       {user ? (
-        <div>
-          <p>환영합니다, {user.displayName}! 🎉 ({user.email})</p>
-          <button onClick={() => signOut(auth)}>로그아웃</button>
+        <div className="mb-4">
+          <p className="text-lg">환영합니다, {user.displayName}! 🎉 ({user.email})</p>
+          <Button onClick={() => signOut(auth)} className="mt-2">로그아웃</Button>
         </div>
       ) : (
-        <button onClick={() => signInWithPopup(auth, provider)}>Google 로그인</button>
+        <Button onClick={() => signInWithPopup(auth, provider)}>Google 로그인</Button>
       )}
-      
-      {/* Google Sheets URL 입력 필드 */}
-      <input
-        type="text"
-        placeholder="Google Sheets URL"
-        value={sheetsUrl}
-        onChange={(e) => {
-          setSheetsUrl(e.target.value);
-          extractSpreadsheetId(e.target.value);
-        }}
-        disabled={!isEditing}
-      />
 
-      <input
-        type="text"
-        placeholder="Extracted Spreadsheet ID"
-        value={spreadsheetId}
-        disabled
-      />
-
-      <input
-        type="text"
-        placeholder="Range (예: data!A1:Z100)"
-        value={range}
-        onChange={(e) => setRange(e.target.value)}
-        disabled={!isEditing}
-      />
-      
-      <button onClick={() => setIsEditing(!isEditing)}>{isEditing ? "저장" : "수정"}</button>
-      <input
-        type="text"
-        placeholder="Search..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
-
-      <div>
-        {videos.map((video, index) => (
-          <Link href={`/${video.slug}`} key={index}>
-            <div>
-              <img src={video.thumbnail} alt={video.name} />
-              <h3>{video.name}</h3>
-              <p>{video.channel}</p>
-            </div>
-          </Link>
-        ))}
+      {/* 스프레드시트 입력 */}
+      <div className="flex flex-col gap-2 w-full max-w-lg">
+        <Input 
+          type="text" 
+          placeholder="Google Sheets URL" 
+          value={sheetsUrl} 
+          onChange={(e) => {
+            setSheetsUrl(e.target.value);
+            extractSpreadsheetId(e.target.value);
+          }} 
+          disabled={!isEditing}
+        />
+        <Input 
+          type="text" 
+          placeholder="Range (예: data!A1:Z100)" 
+          value={range} 
+          onChange={(e) => setRange(e.target.value)} 
+          disabled={!isEditing}
+        />
+        <Button onClick={() => setIsEditing(!isEditing)}>
+          {isEditing ? "저장" : "수정"}
+        </Button>
       </div>
-      
-      {error && <p style={{ color: "red" }}>{error}</p>}
+
+      {/* 검색 */}
+      <Input 
+        type="text" 
+        placeholder="Search..." 
+        value={search} 
+        onChange={(e) => setSearch(e.target.value)} 
+        className="mt-4 w-full max-w-lg"
+      />
+
+      {/* 비디오 리스트 */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-6 w-full max-w-6xl">
+        {videos
+          .filter(video => video.name.toLowerCase().includes(search.toLowerCase()))
+          .map((video, index) => (
+            <Link href={`/${video.slug}`} key={index} className="w-full">
+              <Card className="rounded-lg shadow-lg hover:shadow-2xl transition">
+                <img src={video.thumbnail} alt={video.name} className="w-full rounded-t-lg aspect-video object-cover" />
+                <CardContent className="p-4">
+                  <h3 className="text-lg font-bold truncate">{video.name}</h3>
+                  <p className="text-sm text-gray-500 truncate">{video.channel} · {video.view} 조회 · {video.date}</p>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+      </div>
+
+      {error && <p className="text-red-500 mt-4">{error}</p>}
     </div>
   );
 }
