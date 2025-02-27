@@ -1,5 +1,14 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { SheetsProvider } from "@/context/SheetsContext";
+
+export default function Layout({ children }) {
+  return (
+    <SheetsProvider>
+      {children}
+    </SheetsProvider>
+  );
+}
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

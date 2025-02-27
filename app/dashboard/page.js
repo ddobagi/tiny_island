@@ -8,12 +8,13 @@ import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useSheets } from "@/context/SheetsContext";
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [sheetsUrl, setSheetsUrl] = useState("");
-  const [sheetsId, setSheetsId] = useState("");
+  const [sheetsId, setSheetsId] = useSheets();
   const [isEditing, setIsEditing] = useState(false);
   const [videos, setVideos] = useState([]);
   const [error, setError] = useState(null);
@@ -86,7 +87,7 @@ export default function Dashboard() {
       }
     };
 
-    fetchGoogleSheetsData();
+    fetchGoogleSheetsData(sheetsId);
   }, [sheetsId]);
 
   const extractSheetsId = (url) => {
