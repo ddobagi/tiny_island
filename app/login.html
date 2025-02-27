@@ -33,41 +33,33 @@
         };
 
         firebase.initializeApp(firebaseConfig);
-
         firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 
         // 🔹 3. Google 로그인 프로바이더 생성
         const provider = new firebase.auth.GoogleAuthProvider();
 
-        // 🔹 4. 로그인 버튼 클릭 이벤트
+        // 🔹 4. 로그인 버튼 클릭 이벤트 (팝업 차단 방지 → signInWithRedirect 사용)
         document.getElementById('google-login').addEventListener('click', () => {
-            firebase.auth().signInWithPopup(provider)
-                .then((result) => {
-                    const user = result.user;
-                    console.log("✅ 로그인 성공:", user);
-                    alert(`환영합니다, ${user.displayName}님!`); // ✅ 템플릿 리터럴 사용
-                    handleUserRedirect(user); // 로그인 후 자동 이동
-                })
-                .catch((error) => {
-                    console.error("❌ 로그인 오류:", error);
-                });
+            firebase.auth().signInWithRedirect(provider);
         });
 
-        // 🔹 5. 로그아웃 버튼 클릭 이벤트
-        document.getElementById('logout').addEventListener('click', () => {
-            firebase.auth().signOut().then(() => {
-                alert("로그아웃 되었습니다.");
-                updateUI(null); // UI 업데이트
-            }).catch((error) => {
-                console.error("❌ 로그아웃 오류:", error);
-            });
+        // 🔹 5. 로그인 후 리디렉션 결과 확인
+        firebase.auth().getRedirectResult().then((result) => {
+            if (result.user) {
+                console.log("✅ 로그인 성공:", result.user);
+                alert(`환영합니다, ${result.user.displayName}님!`);
+                window.location.href = "/dashboard.html"; // 로그인 후 자동 이동
+            }
+        }).catch((error) => {
+            console.error("❌ 로그인 오류:", error);
         });
 
         // 🔹 6. 로그인 상태 변경 감지
         firebase.auth().onAuthStateChanged((user) => {
             updateUI(user);
             if (user) {
-                handleUserRedirect(user); // 로그인 상태 감지 후 자동 이동
+                // 로그인한 상태이면 대시보드로 이동
+                window.location.href = "/dashboard.html";
             }
         });
 
@@ -78,7 +70,7 @@
             const logoutBtn = document.getElementById('logout');
 
             if (user) {
-                userInfo.innerHTML = `로그인한 사용자: ${user.displayName} (${user.email})`; // ✅ 템플릿 리터럴 적용
+                userInfo.innerHTML = `로그인한 사용자: ${user.displayName} (${user.email})`;
                 loginBtn.style.display = 'none';
                 logoutBtn.style.display = 'block';
             } else {
@@ -88,17 +80,15 @@
             }
         }
 
-        // 🔹 8. 로그인 후 사용자별 페이지 이동 함수
-        function handleUserRedirect(user) {
-            if (!user) return;
-
-            const adminEmails = ["admin@example.com"]; // 🔥 관리자 계정 리스트
-            if (adminEmails.includes(user.email)) {
-                window.location.href = "/admin.html"; // ✅ 관리자 페이지로 이동
-            } else {
-                window.location.href = `/dashboard.html?uid=${user.uid}`; // ✅ 일반 사용자 개별 페이지 이동 (템플릿 리터럴 적용)
-            }
-        }
+        // 🔹 8. 로그아웃 기능 추가
+        document.getElementById('logout').addEventListener('click', () => {
+            firebase.auth().signOut().then(() => {
+                alert("로그아웃 되었습니다.");
+                window.location.href = "/login.html"; // 로그아웃 후 로그인 페이지로 이동
+            }).catch((error) => {
+                console.error("❌ 로그아웃 오류:", error);
+            });
+        });
     </script>
 
 </body>
