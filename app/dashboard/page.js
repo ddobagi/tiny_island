@@ -59,7 +59,7 @@ export default function Dashboard() {
       setSpreadsheetId(match[1]);
     } else {
       setSpreadsheetId("");
-      setError("잘못된 Google Sheets URL입니다. ID를 확인하세요.");
+      setError("Google Sheets URL이 잘못되었거나 아직 입력되지 않은 듯해요! \n 확인 부탁드려요 🤗");
     }
   };
 
@@ -159,7 +159,7 @@ export default function Dashboard() {
         {videos
           .filter(video => video.name.toLowerCase().includes(search.toLowerCase()))
           .map((video, index) => (
-            <Link href={`/${video.slug}`} key={index} className="w-full">
+            <Link href={`/dashboard/${video.slug}`} key={index} className="w-full">
               <Card className="rounded-lg shadow-lg hover:shadow-2xl transition">
                 <img src={video.thumbnail} alt={video.name} className="w-full rounded-t-lg aspect-video object-cover" />
                 <CardContent className="p-4">
