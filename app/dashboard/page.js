@@ -21,6 +21,23 @@ export default function Dashboard() {
   const router = useRouter();
 
   useEffect(() => {
+    window.addEventListener("unhandledrejection", (event) => {
+      if (
+        event.reason &&
+        event.reason.message.includes("A listener indicated an asynchronous response")
+      ) {
+        console.warn("🚨 확장 프로그램 관련 오류 무시");
+        event.preventDefault(); // ✅ 오류를 무시하고 실행 계속
+      }
+    });
+  
+    return () => {
+      window.removeEventListener("unhandledrejection", () => {});
+    };
+  }, []);
+  
+
+  useEffect(() => {
     if (!auth) return;
 
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -94,7 +111,8 @@ export default function Dashboard() {
     if (match) {
       setSheetsId(match[1]);
       return match[1];
-    } return null;
+    } 
+    return null;
   };
 
   const handleSaveSheetsUrl = () => {
