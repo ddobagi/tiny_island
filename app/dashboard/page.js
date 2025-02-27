@@ -21,8 +21,8 @@ export default function Dashboard() {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
-        // 저장된 URL이 있으면 불러옴
-        const savedUrl = localStorage.getItem("sheetsUrl");
+        // 사용자의 uid에 맞는 URL 불러오기
+        const savedUrl = localStorage.getItem(`sheetsUrl_${currentUser.uid}`);
         if (savedUrl) {
           setSheetsUrl(savedUrl);
           setIsEditing(false); // 저장된 URL이 있으면 편집 비활성화 상태로 시작
@@ -53,9 +53,9 @@ export default function Dashboard() {
   };
 
   const handleSaveOrEdit = () => {
-    if (isEditing) {
-      // URL 저장
-      localStorage.setItem("sheetsUrl", sheetsUrl);
+    if (isEditing && user) {
+      // uid 기반으로 URL 저장
+      localStorage.setItem(`sheetsUrl_${user.uid}`, sheetsUrl);
       alert("✅ Google Sheets URL이 저장되었습니다!");
     }
     // 편집 상태 토글
