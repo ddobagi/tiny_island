@@ -1,6 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { SheetsProvider } from "../context/SheetsContext";
+import { SheetsProvider } from "@/context/SheetsContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,12 +19,12 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <SheetsProvider>
-      <html lang="en">
-        <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-          {children}
-        </body>
-      </html>
-    </SheetsProvider>
+    <html lang="en">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        {children}
+      </body>
+    </html>
   );
 }
