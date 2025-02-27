@@ -63,6 +63,17 @@ export default function Home() {
   );
 
   return (
+
+    <div>
+      <h2>Firebase Google 로그인</h2>
+
+      <button id="google-login">Google 로그인</button>
+      <button id="logout" style="display: none;">로그아웃</button>
+
+      <p id="user-info">로그인한 사용자 정보가 없습니다.</p>
+    </div>
+
+
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>
       <h1>Video Gallery</h1>
       <input
