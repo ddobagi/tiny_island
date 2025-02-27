@@ -16,7 +16,7 @@ export default function VideoPage() {
     const fetchGoogleSheetsData = async () => {
       try {
         const res = await fetch(
-          `https://python-island.onrender.com/google-sheets/${spreadsheetId}/${slug}`
+          `https://python-island.onrender.com/google-sheets/${slug}`
         );
 
         if (!res.ok) {
