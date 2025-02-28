@@ -9,16 +9,11 @@ import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
-// ✅ Google Sheets API URL (스프레드시트 ID는 Firestore에서 가져옴)
-const API_URL = "https://python-island.onrender.com/google-sheets/";
-const RANGE = "data!A1:Z100";
-
 export default function VideoDetail() {
   const { slug } = useParams(); // URL에서 slug 가져오기
   const router = useRouter();
-  
+
   const [user, setUser] = useState(null);
-  const [sheetsId, setSheetsId] = useState(null);
   const [video, setVideo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -33,66 +28,29 @@ export default function VideoDetail() {
       }
       
       setUser(currentUser);
-      fetchSheetsId(currentUser.uid);
+      fetchVideoData(slug);
     });
     return () => unsubscribe();
-  }, [router]);
+  }, [slug, router]);
 
-  // ✅ Firestore에서 sheetsId 가져오기
-  const fetchSheetsId = async (uid) => {
+  // ✅ Firestore에서 비디오 데이터 가져오기
+  const fetchVideoData = async (slug) => {
     try {
-      const docRef = doc(db, "users", uid);
+      const docRef = doc(db, "videos", slug);
       const docSnap = await getDoc(docRef);
+
       if (docSnap.exists()) {
-        setSheetsId(docSnap.data().sheetsId || null);
+        setVideo(docSnap.data());
       } else {
-        console.warn("Firestore에서 sheetsId를 찾을 수 없습니다.");
+        throw new Error("해당 비디오를 찾을 수 없습니다.");
       }
     } catch (error) {
-      console.error("Firestore에서 sheetsId를 가져오는 중 오류 발생: ", error);
+      console.error("Firestore에서 비디오 데이터 가져오는 중 오류 발생: ", error);
       setError(error.message);
     } finally {
       setLoading(false);
     }
   };
-
-  // ✅ Google Sheets API에서 데이터 가져오기
-  useEffect(() => {
-    if (!slug || !sheetsId) return;
-    
-    const fetchVideoData = async () => {
-      try {
-        const res = await fetch(`${API_URL}${sheetsId}?range=${encodeURIComponent(RANGE)}`);
-        if (!res.ok) throw new Error(`Google Sheets API error: ${res.status}`);
-        
-        const data = await res.json();
-        const rows = data.values;
-        if (!rows || rows.length === 0) throw new Error("No data found in Google Sheets");
-        
-        const headers = rows[0];
-        const slugIndex = headers.indexOf("slug");
-        const foundVideo = rows.slice(1).find((row) => row[slugIndex] === slug);
-
-        if (!foundVideo) throw new Error("해당 비디오를 찾을 수 없습니다.");
-
-        setVideo({
-          name: foundVideo[headers.indexOf("name")] || "제목 없음",
-          thumbnail: foundVideo[headers.indexOf("thumbnail")] || "",
-          channel: foundVideo[headers.indexOf("channel")],
-          view: foundVideo[headers.indexOf("view")],
-          date: foundVideo[headers.indexOf("date")],
-          length: foundVideo[headers.indexOf("length")],
-        });
-      } catch (error) {
-        console.error("Error fetching video data: ", error);
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchVideoData();
-  }, [slug, sheetsId]);
 
   // ✅ 로딩 상태 및 에러 처리
   if (loading) return <p className="text-center mt-10">로딩 중...</p>;
@@ -106,7 +64,9 @@ export default function VideoDetail() {
         <Card className="rounded-lg shadow-lg w-full max-w-2xl">
           <img src={video.thumbnail} alt={video.name} className="w-full rounded-t-lg aspect-video object-cover" />
           <CardContent className="p-4">
-            <p className="text-sm text-gray-500">채널: {video.channel} · 조회수: {video.view} · 날짜: {video.date}</p>
+            <p className="text-sm text-gray-500">
+              채널: {video.channel} · 조회수: {video.view} · 날짜: {video.date}
+            </p>
             <p className="mt-2">영상 길이: {video.length}</p>
           </CardContent>
         </Card>
