@@ -36,7 +36,7 @@ export default function Dashboard() {
   useEffect(() => {
     if (!user) return;
 
-    const videosRef = collection(db, "videos");
+    const videosRef = collection(db, "users", userId , "videos");
 
     const unsubscribe = onSnapshot(videosRef, (snapshot) => {
       const videosData = snapshot.docs.map((doc) => ({
@@ -54,7 +54,7 @@ export default function Dashboard() {
     if (!user) return;
 
     try {
-      await addDoc(collection(db, "videos"), newVideo);
+      await addDoc(collection(db, "users", userId, "videos"), newVideo);
       setNewVideo({ name: "", video: "", thumbnail: "", channel: "" });
     } catch (error) {
       console.error("Firestore에 비디오 추가 중 오류 발생: ", error);
@@ -64,7 +64,7 @@ export default function Dashboard() {
   // ✅ Firestore 데이터 수정
   const handleUpdateVideo = async (id, updatedData) => {
     try {
-      const videoRef = doc(db, "videos", id);
+      const videoRef = doc(db, "users", userId, "videos", id);
       await updateDoc(videoRef, updatedData);
     } catch (error) {
       console.error("Firestore 업데이트 중 오류 발생: ", error);
@@ -74,7 +74,7 @@ export default function Dashboard() {
   // ✅ Firestore 데이터 삭제
   const handleDeleteVideo = async (id) => {
     try {
-      await deleteDoc(doc(db, "videos", id));
+      await deleteDoc(doc(db, "users", userId, "videos", id));
     } catch (error) {
       console.error("Firestore에서 비디오 삭제 중 오류 발생: ", error);
     }
