@@ -52,6 +52,7 @@ export default function Dashboard() {
 
   // ✅ Firestore에 데이터 추가
   const handleAddVideo = async () => {
+    const userId = auth.currentUser.uid;
     if (!user) return;
 
     try {
@@ -64,6 +65,7 @@ export default function Dashboard() {
 
   // ✅ Firestore 데이터 수정
   const handleUpdateVideo = async (id, updatedData) => {
+    const userId = auth.currentUser.uid;
     try {
       const videoRef = doc(db, "users", userId, "videos", id);
       await updateDoc(videoRef, updatedData);
@@ -74,6 +76,7 @@ export default function Dashboard() {
 
   // ✅ Firestore 데이터 삭제
   const handleDeleteVideo = async (id) => {
+    const userId = auth.currentUser.uid;
     try {
       await deleteDoc(doc(db, "users", userId, "videos", id));
     } catch (error) {
