@@ -14,6 +14,7 @@ export default {
 			libre: ['Libre Bodoni', 'serif'],
 			noto: ['Noto Sans', 'sans-serif'],
 			signika: ['Signika', 'sans-serif'],
+			archivo: [ ' Archivo', 'sans-serif'],
 
 		},
 		colors: {

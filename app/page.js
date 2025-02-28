@@ -59,7 +59,7 @@ export default function Home() {
         <div className="w-16 h-16 px-2 py-2 bg-black rounded-full overflow-hidden border border-gray-300">
           <Image src="/deep_logo.png" alt="띱 로고" className="object-contain" />
         </div>
-        <h1 className="text-4xl font-semibold font-libre">Deep Essays</h1>
+        <h1 className="text-4xl font-semibold font-archivo">Deep Essays</h1>
       </div>
 
       {/* 구분선 */}
