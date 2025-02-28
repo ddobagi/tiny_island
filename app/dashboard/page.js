@@ -86,7 +86,7 @@ export default function Dashboard() {
         chaennelProfile: channelProfile,
         views: viewCount,
         likes: likeCount,
-        publishedAt 
+        publishedAt: publishedAt
       };
     } catch (error) {
       console.error("YouTube API 오류:", error);
