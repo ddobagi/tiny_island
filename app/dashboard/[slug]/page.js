@@ -42,6 +42,7 @@ export default function VideoDetail() {
 
         if (docSnap.exists()) {
           setSheetsId(docSnap.data().sheetsId);
+          console.log(sheetsId);
         } else {
           throw new Error("Firestore에서 SheetsId를 찾을 수 없습니다");
         }

@@ -134,7 +134,10 @@ export default function Dashboard() {
         const extractedId = extractSheetsId(sheetsUrl);
         
         ///
-        await setDoc(doc(db, "users", user.uid), { sheetsId: extractedId }, { merge: true });
+        await setDoc(doc(db, "users", user.uid), { 
+          sheetsId: extractedId,
+          sheetsUrl: sheetsUrl
+        }, { merge: true });
         ///
 
         setSheetsId(extractedId);
