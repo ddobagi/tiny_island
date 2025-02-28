@@ -146,15 +146,32 @@ export default function Dashboard() {
 
       <div className="fixed bottom-6 right-6 flex flex-col items-end" ref={fabRef}>
         {fabOpen && (
-          <div className="transition-transform transform translate-y-2 opacity-100 mb-2">
-            <Input type="text" placeholder="유튜브 링크 입력" value={newVideo.video} onChange={handleInputChange} className="mb-2" />
-            <Button onClick={handleAddVideo}>추가</Button>
+          <div className="relative w-[400px] transition-transform transform translate-y-2 opacity-100 mb-2">
+            <div className="relative">
+              <Input 
+                type="text" 
+                placeholder="URL..." 
+                value={newVideo.video} 
+                onChange={handleInputChange} 
+                className="w-full pr-16 px-4 py-2 rounded border border-gray-300" 
+              />
+              <Button 
+                onClick={handleAddVideo} 
+                className="absolute inset-y-0 right-0 px-4 py-1 h-full rounded-r bg-blue-500 text-white hover:bg-blue-600"
+              >
+                추가
+              </Button>
+            </div>
           </div>
         )}
-        <Button onClick={() => setFabOpen(!fabOpen)} className="rounded-full w-12 h-12 flex items-center justify-center shadow-lg">
+        <Button 
+          onClick={() => setFabOpen(!fabOpen)} 
+          className="rounded-full w-12 h-12 flex items-center justify-center shadow-lg"
+        >
           {fabOpen ? <X size={24} /> : <Plus size={24} />}
         </Button>
       </div>
+
 
       <div className="grid grid-cols-1 gap-6 mt-6 w-full max-w-6xl">
         {videos
