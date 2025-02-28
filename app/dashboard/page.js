@@ -113,6 +113,19 @@ export default function Dashboard() {
 
 
       <Input type="text" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} className="mt-4 w-full max-w-lg" />
+
+      <div className="fixed bottom-6 right-6 flex flex-col items-end" ref={fabRef}>
+        {fabOpen && (
+          <div className="transition-transform transform translate-y-2 opacity-100 mb-2">
+            <Input type="text" placeholder="유튜브 링크 입력" value={newVideo.video} onChange={handleInputChange} className="mb-2" />
+            <Button onClick={handleAddVideo}>비디오 추가</Button>
+          </div>
+        )}
+        <Button onClick={() => setFabOpen(!fabOpen)} className="rounded-full w-12 h-12 flex items-center justify-center shadow-lg">
+          {fabOpen ? <X size={24} /> : <Plus size={24} />}
+        </Button>
+      </div>
+      
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-6 w-full max-w-6xl">
         {videos.map((video) => (
           <Card key={video.id} className="rounded-lg shadow-lg cursor-pointer hover:shadow-2xl transition relative">
