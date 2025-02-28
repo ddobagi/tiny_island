@@ -105,7 +105,7 @@ export default function Dashboard() {
     <div className="flex flex-col items-center w-full p-6 relative">
       <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
 
-      <div className="flex items-center justify-between w-full h-16 px-4 bg-black text-white">
+      <div className="flex items-center justify-between w-full h-16 px-4 bg-transparent rounded border-gray-500 text-white">
         {/* 왼쪽 아이콘 */}
         {searchMode ? (
           <button onClick={() => setSearchMode(false)}>
@@ -133,13 +133,6 @@ export default function Dashboard() {
           </button>
         )}
       </div>
-
-
-
-
-
-
-
 
 
       {user ? (
