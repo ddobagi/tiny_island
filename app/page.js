@@ -58,7 +58,7 @@ export default function Home() {
       {/* 프로필 영역 */}
       <div className="flex items-center mb-6 space-x-3">
         <div className="w-16 h-16 rounded-full overflow-hidden border border-gray-300">
-          <Image src="/img/deep_logo.png" alt="채널 프로필 이미지" width={64} height={64} />
+          <Image src="/img/deep_logo.png" alt="띱 로고 " width={64} height={64} />
         </div>
         <h1 className="text-2xl font-semibold">띱 에세이</h1>
       </div>
