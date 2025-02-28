@@ -22,12 +22,54 @@ export default function VideoDetail() {
   ///
 
   const { slug } = useParams(); // URL에서 slug 가져오기
-  console.log(slug);
   
   const [video, setVideo] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [sheetsUrl, setSheetsUrl] = useState("");
   const [sheetsId, setSheetsId] = useState(null);
+
+////////
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+        setLoading(true); // ✅ Firestore에서 데이터를 가져오기 전까지 로딩 유지
+  
+        try {
+          // ✅ Firestore에서 사용자 정보 가져오기
+          const docRef = doc(db, "users", currentUser.uid);
+          const docSnap = await getDoc(docRef);
+  
+          if (docSnap.exists()) {  // 🚀 오타 수정: exits() → exists()
+            const userData = docSnap.data();
+            if (userData.sheetsUrl) {
+              setSheetsUrl(userData.sheetsUrl);
+              const extractedId = extractSheetsId(userData.sheetsUrl);
+              if (extractedId) {
+                setSheetsId(extractedId);
+              }
+            }
+          } else {
+            console.warn("Firestore에서 SheetsUrl을 찾을 수 없습니다.");
+          }
+        } catch (error) {
+          console.error("Firestore에서 SheetsUrl 가져오는 중 오류 발생: ", error);
+        }
+  
+        setLoading(false); // ✅ Firestore 데이터 가져온 후 로딩 해제
+      } else {
+        setLoading(false);
+        router.push("/"); // 🚀 user가 없을 때만 `/`로 이동 (무한 리디렉션 방지)
+      }
+    });
+  
+    return () => unsubscribe();
+  }, [router]); // ✅ 의존성 배열 최적화
+  
+//////////
+
 
   useEffect(() => {
     console.log("📌 현재 sheetsId 값:", sheetsId); // ✅ sheetsId 업데이트 확인
