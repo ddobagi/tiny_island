@@ -9,7 +9,7 @@ import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, X, Trash2, Search, ArrowLeft  } from "lucide-react";
+import { Plus, X, Trash2, Search, ArrowLeft, LogOut  } from "lucide-react";
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
@@ -134,20 +134,13 @@ export default function Dashboard() {
             <Search size={24} />
           </button>
         )}
-      </div>
 
-
-      {user ? (
-        <div className="mb-4">
-          <p className="text-sm text-gray-500">{extractEmailPrefix(user.email)} 님</p>
-          <Button onClick={() => signOut(auth)} className="mt-2">로그아웃</Button>
-        </div>
-      ) : (
-        <Button onClick={() => signInWithPopup(auth, provider)}>Google 로그인</Button>
-      )}
-
-
-      
+        {user && (
+          <button onClick={() => signOut(auth)} className="text-black">
+            <LogOut size={24} />
+          </button>
+        )}
+      </div>      
 
       <div className="fixed bottom-6 right-6 flex flex-col items-end" ref={fabRef}>
         {fabOpen && (
@@ -161,12 +154,12 @@ export default function Dashboard() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-6 w-full max-w-6xl">
+      <div className="grid grid-cols-1 gap-6 mt-6 w-full max-w-6xl">
         {videos
           .filter((video) => video.name.toLowerCase().includes(search.toLowerCase()))
           .map((video) => (
             <Link key={video.id} href={`/dashboard/${video.id}`} passHref>
-              <Card key={video.id} className="max-w-[600px] w-full rounded-lg shadow-lg cursor-pointer hover:shadow-2xl transition relative">
+              <Card key={video.id} className="w-full rounded-lg shadow-lg cursor-pointer hover:shadow-2xl transition relative">
                 <button 
                   onClick={() => deleteDoc(doc(db, "users", user.uid, "videos", video.id))} 
                   className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full shadow-md hover:bg-red-600">
