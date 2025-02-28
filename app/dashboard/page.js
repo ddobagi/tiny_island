@@ -158,14 +158,15 @@ export default function Dashboard() {
         {videos
           .filter(video => video.name.toLowerCase().includes(search.toLowerCase()))
           .map((video) => (
-            <Card key={video.id} className="rounded-lg shadow-lg">
-              <img src={video.thumbnail} alt={video.name} className="w-full rounded-t-lg object-cover"/>
-              <CardContent className="p-4">
-                <h3 className="text-lg font-bold truncate">{video.name}</h3>
-                <p className="text-sm text-gray-500 truncate">{video.channel} ({video.views} views)</p>
-              </CardContent>
-              <Button onClick={() => handleDeleteVideo(video.id)} className="bg-red-500">삭제</Button>
-            </Card>
+            <Link key={video.id} href={`/dashboard/${video.id}`} passHref>
+              <Card className="rounded-lg shadow-lg cursor-pointer hover:shadow-2xl transition">
+                <img src={video.thumbnail} alt={video.name} className="w-full rounded-t-lg object-cover"/>
+                <CardContent className="p-4">
+                  <h3 className="text-lg font-bold truncate">{video.name}</h3>
+                  <p className="text-sm text-gray-500 truncate">{video.channel} ({video.views} views)</p>
+                </CardContent>
+              </Card>
+            </Link>
           ))}
       </div>
     </div>
