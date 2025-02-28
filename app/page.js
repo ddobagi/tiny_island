@@ -57,7 +57,7 @@ export default function Home() {
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 px-4 font-pretendard">
       <div className="flex items-center mb-6 space-x-3">
         <div className="w-16 h-16 rounded-full overflow-hidden border border-gray-300">
-          <Image src="/img/deep_logo.png" alt="띱 로고 " width={32} height={32} />
+          <Image src="/deep_logo.png" alt="띱 로고 " width={32} height={32} />
         </div>
         <h1 className="text-4xl font-semibold">띱 에세이</h1>
       </div>
@@ -85,7 +85,7 @@ export default function Home() {
           onClick={handleLogin}
           className="flex items-center px-5 py-3 bg-white border border-gray-300 rounded-lg shadow-md hover:bg-gray-50"
         >
-          <Image src="/img/google_logo.png" alt="Google 로고" width={24} height={24} className="mr-3" />
+          <Image src="/google_logo.png" alt="Google 로고" width={24} height={24} className="mr-3" />
         </button>
       )}
     </div>
