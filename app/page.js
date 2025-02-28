@@ -1,63 +1,53 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { auth, provider } from "@/lib/firebase";
-import { signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } from "firebase/auth";
+import { signInWithPopup, getRedirectResult, onAuthStateChanged, signOut } from "firebase/auth";
 
 export default function Home() {
+  const [search, setSearch] = useState("");
+  const [videos, setVideos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
-  const [checkingAuth, setCheckingAuth] = useState(true); // 🔹 로그인 상태 확인 플래그
   const router = useRouter();
 
-  // ✅ 1. Firebase 로그인 상태 유지 감지
   useEffect(() => {
+    if (!auth) return;
+
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
-        setUser(currentUser); // 사용자 정보 업데이트
-      } else {
-        setCheckingAuth(false); // 로그인 상태 확인 완료
+        setUser(currentUser);
+        router.push("/dashboard"); // 로그인 후 대시보드로 이동
       }
     });
 
-    return () => unsubscribe();
-  }, []);
-
-  // ✅ 2. 로그인 후 대시보드로 안전하게 이동하기 위한 useEffect 추가
-  useEffect(() => {
-    if (user) {
-      router.push("/dashboard"); // ✅ `user`가 있을 때만 이동하도록 설정
-    }
-  }, [user, router]);
-
-  // ✅ 3. getRedirectResult(auth)를 useEffect 내부에서 실행하여 리디렉트 로그인 처리
-  useEffect(() => {
-    const checkRedirectLogin = async () => {
-      try {
-        const result = await getRedirectResult(auth);
-        if (result?.user) {
-          setUser(result.user); // 사용자 정보 업데이트
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result && result.user) {
+          setUser(result.user);
+          router.push("/dashboard"); // 로그인 후 대시보드로 이동
         }
-      } catch (error) {
+      })
+      .catch((error) => {
         console.error("로그인 오류:", error);
-      }
-    };
+      });
 
-    checkRedirectLogin();
-  }, []);
+    return () => unsubscribe();
+  }, [router]);
 
-  // ✅ 4. 로그인 함수 (signInWithRedirect 사용)
   const handleLogin = async () => {
     try {
       if (auth && provider) {
-        await signInWithRedirect(auth, provider);
+        await signInWithPopup(auth, provider); // 팝업 로그인
       }
     } catch (error) {
       console.error("로그인 오류:", error);
     }
   };
 
-  // ✅ 5. 로그아웃 처리
   const handleLogout = () => {
     if (auth) {
       signOut(auth)
@@ -69,10 +59,56 @@ export default function Home() {
     }
   };
 
-  // ✅ 6. 로그인 상태 확인 중 로딩 UI 표시
-  if (checkingAuth) {
-    return <p>로딩 중...</p>;
-  }
+  useEffect(() => {
+    const fetchGoogleSheetsData = async () => {
+      try {
+        const res = await fetch("https://python-island.onrender.com/google-sheets/all");
+
+        if (!res.ok) throw new Error(`Google Sheets API error: ${res.status}`);
+
+        const data = await res.json();
+        const rows = data.values;
+
+        if (!rows || rows.length === 0) throw new Error("No data found in Google Sheets");
+
+        const headers = rows[0];
+        const videoIndex = headers.indexOf("video");
+        const thumbnailIndex = headers.indexOf("thumbnail");
+        const nameIndex = headers.indexOf("name");
+        const slugIndex = headers.indexOf("slug");
+        const channelIndex = headers.indexOf("channel");
+        const viewIndex = headers.indexOf("view");
+        const dateIndex = headers.indexOf("date");
+        const profileIndex = headers.indexOf("profile");
+        const lengthIndex = headers.indexOf("length");
+
+        const parsedVideos = rows.slice(1).map((row) => ({
+          video: row[videoIndex],
+          thumbnail: row[thumbnailIndex] || "",
+          name: row[nameIndex],
+          slug: row[slugIndex],
+          channel: row[channelIndex],
+          view: row[viewIndex],
+          date: row[dateIndex],
+          profile: row[profileIndex],
+          length: row[lengthIndex],
+        }));
+
+        setVideos(parsedVideos);
+      } catch (error) {
+        console.error("Error fetching Google Sheets data: ", error);
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchGoogleSheetsData();
+  }, []);
+
+  const filteredVideos = videos.filter((video) =>
+    video.name.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <div style={{ textAlign: "center", padding: "20px" }}>
@@ -87,6 +123,52 @@ export default function Home() {
       ) : (
         <button onClick={handleLogin}>Google 로그인</button>
       )}
+
+      {/* 🔹 비디오 검색 UI */}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>
+        <h1>Video Gallery</h1>
+        <input
+          type="text"
+          placeholder="Search..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          style={{ width: '100%', maxWidth: '400px', padding: '10px', marginBottom: '20px', borderRadius: '4px', border: '1px solid #ccc' }}
+        />
+
+        {loading && <p>Loading...</p>}
+        {error && <p style={{ color: 'red' }}>{error}</p>}
+
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', justifyContent: 'center' }}>
+          {filteredVideos.map((video, index) => (
+            <Link href={`/${video.slug}`} key={index} style={{ textDecoration: 'none', color: 'inherit' }}>
+              <div style={{
+                width: '300px',
+                border: '1px solid #ddd',
+                borderRadius: '8px',
+                overflow: 'hidden',
+                cursor: 'pointer',
+                transition: 'transform 0.2s',
+                display: 'flex',
+                flexDirection: 'column'
+              }}>
+                <div style={{ position: 'relative' }}>
+                  <img src={video.thumbnail} alt={video.name} style={{ width: '100%', height: '170px', objectFit: 'cover' }} />
+                </div>
+
+                <div style={{ padding: '10px', flex: '1' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <img src={video.profile} alt={video.channel} style={{ width: '36px', height: '36px', borderRadius: '50%' }} />
+                    <div>
+                      <h3 style={{ margin: '0', fontSize: '16px' }}>{video.name}</h3>
+                      <p style={{ margin: '0', fontSize: '14px', color: '#555' }}>{video.channel}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
