@@ -136,7 +136,7 @@ export default function Dashboard() {
             </button>
           )}
 
-          {user && (
+          {user && !searchMode && (
             <button onClick={() => signOut(auth)} className="text-black">
               <LogOut size={24} />
             </button>
@@ -182,7 +182,7 @@ export default function Dashboard() {
                 <button 
                   onClick={() => deleteDoc(doc(db, "users", user.uid, "videos", video.id))} 
                   className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full shadow-md hover:bg-red-600">
-                  <Trash2 size={16} />
+                  <Trash2 size={32} />
                 </button>
                 <div className="aspect-w-16 aspect-h-9">
                   <img src={video.thumbnail} alt={video.name} className="w-full h-full object-cover rounded-t-lg" />
