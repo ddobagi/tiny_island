@@ -182,9 +182,9 @@ export default function Dashboard() {
                   className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full shadow-md hover:bg-red-600">
                   <Trash2 size={32} />
                 </button>
-                <div>
-                  <img src={video.thumbnail} alt={video.name} className="object-contain rounded-t-lg" />
-                </div>
+                <div className = "rounded-lg shadow-lg cursor-pointer hover:shadow-2xl transition">
+                  <img src={video.thumbnail} alt={video.name} className="w-full rounded-t-lg object-cover" />
+                </div >
                 <CardContent className="p-4">
                   <h3 className="text-lg font-bold truncate">{video.name}</h3>
                   <p className="text-sm text-gray-500 truncate">{video.channel} ({video.views} views)</p>
