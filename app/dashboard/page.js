@@ -78,6 +78,7 @@ export default function Dashboard() {
       
       const channelProfile = channelData.items[0].snippet.thumbnails.default.url;
       
+      /// 여기서 불러올 데이터 지정 ///
       return {
         name: title,
         video: url,
