@@ -22,6 +22,8 @@ export default function VideoDetail() {
   ///
 
   const { slug } = useParams(); // URL에서 slug 가져오기
+  console.log(slug);
+  
   const [video, setVideo] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
