@@ -105,14 +105,14 @@ export default function Dashboard() {
     <div className="flex flex-col items-center w-full p-6 relative">
       <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
 
-      <div className="flex items-center justify-between w-full h-16 px-4 bg-transparent border border-gray-500 rounded text-white">
+      <div className="flex items-center justify-between max-w-[600px] w-full h-16 px-4 bg-transparent border border-gray-500 rounded text-white">
         {/* 왼쪽 아이콘 */}
         {searchMode ? (
           <button onClick={() => setSearchMode(false)} className="text-black">
             <ArrowLeft size={24} />
           </button>
         ) : (
-          <div className="w-10 h-10 rounded-full overflow-hidden bg-white flex items-center justify-center">
+          <div className="w-10 h-10 rounded-full overflow-hidden bg-black flex items-center justify-center">
             <img src="/deep_logo.png" alt="Logo" className="w-8 h-8 object-contain" />
           </div>
         )}
