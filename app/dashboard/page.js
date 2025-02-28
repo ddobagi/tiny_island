@@ -128,8 +128,9 @@ export default function Dashboard() {
           />
         )}
 
-        {/* 돋보기 버튼 */}
-        {!searchMode && (
+        <div>
+{/* 돋보기 버튼 */}
+{!searchMode && (
           <button onClick={() => setSearchMode(true)} className="text-black">
             <Search size={24} />
           </button>
@@ -140,6 +141,7 @@ export default function Dashboard() {
             <LogOut size={24} />
           </button>
         )}
+        </div>
       </div>      
 
       <div className="fixed bottom-6 right-6 flex flex-col items-end" ref={fabRef}>
