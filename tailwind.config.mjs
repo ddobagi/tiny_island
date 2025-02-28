@@ -8,7 +8,10 @@ export default {
   ],
   theme: {
   	extend: {
-  		colors: {
+  		fontFamily: {
+			pretendard: ['Pretendard', 'sans-serif'],
+		},
+		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {

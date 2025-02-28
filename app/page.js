@@ -54,18 +54,18 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 px-4">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 px-4 font-pretendard">
       <div className="flex items-center mb-6 space-x-3">
         <div className="w-16 h-16 rounded-full overflow-hidden border border-gray-300">
-          <Image src="/img/deep_logo.png" alt="띱 로고 " width={64} height={64} />
+          <Image src="/img/deep_logo.png" alt="띱 로고 " width={32} height={32} />
         </div>
-        <h1 className="text-2xl font-semibold">띱 에세이</h1>
+        <h1 className="text-4xl font-semibold">띱 에세이</h1>
       </div>
 
       {/* 구분선 */}
       <div className="flex items-center w-full max-w-xs mb-6">
         <div className="flex-grow border-t border-gray-300"></div>
-        <span className="px-3 text-gray-500">간편로그인</span>
+        <span className="px-3 text-gray-500 text-sm">간편로그인</span>
         <div className="flex-grow border-t border-gray-300"></div>
       </div>
 
