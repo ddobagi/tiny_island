@@ -49,8 +49,7 @@ export default function VideoDetail() {
           if (docSnap.exists()) {  // 🚀 오타 수정: exits() → exists()
             const userData = docSnap.data();
             if (userData.sheetsUrl) {
-              setSheetsUrl(userData.sheetsUrl);
-              const extractedId = extractSheetsId(userData.sheetsUrl);
+              const extractedId = userData.sheetsId;
               if (extractedId) {
                 setSheetsId(extractedId);
               }
