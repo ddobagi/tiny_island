@@ -41,8 +41,9 @@ export default function VideoDetail() {
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-          setSheetsId(docSnap.data().sheetsId);
-          console.log(sheetsId);
+          const fetchedSheetsId = docSnap.data().sheetsId;
+          console.log(fetchedSheetsId)
+          setSheetsId(fetchedSheetsId);
         } else {
           throw new Error("Firestore에서 SheetsId를 찾을 수 없습니다");
         }
