@@ -9,8 +9,17 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
+///
+import { db } from "@/lib/firebase";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+///
+
 export default function Dashboard() {
+
+  ///
   const [user, setUser] = useState(null);
+  ///
+
   const [loading, setLoading] = useState(true);
   const [sheetsUrl, setSheetsUrl] = useState("");
   const [sheetsId, setSheetsId] = useState("");
@@ -18,27 +27,46 @@ export default function Dashboard() {
   const [videos, setVideos] = useState([]);
   const [error, setError] = useState(null);
   const [search, setSearch] = useState("");
-  const router = useRouter();
+  const router = useRouter(); 
 
   useEffect(() => {
-    if (!auth) return;
-
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
-        const savedSheetsUrl = localStorage.getItem(`sheetsUrl_${currentUser.uid}`);
-        if (savedSheetsUrl) {
-          setSheetsUrl(savedSheetsUrl);
-          extractSheetsId(savedSheetsUrl);
+        setLoading(true); // ✅ Firestore에서 데이터를 가져오기 전까지 로딩 유지
+  
+        try {
+          // ✅ Firestore에서 사용자 정보 가져오기
+          const docRef = doc(db, "users", currentUser.uid);
+          const docSnap = await getDoc(docRef);
+  
+          if (docSnap.exists()) {  // 🚀 오타 수정: exits() → exists()
+            const userData = docSnap.data();
+            if (userData.sheetsUrl) {
+              setSheetsUrl(userData.sheetsUrl);
+              const extractedId = extractSheetsId(userData.sheetsUrl);
+              if (extractedId) {
+                setSheetsId(extractedId);
+              }
+            }
+          } else {
+            console.warn("Firestore에서 SheetsUrl을 찾을 수 없습니다.");
+          }
+        } catch (error) {
+          console.error("Firestore에서 SheetsUrl 가져오는 중 오류 발생: ", error);
         }
+  
+        setLoading(false); // ✅ Firestore 데이터 가져온 후 로딩 해제
       } else {
-        router.push("/");
+        setLoading(false);
+        router.push("/"); // 🚀 user가 없을 때만 `/`로 이동 (무한 리디렉션 방지)
       }
-      setLoading(false);
     });
-
+  
     return () => unsubscribe();
-  }, [router]);
+  }, [router]); // ✅ 의존성 배열 최적화
+  
+///
 
   useEffect(() => {
     if (!sheetsId) return;
@@ -91,13 +119,31 @@ export default function Dashboard() {
 
   const extractSheetsId = (url) => {
     const match = url.match(/\/d\/([a-zA-Z0-9-_]+)\/edit/);
-    if (match) setSheetsId(match[1]);
+    return match ? match[1] : null;
   };
 
-  const handleSaveSheetsUrl = () => {
+  const handleSaveSheetsUrl = async () => {
+
+    ///
+    if (!user) return;
+    ///
+
+
     if (user) {
-      localStorage.setItem(`sheetsUrl_${user.uid}`, sheetsUrl);
-      extractSheetsId(sheetsUrl);
+      try{
+        const extractedId = extractSheetsId(sheetsUrl);
+        
+        ///
+        await setDoc(doc(db, "users", user.uid), { 
+          sheetsId: extractedId,
+          sheetsUrl: sheetsUrl
+        }, { merge: true });
+        ///
+
+        setSheetsId(extractedId);
+      } catch (error) {
+        console.error("Firestore 저장 중 오류 발생: ", error)
+      }
     }
     setIsEditing(false);
   };
