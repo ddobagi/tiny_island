@@ -94,9 +94,24 @@ export default function Dashboard() {
     }
   };
 
+  const extractEmailPrefix = (email) => {
+    return email ? email.split("@")[0] : "";
+  };
+
   return (
     <div className="flex flex-col items-center w-full p-6 relative">
       <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
+
+      {user ? (
+        <div className="mb-4">
+          <p className="text-sm text-gray-500">{user.displayName || "사용자"} 님 ({extractEmailPrefix(user.email)})</p>
+          <Button onClick={() => signOut(auth)} className="mt-2">로그아웃</Button>
+        </div>
+      ) : (
+        <Button onClick={() => signInWithPopup(auth, provider)}>Google 로그인</Button>
+      )}
+
+
       <Input type="text" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} className="mt-4 w-full max-w-lg" />
       <div className="fixed bottom-6 right-6 flex flex-col items-end" ref={fabRef}>
         {fabOpen && (
