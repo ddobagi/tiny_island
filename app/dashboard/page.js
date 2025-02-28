@@ -148,14 +148,14 @@ export default function Dashboard() {
             <div className="relative">
               <Input 
                 type="text" 
-                placeholder="URL..." 
+                placeholder="URL" 
                 value={newVideo.video} 
                 onChange={handleInputChange} 
                 className="w-full pr-16 px-4 py-2 rounded border border-gray-300" 
               />
               <Button 
                 onClick={handleAddVideo} 
-                className="absolute inset-y-0 right-1 px-2 py-1 h-full rounded-r bg-black test-sm text-white"
+                className="absolute inset-y-0 right-1 px-2 py-1 rounded-r bg-black test-sm text-white"
               >
                 추가
               </Button>
