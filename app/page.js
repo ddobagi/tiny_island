@@ -83,9 +83,9 @@ export default function Home() {
       ) : (
         <button
           onClick={handleLogin}
-          className="w-12 h-12 flex items-center px-5 py-3 bg-transparent border border-gray-300 rounded-lg shadow-md hover:bg-gray-50"
+          className="w-6 h-6 flex items-center px-5 py-3 bg-transparent border border-gray-300 rounded-lg shadow-md hover:bg-gray-50"
         >
-          <Image src="/google_logo.png" alt="Google 로고" width={24} height={24} className="object-contain" />
+          <Image src="/google_logo.png" alt="Google 로고" width={24} height={24} className="object-cover" />
         </button>
       )}
     </div>
