@@ -157,7 +157,7 @@ export default function Dashboard() {
               />
               <Button 
                 onClick={handleAddVideo} 
-                className="absolute inset-y-0 right-0 px-4 py-1 h-full rounded-r bg-blue-500 text-white hover:bg-blue-600"
+                className="absolute inset-y-1 right-1 px-4 py-1 h-full rounded-r bg-black-500 text-white"
               >
                 추가
               </Button>
