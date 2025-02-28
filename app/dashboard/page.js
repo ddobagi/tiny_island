@@ -68,11 +68,7 @@ export default function Dashboard() {
       const { title, channelTitle, publishedAt, thumbnails, channelId } = videoInfo.snippet;
       const { viewCount, likeCount } = videoInfo.statistics;
       
-      const channelResponse = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${channelId}&key=${API_KEY}`);
-      const channelData = await channelResponse.json();
-      const channelProfileImage = channelData.items[0]?.snippet?.thumbnails?.default?.url || "";
-      
-      return { name: title, video: url, thumbnail: thumbnails.high.url, channel: channelTitle, views: viewCount, likes: likeCount, publishedAt, channelProfile: channelProfileImage };
+      return { name: title, video: url, thumbnail: thumbnails.high.url, channel: channelTitle, views: viewCount, likes: likeCount, publishedAt };
     } catch (error) {
       console.error("YouTube API 오류:", error);
       return null;
@@ -82,17 +78,15 @@ export default function Dashboard() {
   const handleInputChange = async (e) => {
     const url = e.target.value;
     setNewVideo({ ...newVideo, video: url });
-    if (url.includes("youtube.com") || url.includes("youtu.be")) {
-      const videoDetails = await getYoutubeVideoDetails(url);
-      if (videoDetails) setNewVideo(videoDetails);
-    }
   };
 
   const handleAddVideo = async () => {
-    if (!user) return;
+    if (!user || !newVideo.video) return;
     try {
+      const videoDetails = await getYoutubeVideoDetails(newVideo.video);
+      if (!videoDetails) return;
       const userId = auth.currentUser.uid;
-      await addDoc(collection(db, "users", userId, "videos"), newVideo);
+      await addDoc(collection(db, "users", userId, "videos"), videoDetails);
       setNewVideo({ name: "", video: "", thumbnail: "", channel: "", views: "", likes: "", publishedAt: "", channelProfile: "" });
       setFabOpen(false);
     } catch (error) {
@@ -103,12 +97,6 @@ export default function Dashboard() {
   return (
     <div className="flex flex-col items-center w-full p-6 relative">
       <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
-      {user && (
-        <div className="mb-4">
-          <p className="text-lg">{user.displayName || "사용자"} 님, ({user.email})</p>
-          <Button onClick={() => signOut(auth)} className="mt-2">로그아웃</Button>
-        </div>
-      )}
       <Input type="text" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} className="mt-4 w-full max-w-lg" />
       <div className="fixed bottom-6 right-6 flex flex-col items-end" ref={fabRef}>
         {fabOpen && (
@@ -120,6 +108,17 @@ export default function Dashboard() {
         <Button onClick={() => setFabOpen(!fabOpen)} className="rounded-full w-12 h-12 flex items-center justify-center shadow-lg">
           {fabOpen ? <X size={24} /> : <Plus size={24} />}
         </Button>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-6 w-full max-w-6xl">
+        {videos.map((video) => (
+          <Card key={video.id} className="rounded-lg shadow-lg cursor-pointer hover:shadow-2xl transition">
+            <img src={video.thumbnail} alt={video.name} className="w-full rounded-t-lg object-cover"/>
+            <CardContent className="p-4">
+              <h3 className="text-lg font-bold truncate">{video.name}</h3>
+              <p className="text-sm text-gray-500 truncate">{video.channel} ({video.views} views)</p>
+            </CardContent>
+          </Card>
+        ))}
       </div>
     </div>
   );
