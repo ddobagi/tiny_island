@@ -123,52 +123,6 @@ export default function Home() {
       ) : (
         <button onClick={handleLogin}>Google 로그인</button>
       )}
-
-      {/* 🔹 비디오 검색 UI */}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>
-        <h1>Video Gallery</h1>
-        <input
-          type="text"
-          placeholder="Search..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          style={{ width: '100%', maxWidth: '400px', padding: '10px', marginBottom: '20px', borderRadius: '4px', border: '1px solid #ccc' }}
-        />
-
-        {loading && <p>Loading...</p>}
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', justifyContent: 'center' }}>
-          {filteredVideos.map((video, index) => (
-            <Link href={`/${video.slug}`} key={index} style={{ textDecoration: 'none', color: 'inherit' }}>
-              <div style={{
-                width: '300px',
-                border: '1px solid #ddd',
-                borderRadius: '8px',
-                overflow: 'hidden',
-                cursor: 'pointer',
-                transition: 'transform 0.2s',
-                display: 'flex',
-                flexDirection: 'column'
-              }}>
-                <div style={{ position: 'relative' }}>
-                  <img src={video.thumbnail} alt={video.name} style={{ width: '100%', height: '170px', objectFit: 'cover' }} />
-                </div>
-
-                <div style={{ padding: '10px', flex: '1' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <img src={video.profile} alt={video.channel} style={{ width: '36px', height: '36px', borderRadius: '50%' }} />
-                    <div>
-                      <h3 style={{ margin: '0', fontSize: '16px' }}>{video.name}</h3>
-                      <p style={{ margin: '0', fontSize: '14px', color: '#555' }}>{video.channel}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </div>
     </div>
   );
 }
