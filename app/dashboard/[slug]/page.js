@@ -28,6 +28,7 @@ export default function VideoDetail() {
   const [error, setError] = useState(null);
   const [sheetsUrl, setSheetsUrl] = useState("");
   const [sheetsId, setSheetsId] = useState(null);
+  const router = useRouter(); 
 
 ////////
 
