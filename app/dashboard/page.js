@@ -102,7 +102,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex flex-col items-center max-w-[600px] w-full p-6 relative">
+    <div className="mx-auto flex flex-col items-center max-w-[600px] w-full p-6 relative">
       <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
 
       <div className="flex items-center justify-between max-w-[600px] w-full h-16 px-4 bg-transparent border border-gray-500 rounded text-white">
@@ -128,7 +128,7 @@ export default function Dashboard() {
           />
         )}
 
-        <div>
+        <div flex items-center space-x-6>
           {/* 돋보기 버튼 */}
           {!searchMode && (
             <button onClick={() => setSearchMode(true)} className="text-black">
