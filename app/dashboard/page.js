@@ -183,7 +183,7 @@ export default function Dashboard() {
                   <Trash2 size={32} />
                 </button>
                 <div className="inline-block">
-                  <img src={video.thumbnail} alt={video.name} className="w-auto h-auto max-w-full max-h-full object-contain rounded-t-lg" />
+                  <img src={video.thumbnail} alt={video.name} className="object-contain rounded-t-lg" />
                 </div>
                 <CardContent className="p-4">
                   <h3 className="text-lg font-bold truncate">{video.name}</h3>
