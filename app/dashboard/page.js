@@ -146,7 +146,7 @@ export default function Dashboard() {
 
       <div className="fixed bottom-6 right-6 flex flex-col items-end" ref={fabRef}>
         {fabOpen && (
-          <div className="relative w-[400px] transition-transform transform translate-y-2 opacity-100 mb-2">
+          <div className="relative px-4 py-2 w-[400px] transition-transform transform translate-y-2 opacity-100 mb-2">
             <div className="relative">
               <Input 
                 type="text" 
@@ -157,7 +157,7 @@ export default function Dashboard() {
               />
               <Button 
                 onClick={handleAddVideo} 
-                className="absolute inset-y-1 right-1 px-4 py-1 h-full rounded-r bg-black-500 text-white"
+                className="absolute inset-y-0 right-1 px-4 py-1 h-full rounded-r bg-black text-white"
               >
                 추가
               </Button>
