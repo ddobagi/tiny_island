@@ -22,7 +22,7 @@ export default function VideoDetail() {
   ///
 
   const { slug } = useParams(); // URL에서 slug 가져오기
-  const [video, setVideo] = useState(null);
+  const [video, setVideo] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [sheetsId, setSheetsId] = useState(null);
@@ -100,8 +100,9 @@ export default function VideoDetail() {
 
   return (
     <div className="flex flex-col items-center w-full p-6">
-      <h1 className="text-2xl font-bold mb-4">{video.name}</h1>
+      { video && <h1 className="text-2xl font-bold mb-4">{video.name}</h1> }
 
+      { video && (
       <Card className="rounded-lg shadow-lg w-full max-w-2xl">
         <img src={video.thumbnail} alt={video.name} className="w-full rounded-t-lg aspect-video object-cover" />
         <CardContent className="p-4">
@@ -109,6 +110,7 @@ export default function VideoDetail() {
           <p className="mt-2">영상 길이: {video.length}</p>
         </CardContent>
       </Card>
+  )}
 
       <Link href="/dashboard">
         <Button className="mt-4">⬅️ 대시보드로 돌아가기</Button>
