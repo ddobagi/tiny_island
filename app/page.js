@@ -7,14 +7,25 @@ import { auth, provider } from "@/lib/firebase";
 import { signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } from "firebase/auth";
 
 export default function Home() {
-  const [search, setSearch] = useState("");
-  const [videos, setVideos] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
   const router = useRouter();
+  const [checkingAuth, setCheckingAuth] = useState(true); // 🔹 로그인 상태 확인 플래그
 
-  // ✅ 1. getRedirectResult(auth)를 useEffect 내부에서 비동기적으로 실행
+  // ✅ 1. Firebase 로그인 상태 유지 감지
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser); // 사용자 정보 업데이트
+        router.push("/dashboard"); // 로그인 후 대시보드 이동
+      } else {
+        setCheckingAuth(false); // 로그인 상태 확인 완료
+      }
+    });
+
+    return () => unsubscribe();
+  }, [router]);
+
+  // ✅ 2. getRedirectResult(auth)를 useEffect 내부에서 실행하여 리디렉트 로그인 처리
   useEffect(() => {
     const checkRedirectLogin = async () => {
       try {
@@ -29,18 +40,6 @@ export default function Home() {
     };
 
     checkRedirectLogin();
-  }, [router]); // ✅ `router` 의존성 추가
-
-  // ✅ 2. Firebase 로그인 상태 유지 감지
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      if (currentUser) {
-        setUser(currentUser); // 사용자 정보 업데이트
-        router.push("/dashboard"); // 로그인 후 대시보드 이동
-      }
-    });
-
-    return () => unsubscribe();
   }, [router]);
 
   // ✅ 3. 로그인 함수 (signInWithRedirect 사용)
@@ -65,6 +64,11 @@ export default function Home() {
         .catch((error) => console.error("❌ 로그아웃 오류:", error));
     }
   };
+
+  // ✅ 5. 로그인 상태 확인 중 로딩 UI 표시
+  if (checkingAuth) {
+    return <p>로딩 중...</p>;
+  }
 
   return (
     <div style={{ textAlign: "center", padding: "20px" }}>
