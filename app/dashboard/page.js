@@ -104,7 +104,7 @@ export default function Dashboard() {
 
       {user ? (
         <div className="mb-4">
-          <p className="text-sm text-gray-500">{user.displayName || "사용자"} 님 ({extractEmailPrefix(user.email)})</p>
+          <p className="text-sm text-gray-500">{extractEmailPrefix(user.email)} 님</p>
           <Button onClick={() => signOut(auth)} className="mt-2">로그아웃</Button>
         </div>
       ) : (
@@ -113,26 +113,21 @@ export default function Dashboard() {
 
 
       <Input type="text" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} className="mt-4 w-full max-w-lg" />
-      <div className="fixed bottom-6 right-6 flex flex-col items-end" ref={fabRef}>
-        {fabOpen && (
-          <div className="transition-transform transform translate-y-2 opacity-100 mb-2">
-            <Input type="text" placeholder="유튜브 링크 입력" value={newVideo.video} onChange={handleInputChange} className="mb-2" />
-            <Button onClick={handleAddVideo}>비디오 추가</Button>
-          </div>
-        )}
-        <Button onClick={() => setFabOpen(!fabOpen)} className="rounded-full w-12 h-12 flex items-center justify-center shadow-lg">
-          {fabOpen ? <X size={24} /> : <Plus size={24} />}
-        </Button>
-      </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-6 w-full max-w-6xl">
         {videos.map((video) => (
-          <Card key={video.id} className="rounded-lg shadow-lg cursor-pointer hover:shadow-2xl transition">
-            <img src={video.thumbnail} alt={video.name} className="w-full rounded-t-lg object-cover"/>
+          <Card key={video.id} className="rounded-lg shadow-lg cursor-pointer hover:shadow-2xl transition relative">
+            <button 
+              onClick={() => deleteDoc(doc(db, "users", user.uid, "videos", video.id))} 
+              className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full shadow-md hover:bg-red-600">
+              <Trash2 size={16} />
+            </button>
+            <div className="w-full aspect-w-16 aspect-h-9">
+              <img src={video.thumbnail} alt={video.name} className="w-full h-full object-cover rounded-t-lg" />
+            </div>
             <CardContent className="p-4">
               <h3 className="text-lg font-bold truncate">{video.name}</h3>
               <p className="text-sm text-gray-500 truncate">{video.channel} ({video.views} views)</p>
             </CardContent>
-            <Button onClick={() => handleDeleteVideo(video.id)} className="bg-red-500 font-pretendard">삭제</Button>
           </Card>
         ))}
       </div>
