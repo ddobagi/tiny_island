@@ -137,7 +137,7 @@ export default function Dashboard() {
 
       {user ? (
         <div className="mb-4">
-          <p className="text-lg">환영합니다, {user.displayName || "사용자"}! 🎉 ({user.email})</p>
+          <p className="text-lg">{user.displayName || "사용자"} 님, 띱의 팬이시군요? ({user.email})</p>
           <Button onClick={() => signOut(auth)} className="mt-2">로그아웃</Button>
         </div>
       ) : (
