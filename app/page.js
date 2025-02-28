@@ -2,13 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { auth, provider } from "@/lib/firebase";
 import { signInWithPopup, getRedirectResult, onAuthStateChanged, signOut } from "firebase/auth";
 
 export default function Home() {
-  const [videos, setVideos] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
   const router = useRouter();
 
@@ -26,12 +24,10 @@ export default function Home() {
       .then((result) => {
         if (result && result.user) {
           setUser(result.user);
-          router.push("/dashboard"); // 로그인 후 대시보드로 이동
+          router.push("/dashboard");
         }
       })
-      .catch((error) => {
-        console.error("로그인 오류:", error);
-      });
+      .catch((error) => console.error("로그인 오류:", error));
 
     return () => unsubscribe();
   }, [router]);
@@ -39,7 +35,7 @@ export default function Home() {
   const handleLogin = async () => {
     try {
       if (auth && provider) {
-        await signInWithPopup(auth, provider); // 팝업 로그인
+        await signInWithPopup(auth, provider);
       }
     } catch (error) {
       console.error("로그인 오류:", error);
@@ -58,17 +54,41 @@ export default function Home() {
   };
 
   return (
-    <div style={{ textAlign: "center", padding: "20px" }}>
-      <h2>Firebase Google 로그인</h2>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 px-4">
+      {/* 프로필 영역 */}
+      <div className="flex items-center mb-6 space-x-3">
+        <div className="w-16 h-16 rounded-full overflow-hidden border border-gray-300">
+          <Image src="/img/deep_logo.png" alt="채널 프로필 이미지" width={64} height={64} />
+        </div>
+        <h1 className="text-2xl font-semibold">띱 에세이</h1>
+      </div>
 
-      {/* 🔹 로그인 UI */}
+      {/* 구분선 */}
+      <div className="flex items-center w-full max-w-xs mb-6">
+        <div className="flex-grow border-t border-gray-300"></div>
+        <span className="px-3 text-gray-500">간편로그인</span>
+        <div className="flex-grow border-t border-gray-300"></div>
+      </div>
+
+      {/* 로그인 버튼 */}
       {user ? (
-        <div>
-          <p>로그인한 사용자: {user.displayName} ({user.email})</p>
-          <button onClick={handleLogout}>로그아웃</button>
+        <div className="text-center">
+          <p className="mb-4">로그인한 사용자: {user.displayName} ({user.email})</p>
+          <button
+            onClick={handleLogout}
+            className="px-5 py-2 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600"
+          >
+            로그아웃
+          </button>
         </div>
       ) : (
-        <button onClick={handleLogin}>Google 로그인</button>
+        <button
+          onClick={handleLogin}
+          className="flex items-center px-5 py-3 bg-white border border-gray-300 rounded-lg shadow-md hover:bg-gray-50"
+        >
+          <Image src="/img/google_logo.png" alt="Google 로고" width={24} height={24} className="mr-3" />
+          Google 로그인
+        </button>
       )}
     </div>
   );
