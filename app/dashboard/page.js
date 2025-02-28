@@ -9,7 +9,7 @@ import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, X, Trash2 } from "lucide-react";
+import { Plus, X, Trash2, Search, ArrowLeft  } from "lucide-react";
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
@@ -20,6 +20,9 @@ export default function Dashboard() {
   const [fabOpen, setFabOpen] = useState(false);
   const fabRef = useRef(null);
   const router = useRouter();
+
+  const [searchMode, setSearchMode] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   
   const API_KEY = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY;
 
@@ -102,6 +105,43 @@ export default function Dashboard() {
     <div className="flex flex-col items-center w-full p-6 relative">
       <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
 
+      <div className="flex items-center justify-between w-full h-16 px-4 bg-black text-white">
+        {/* 왼쪽 아이콘 */}
+        {searchMode ? (
+          <button onClick={() => setSearchMode(false)}>
+            <ArrowLeft size={24} />
+          </button>
+        ) : (
+          <img src="/deep_logo.png" alt="Logo" className="h-10" />
+        )}
+
+        {/* 검색 입력창 */}
+        {searchMode && (
+          <input
+            type="text"
+            className="flex-1 ml-4 px-2 py-1 text-black rounded bg-gray-100"
+            placeholder="Search..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        )}
+
+        {/* 돋보기 버튼 */}
+        {!searchMode && (
+          <button onClick={() => setSearchMode(true)}>
+            <Search size={24} />
+          </button>
+        )}
+      </div>
+
+
+
+
+
+
+
+
+
       {user ? (
         <div className="mb-4">
           <p className="text-sm text-gray-500">{extractEmailPrefix(user.email)} 님</p>
@@ -112,7 +152,7 @@ export default function Dashboard() {
       )}
 
 
-      <Input type="text" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} className="mt-4 w-full max-w-lg" />
+      
 
       <div className="fixed bottom-6 right-6 flex flex-col items-end" ref={fabRef}>
         {fabOpen && (
