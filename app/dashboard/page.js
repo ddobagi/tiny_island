@@ -183,11 +183,24 @@ export default function Dashboard() {
                   <Trash2 size={32} />
                 </button>
                 <div className = "rounded-lg shadow-lg cursor-pointer hover:shadow-2xl transition">
-                  <img src={video.thumbnail} alt={video.name} className="w-full rounded-t-lg object-cover" />
+                  <img src={video.thumbnail} alt={video.name} className="w-full h-48 rounded-t-lg object-cover" />
                 </div >
                 <CardContent className="p-4">
-                  <h3 className="text-lg font-bold truncate">{video.name}</h3>
-                  <p className="text-sm text-gray-500 truncate">{video.channel} ({video.views} views)</p>
+                  <div className="flex items-center space-x-3">
+                    {/* 채널 프로필 이미지 */}
+                    <img src={video.channelProfile} alt={video.channel} className="w-10 h-10 rounded-full object-cover" />
+
+                    {/* 영상 제목 및 채널 정보 */}
+                    <div className="flex flex-col flex-1">
+                      {/* 영상 제목 */}
+                      <h3 className="text-lg font-bold truncate">{video.name}</h3>
+            
+                      {/* 채널명, 조회수, 게시일 */}
+                      <p className="text-sm text-gray-500 truncate">
+                        {video.channel} · {video.views} views · {video.uploadDate}
+                      </p>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             </Link>
