@@ -30,22 +30,17 @@ export default function Dashboard() {
   const router = useRouter(); 
 
   useEffect(() => {
-
-    if (!user) {
-      router.push("/");
-      return;
-    }
-
-    ///
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
-        
+        setLoading(true); // ✅ Firestore에서 데이터를 가져오기 전까지 로딩 유지
+  
         try {
+          // ✅ Firestore에서 사용자 정보 가져오기
           const docRef = doc(db, "users", currentUser.uid);
           const docSnap = await getDoc(docRef);
   
-          if (docSnap.exits()) {
+          if (docSnap.exists()) {  // 🚀 오타 수정: exits() → exists()
             const userData = docSnap.data();
             if (userData.sheetsUrl) {
               setSheetsUrl(userData.sheetsUrl);
@@ -55,20 +50,22 @@ export default function Dashboard() {
               }
             }
           } else {
-            console.warn("Firestore에서 SheetsUrl을 찾을 수 없습니다");
+            console.warn("Firestore에서 SheetsUrl을 찾을 수 없습니다.");
           }
         } catch (error) {
-          console.error("Firestore에서 SheetsUrl 가져오는 중 오료 발생", error);
+          console.error("Firestore에서 SheetsUrl 가져오는 중 오류 발생: ", error);
         }
+  
+        setLoading(false); // ✅ Firestore 데이터 가져온 후 로딩 해제
       } else {
-        router.push("/")
+        setLoading(false);
+        router.push("/"); // 🚀 user가 없을 때만 `/`로 이동 (무한 리디렉션 방지)
       }
-
-      setLoading(false);
     });
-
+  
     return () => unsubscribe();
-  }, [router]); 
+  }, [router]); // ✅ 의존성 배열 최적화
+  
 ///
 
   useEffect(() => {
