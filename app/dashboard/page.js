@@ -102,7 +102,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex flex-col items-center w-full p-6 relative">
+    <div className="flex flex-col items-center max-w-[600px] w-full p-6 relative">
       <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
 
       <div className="flex items-center justify-between max-w-[600px] w-full h-16 px-4 bg-transparent border border-gray-500 rounded text-white">
@@ -153,7 +153,7 @@ export default function Dashboard() {
         {fabOpen && (
           <div className="transition-transform transform translate-y-2 opacity-100 mb-2">
             <Input type="text" placeholder="유튜브 링크 입력" value={newVideo.video} onChange={handleInputChange} className="mb-2" />
-            <Button onClick={handleAddVideo}>비디오 추가</Button>
+            <Button onClick={handleAddVideo}>추가</Button>
           </div>
         )}
         <Button onClick={() => setFabOpen(!fabOpen)} className="rounded-full w-12 h-12 flex items-center justify-center shadow-lg">
@@ -172,7 +172,7 @@ export default function Dashboard() {
                   className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full shadow-md hover:bg-red-600">
                   <Trash2 size={16} />
                 </button>
-                <div className="w-full aspect-w-16 aspect-h-9">
+                <div className="aspect-w-16 aspect-h-9">
                   <img src={video.thumbnail} alt={video.name} className="w-full h-full object-cover rounded-t-lg" />
                 </div>
                 <CardContent className="p-4">
