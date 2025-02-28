@@ -4,10 +4,12 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "@/lib/firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+
+const YOUTUBE_API_KEY = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY; // 환경변수 사용
 
 export default function VideoDetail() {
   const { videoId } = useParams();
@@ -19,7 +21,7 @@ export default function VideoDetail() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!videoId) return; // 🔥 videoId 없으면 실행하지 않음
+    if (!videoId) return;
 
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (!currentUser) {
@@ -29,33 +31,67 @@ export default function VideoDetail() {
       }
 
       setUser(currentUser);
-      fetchVideoData(videoId);
+      fetchVideoData(videoId, currentUser.uid);
     });
 
     return () => unsubscribe();
   }, [videoId, router]);
 
-  const fetchVideoData = async (videoId) => {
+  const fetchVideoData = async (videoId, userId) => {
     try {
-      const userId = auth.currentUser?.uid; // 🔥 유저 확인
       if (!userId) throw new Error("사용자 정보 없음");
 
       const docRef = doc(db, "users", userId, "videos", videoId);
       const docSnap = await getDoc(docRef);
 
-      if (!docSnap.exists()) {
-        throw new Error("해당 비디오를 찾을 수 없습니다.");
+      if (docSnap.exists()) {
+        setVideo(docSnap.data());
+      } else {
+        console.log("🔥 Firestore에 데이터 없음, YouTube API에서 가져옵니다.");
+        const videoData = await fetchYouTubeData(videoId);
+
+        if (videoData) {
+          await setDoc(docRef, videoData); // Firestore에 저장
+          setVideo(videoData);
+        }
       }
-
-      const videoData = docSnap.data();
-      if (!videoData) throw new Error("비디오 데이터 없음");
-
-      setVideo(videoData);
     } catch (error) {
-      console.error("Firestore에서 비디오 데이터 가져오는 중 오류 발생: ", error);
+      console.error("비디오 데이터를 가져오는 중 오류 발생: ", error);
       setError(error.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchYouTubeData = async (videoId) => {
+    try {
+      const response = await fetch(
+        `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&part=snippet,statistics&key=${YOUTUBE_API_KEY}`
+      );
+
+      if (!response.ok) {
+        throw new Error("YouTube API 요청 실패");
+      }
+
+      const data = await response.json();
+      if (!data.items || data.items.length === 0) {
+        throw new Error("YouTube에서 비디오 정보를 찾을 수 없습니다.");
+      }
+
+      const videoInfo = data.items[0];
+      return {
+        name: videoInfo.snippet.title,
+        channel: videoInfo.snippet.channelTitle,
+        channelProfile: `https://yt3.ggpht.com/ytc/${videoInfo.snippet.channelId}`,
+        video: `https://www.youtube.com/watch?v=${videoId}`,
+        thumbnail: videoInfo.snippet.thumbnails.high.url,
+        views: videoInfo.statistics.viewCount,
+        likes: videoInfo.statistics.likeCount,
+        publishedAt: videoInfo.snippet.publishedAt,
+      };
+    } catch (error) {
+      console.error("YouTube API에서 데이터를 가져오는 중 오류 발생: ", error);
+      return null;
     }
   };
 
@@ -63,7 +99,7 @@ export default function VideoDetail() {
   if (error) return <p className="text-center mt-10 text-red-500">{error}</p>;
 
   const extractYouTubeID = (url) => {
-    if (!url) return null; // 🔥 url이 없으면 실행하지 않음
+    if (!url) return null;
     const regex = /(?:youtu\.be\/|youtube\.com\/(?:.*v=|.*\/)([^#&?]*))/;
     const match = url.match(regex);
     return match && match[1] ? match[1] : null;
