@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+
 export default {
     darkMode: ["class"],
     content: [
@@ -10,6 +11,10 @@ export default {
   	extend: {
   		fontFamily: {
 			pretendard: ['Pretendard', 'sans-serif'],
+			libre: ['Libre Bodoni', 'serif'],
+			noto: ['Noto Sans', 'sans-serif'],
+			signika: ['Signika', 'sans-serif'],
+
 		},
 		colors: {
   			background: 'hsl(var(--background))',
