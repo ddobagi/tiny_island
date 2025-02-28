@@ -167,7 +167,7 @@ export default function Dashboard() {
                 placeholder="URL" 
                 value={newVideo.video} 
                 onChange={handleInputChange} 
-                className="w-full pr-16 px-4 py-2 rounded border bg-white border-gray-300" 
+                className="z-10 w-full pr-16 px-4 py-2 rounded border bg-white border-gray-300" 
               />
               <Button 
                 onClick={handleAddVideo} 
