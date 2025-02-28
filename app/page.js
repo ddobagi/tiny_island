@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { auth, provider } from "@/lib/firebase";
-import { signInWithRedirect, signInWithPopup, getRedirectResult, onAuthStateChanged, signOut } from "firebase/auth";
+import { signInWithPopup, getRedirectResult, onAuthStateChanged, signOut } from "firebase/auth";
 
 export default function Home() {
   const [search, setSearch] = useState("");
@@ -41,7 +41,7 @@ export default function Home() {
   const handleLogin = async () => {
     try {
       if (auth && provider) {
-        await signInWithRedirect(auth, provider); // 팝업 로그인
+        await signInWithPopup(auth, provider); // 팝업 로그인
       }
     } catch (error) {
       console.error("로그인 오류:", error);
