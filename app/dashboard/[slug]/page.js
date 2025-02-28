@@ -64,7 +64,16 @@ export default function VideoDetail() {
 
       {video && (
         <Card className="rounded-lg shadow-lg w-full max-w-2xl">
-          <img src={video.thumbnail} alt={video.title} className="w-full rounded-t-lg aspect-video object-cover" />
+          <div className="relative w-full aspect-video">
+            <iframe
+              className="w-full h-full rounded-t-lg"
+              src={`https://www.youtube.com/embed/${video.video}?autoplay=0&controls=1`}
+              title={video.title}
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            ></iframe>
+          </div>
           <CardContent className="p-4">
             <p className="text-sm text-gray-500">
               채널: {video.channel} · 조회수: {video.views} · 좋아요: {video.likes}
