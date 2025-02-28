@@ -36,7 +36,7 @@ export default function VideoDetail() {
   // ✅ Firestore에서 비디오 데이터 가져오기
   const fetchVideoData = async (slug) => {
     try {
-      const docRef = doc(db, "videos", slug);
+      const docRef = doc(db, "users", userId, "videos", slug);
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
