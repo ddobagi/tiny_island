@@ -125,24 +125,28 @@ export default function Dashboard() {
           {fabOpen ? <X size={24} /> : <Plus size={24} />}
         </Button>
       </div>
-      
+
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-6 w-full max-w-6xl">
-        {videos.map((video) => (
-          <Card key={video.id} className="rounded-lg shadow-lg cursor-pointer hover:shadow-2xl transition relative">
-            <button 
-              onClick={() => deleteDoc(doc(db, "users", user.uid, "videos", video.id))} 
-              className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full shadow-md hover:bg-red-600">
-              <Trash2 size={16} />
-            </button>
-            <div className="w-full aspect-w-16 aspect-h-9">
-              <img src={video.thumbnail} alt={video.name} className="w-full h-full object-cover rounded-t-lg" />
-            </div>
-            <CardContent className="p-4">
-              <h3 className="text-lg font-bold truncate">{video.name}</h3>
-              <p className="text-sm text-gray-500 truncate">{video.channel} ({video.views} views)</p>
-            </CardContent>
-          </Card>
-        ))}
+        {videos
+          .filter((video) => video.name.toLowerCase().includes(search.toLowerCase()))
+          .map((video) => (
+            <Link key={video.id} href={`/dashboard/${video.id}`} passHref>
+              <Card key={video.id} className="rounded-lg shadow-lg cursor-pointer hover:shadow-2xl transition relative">
+                <button 
+                  onClick={() => deleteDoc(doc(db, "users", user.uid, "videos", video.id))} 
+                  className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full shadow-md hover:bg-red-600">
+                  <Trash2 size={16} />
+                </button>
+                <div className="w-full aspect-w-16 aspect-h-9">
+                  <img src={video.thumbnail} alt={video.name} className="w-full h-full object-cover rounded-t-lg" />
+                </div>
+                <CardContent className="p-4">
+                  <h3 className="text-lg font-bold truncate">{video.name}</h3>
+                  <p className="text-sm text-gray-500 truncate">{video.channel} ({video.views} views)</p>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
       </div>
     </div>
   );
