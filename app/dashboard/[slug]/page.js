@@ -75,7 +75,7 @@ export default function VideoDetail() {
         if (!foundVideo) throw new Error("해당 비디오를 찾을 수 없습니다.");
 
         setVideo({
-          name: foundVideo[headers.indexOf("name")],
+          name: foundVideo[headers.indexOf("name")] || "제목 없음",
           thumbnail: foundVideo[headers.indexOf("thumbnail")] || "",
           channel: foundVideo[headers.indexOf("channel")],
           view: foundVideo[headers.indexOf("view")],
