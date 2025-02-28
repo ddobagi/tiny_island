@@ -56,8 +56,8 @@ export default function Home() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 px-4 font-pretendard">
       <div className="flex items-center mb-6 space-x-3">
-        <div className="w-16 h-16 rounded-full overflow-hidden border border-gray-300">
-          <Image src="/deep_logo.png" alt="띱 로고" className="w-full h-full object-cover" />
+        <div className="w-16 h-16 px-2 py-2 bg-black rounded-full overflow-hidden border border-gray-300">
+          <Image src="/deep_logo.png" alt="띱 로고" className="object-contain" />
         </div>
         <h1 className="text-4xl font-semibold">Deep Essays</h1>
       </div>
@@ -83,7 +83,7 @@ export default function Home() {
       ) : (
         <button
           onClick={handleLogin}
-          className="w-12 h-12 flex items-center px-1 py-1 bg-transparent border border-gray-300 rounded-lg shadow-md hover:bg-gray-50"
+          className="w-12 h-12 flex items-center px-2 py-2 bg-transparent border border-gray-300 rounded-lg shadow-md hover:bg-gray-50"
         >
           <Image src="/google_logo.png" alt="Google 로고" className="object-contain" />
         </button>
