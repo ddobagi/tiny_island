@@ -128,7 +128,7 @@ export default function Dashboard() {
           />
         )}
 
-        <div flex items-center space-x-6>
+        <div className = "flex items-center space-x-6">
           {/* 돋보기 버튼 */}
           {!searchMode && (
             <button onClick={() => setSearchMode(true)} className="text-black">
