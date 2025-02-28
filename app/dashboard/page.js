@@ -129,18 +129,18 @@ export default function Dashboard() {
         )}
 
         <div>
-{/* 돋보기 버튼 */}
-{!searchMode && (
-          <button onClick={() => setSearchMode(true)} className="text-black">
-            <Search size={24} />
-          </button>
-        )}
+          {/* 돋보기 버튼 */}
+          {!searchMode && (
+            <button onClick={() => setSearchMode(true)} className="text-black">
+              <Search size={24} />
+            </button>
+          )}
 
-        {user && (
-          <button onClick={() => signOut(auth)} className="text-black">
-            <LogOut size={24} />
-          </button>
-        )}
+          {user && (
+            <button onClick={() => signOut(auth)} className="text-black">
+              <LogOut size={24} />
+            </button>
+          )}
         </div>
       </div>      
 
