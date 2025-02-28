@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 
 ///
 import { db } from "@/lib/firebase";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 ///
 
 export default function Dashboard() {
