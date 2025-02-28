@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 ///
 import { db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
-import { useAuth } from "@/context/AuthContext";
 ///
 
 // ✅ 스프레드시트 ID 고정 (변수화 X, 그냥 하드코딩)
@@ -19,7 +18,7 @@ const range = "data!A1:Z100";
 export default function VideoDetail() {
   
   ///
-  const { user } = useAuth();
+  const [user, setUser] = useState(null);
   ///
 
   const { slug } = useParams(); // URL에서 slug 가져오기
