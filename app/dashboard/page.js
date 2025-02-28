@@ -9,8 +9,18 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
+///
+import { db } from "@/lib/firebase";
+import { doc, setDoc } from "firebase/firestore";
+import { useAuth } from "@/context/AuthContext";
+///
+
 export default function Dashboard() {
-  const [user, setUser] = useState(null);
+
+  ///
+  const { user } = useAuth()
+  ///
+
   const [loading, setLoading] = useState(true);
   const [sheetsUrl, setSheetsUrl] = useState("");
   const [sheetsId, setSheetsId] = useState("");
@@ -21,24 +31,46 @@ export default function Dashboard() {
   const router = useRouter(); 
 
   useEffect(() => {
-    if (!auth) return;
 
+    if (!user) {
+      router.push("/");
+      return;
+    }
+
+    ///
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
-        const savedSheetsUrl = localStorage.getItem(`sheetsUrl_${currentUser.uid}`);
-        if (savedSheetsUrl) {
-          setSheetsUrl(savedSheetsUrl);
-          extractSheetsId(savedSheetsUrl);
+        
+        try {
+          const docRef = doc(db, "users", currentUser.uid);
+          const docSnap = await getDoc(docRef);
+  
+          if (docSnap.exits()) {
+            const userData = docSnap.data();
+            if (userData.sheetsUrl) {
+              setSheetsUrl(userData.sheetsUrl);
+              const extractedId = extractSheetsId(userData.sheetsUrl);
+              if (extractedId) {
+                setSheetsId(extractedId);
+              }
+            }
+          } else {
+            console.warn("Firestore에서 SheetsUrl을 찾을 수 없습니다");
+          }
+        } catch (error) {
+          console.error("Firestore에서 SheetsUrl 가져오는 중 오료 발생", error);
         }
       } else {
-        router.push("/");
+        router.push("/")
       }
+
       setLoading(false);
     });
 
     return () => unsubscribe();
-  }, [router]);
+  }, [router]); 
+///
 
   useEffect(() => {
     if (!sheetsId) return;
@@ -91,26 +123,27 @@ export default function Dashboard() {
 
   const extractSheetsId = (url) => {
     const match = url.match(/\/d\/([a-zA-Z0-9-_]+)\/edit/);
-    if (match) {
-      setSheetsId(match[1]);
-      return match[1];
-    } 
-    return null;
+    return match ? match[1] : null;
   };
 
-  const handleSaveSheetsUrl = () => {
+  const handleSaveSheetsUrl = async () => {
+
+    ///
+    if (!user) return;
+    ///
+
+
     if (user) {
       try{
-        localStorage.setItem(`sheetsUrl_${user.uid}`, sheetsUrl);
-
         const extractedId = extractSheetsId(sheetsUrl);
+        
+        ///
+        await setDoc(doc(db, "users", user.uid), { sheetsId: extractedId }, { merge: true });
+        ///
 
-        if (extractedId) {
-          localStorage.setItem("sheetsId", extractedId);
-          setSheetsId(extractedId);
-        }
+        setSheetsId(extractedId);
       } catch (error) {
-        console.error("localStorage 저장 중 오류 발생, 크롬 확장 프로그램을 꺼주세요")
+        console.error("Firestore 저장 중 오류 발생: ", error)
       }
     }
     setIsEditing(false);

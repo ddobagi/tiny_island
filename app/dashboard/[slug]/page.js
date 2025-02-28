@@ -6,11 +6,22 @@ import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
+///
+import { db } from "@/lib/firebase";
+import { doc, getDoc } from "firebase/firestore";
+import { useAuth } from "@/context/AuthContext";
+///
+
 // ✅ 스프레드시트 ID 고정 (변수화 X, 그냥 하드코딩)
 const API_URL = "https://python-island.onrender.com/google-sheets/";
 const range = "data!A1:Z100";
 
 export default function VideoDetail() {
+  
+  ///
+  const { user } = useAuth();
+  ///
+
   const { slug } = useParams(); // URL에서 slug 가져오기
   const [video, setVideo] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -18,22 +29,40 @@ export default function VideoDetail() {
   const [sheetsId, setSheetsId] = useState(null);
 
   useEffect(() => {
-    const storedSheetsId = localStorage.getItem("sheetsId");
-    if (storedSheetsId) {
-      setSheetsId(storedSheetsId);
-    } else {
-      setError("Google Sheets ID를 찾을 수 없습니다.");
-      alert("Google Sheets ID를 찾을 수 없습니다. 대시보드에서 다시 입력해주세요.");
+    
+    ///
+    if (!user) {
       setLoading(false);
+      return;
     }
-  }, []);
+
+    const fetchSheetsId = async () => {
+      try {
+        const docRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          setSheetsId(docSnap.data().sheetsId);
+        } else {
+          throw new Error("Firestore에서 SheetsId를 찾을 수 없습니다");
+        }
+      } catch (error) {
+        console.error("Firestore에서 sheetsId를 가져오는 중 오류 발생: ", error);
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSheetsId();
+  }, [user]);
 
   useEffect(() => {
     if (!slug || !sheetsId) return;
 
     const fetchVideoData = async () => {
       try {
-        const res = await fetch(`${API_URL}${spreadsheetId}?range=${encodeURIComponent(range)}`);
+        const res = await fetch(`${API_URL}${sheetsId}?range=${encodeURIComponent(range)}`);
         if (!res.ok) throw new Error(`Google Sheets API error: ${res.status}`);
 
         const data = await res.json();
