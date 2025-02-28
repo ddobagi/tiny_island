@@ -14,10 +14,12 @@ export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [videos, setVideos] = useState([]);
-  const [newVideo, setNewVideo] = useState({ name: "", video: "", thumbnail: "", channel: "" });
+  const [newVideo, setNewVideo] = useState({ name: "", video: "", thumbnail: "", channel: "", views: "", likes: "", publishedAt: "", channelProfile: "" });
   const [search, setSearch] = useState("");
   const [error, setError] = useState(null);
   const router = useRouter();
+  
+  const API_KEY = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY; // Vercel 환경변수에서 API 키 불러오기
 
   // ✅ Firebase Auth 상태 확인
   useEffect(() => {
@@ -37,7 +39,7 @@ export default function Dashboard() {
     if (!user) return;
 
     const userId = auth.currentUser.uid;
-    const videosRef = collection(db, "users", userId , "videos");
+    const videosRef = collection(db, "users", userId, "videos");
 
     const unsubscribe = onSnapshot(videosRef, (snapshot) => {
       const videosData = snapshot.docs.map((doc) => ({
@@ -50,34 +52,79 @@ export default function Dashboard() {
     return () => unsubscribe();
   }, [user]);
 
+  // ✅ 유튜브 API를 사용해 데이터 가져오기
+  const getYoutubeVideoDetails = async (url) => {
+    try {
+      const videoId = url.split("v=")[1]?.split("&")[0] || url.split("/").pop();
+      if (!videoId) throw new Error("유효한 YouTube 링크가 아닙니다.");
+
+      // 비디오 정보 가져오기
+      const videoResponse = await fetch(
+        `https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=${videoId}&key=${API_KEY}`
+      );
+      const videoData = await videoResponse.json();
+
+      if (!videoData.items.length) throw new Error("비디오 정보를 가져올 수 없습니다.");
+
+      const videoInfo = videoData.items[0];
+      const { title, channelTitle, publishedAt, thumbnails, channelId } = videoInfo.snippet;
+      const { viewCount, likeCount } = videoInfo.statistics;
+
+      // 채널 정보 가져오기
+      const channelResponse = await fetch(
+        `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${channelId}&key=${API_KEY}`
+      );
+      const channelData = await channelResponse.json();
+      const channelProfileImage = channelData.items[0]?.snippet?.thumbnails?.default?.url || "";
+
+      return {
+        name: title,
+        video: url,
+        thumbnail: thumbnails.high.url,
+        channel: channelTitle,
+        views: viewCount,
+        likes: likeCount,
+        publishedAt,
+        channelProfile: channelProfileImage,
+      };
+    } catch (error) {
+      console.error("YouTube API 오류:", error);
+      return null;
+    }
+  };
+
+  // ✅ 비디오 URL 입력 시 자동으로 데이터 가져오기
+  const handleInputChange = async (e) => {
+    const url = e.target.value;
+    setNewVideo({ ...newVideo, video: url });
+
+    if (url.includes("youtube.com") || url.includes("youtu.be")) {
+      const videoDetails = await getYoutubeVideoDetails(url);
+      if (videoDetails) {
+        setNewVideo(videoDetails);
+      }
+    }
+  };
+
   // ✅ Firestore에 데이터 추가
   const handleAddVideo = async () => {
-    const userId = auth.currentUser.uid;
     if (!user) return;
 
     try {
+      const userId = auth.currentUser.uid;
       await addDoc(collection(db, "users", userId, "videos"), newVideo);
-      setNewVideo({ name: "", video: "", thumbnail: "", channel: "" });
+      setNewVideo({ name: "", video: "", thumbnail: "", channel: "", views: "", likes: "", publishedAt: "", channelProfile: "" });
     } catch (error) {
       console.error("Firestore에 비디오 추가 중 오류 발생: ", error);
     }
   };
 
-  // ✅ Firestore 데이터 수정
-  const handleUpdateVideo = async (id, updatedData) => {
-    const userId = auth.currentUser.uid;
-    try {
-      const videoRef = doc(db, "users", userId, "videos", id);
-      await updateDoc(videoRef, updatedData);
-    } catch (error) {
-      console.error("Firestore 업데이트 중 오류 발생: ", error);
-    }
-  };
-
   // ✅ Firestore 데이터 삭제
   const handleDeleteVideo = async (id) => {
-    const userId = auth.currentUser.uid;
+    if (!user) return;
+
     try {
+      const userId = auth.currentUser.uid;
       await deleteDoc(doc(db, "users", userId, "videos", id));
     } catch (error) {
       console.error("Firestore에서 비디오 삭제 중 오류 발생: ", error);
@@ -90,79 +137,37 @@ export default function Dashboard() {
 
       {user ? (
         <div className="mb-4">
-          <p className="text-lg">
-            환영합니다, {user.displayName ? user.displayName : "사용자"}! 🎉 ({user.email})
-          </p>
+          <p className="text-lg">환영합니다, {user.displayName || "사용자"}! 🎉 ({user.email})</p>
           <Button onClick={() => signOut(auth)} className="mt-2">로그아웃</Button>
         </div>
       ) : (
         <Button onClick={() => signInWithPopup(auth, provider)}>Google 로그인</Button>
       )}
 
-      {/* ✅ 비디오 추가 폼 */}
+      {/* ✅ 비디오 추가 */}
       <div className="flex flex-col gap-2 w-full max-w-lg mt-4">
-        <p className="text-sm text-gray-500">📌 새 비디오 추가</p>
-        <Input 
-          type="text" 
-          placeholder="비디오 제목" 
-          value={newVideo.name} 
-          onChange={(e) => setNewVideo({ ...newVideo, name: e.target.value })} 
-        />
-        <Input 
-          type="text" 
-          placeholder="비디오 URL" 
-          value={newVideo.video} 
-          onChange={(e) => setNewVideo({ ...newVideo, video: e.target.value })} 
-        />
-        <Input 
-          type="text" 
-          placeholder="썸네일 URL" 
-          value={newVideo.thumbnail} 
-          onChange={(e) => setNewVideo({ ...newVideo, thumbnail: e.target.value })} 
-        />
-        <Input 
-          type="text" 
-          placeholder="채널명" 
-          value={newVideo.channel} 
-          onChange={(e) => setNewVideo({ ...newVideo, channel: e.target.value })} 
-        />
+        <Input type="text" placeholder="유튜브 링크 입력" value={newVideo.video} onChange={handleInputChange} />
         <Button onClick={handleAddVideo}>비디오 추가</Button>
       </div>
 
       {/* ✅ 검색창 */}
-      <Input 
-        type="text" 
-        placeholder="Search..." 
-        value={search} 
-        onChange={(e) => setSearch(e.target.value)} 
-        className="mt-4 w-full max-w-lg"
-      />
+      <Input type="text" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} className="mt-4 w-full max-w-lg"/>
 
       {/* ✅ 비디오 리스트 */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-6 w-full max-w-6xl">
         {videos
           .filter(video => video.name.toLowerCase().includes(search.toLowerCase()))
           .map((video) => (
-            <div key={video.id} className="w-full relative">
-              <Link href={`/dashboard/${video.id}`} className="w-full">
-                <Card className="rounded-lg shadow-lg hover:shadow-2xl transition">
-                  <img src={video.thumbnail} alt={video.name} className="w-full rounded-t-lg aspect-video object-cover" />
-                  <CardContent className="p-4">
-                    <h3 className="text-lg font-bold truncate">{video.name}</h3>
-                    <p className="text-sm text-gray-500 truncate">{video.channel}</p>
-                  </CardContent>
-                </Card>
-              </Link>
-
-              {/* 삭제 버튼 */}
-              <Button onClick={() => handleDeleteVideo(video.id)} className="absolute top-2 right-2 bg-red-500">
-                삭제
-              </Button>
-            </div>
+            <Card key={video.id} className="rounded-lg shadow-lg">
+              <img src={video.thumbnail} alt={video.name} className="w-full rounded-t-lg object-cover"/>
+              <CardContent className="p-4">
+                <h3 className="text-lg font-bold truncate">{video.name}</h3>
+                <p className="text-sm text-gray-500 truncate">{video.channel} ({video.views} views)</p>
+              </CardContent>
+              <Button onClick={() => handleDeleteVideo(video.id)} className="bg-red-500">삭제</Button>
+            </Card>
           ))}
       </div>
-
-      {error && <p className="text-red-500 mt-4">{error}</p>}
     </div>
   );
 }
