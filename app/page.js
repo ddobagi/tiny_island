@@ -86,6 +86,7 @@ export default function Home() {
           className="flex items-center px-5 py-3 bg-white border border-gray-300 rounded-lg shadow-md hover:bg-gray-50"
         >
           <Image src="/img/google_logo.png" alt="Google 로고" width={24} height={24} className="mr-3" />
+          Google 로그인
         </button>
       )}
     </div>
