@@ -55,7 +55,6 @@ export default function Home() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 px-4">
-      {/* 프로필 영역 */}
       <div className="flex items-center mb-6 space-x-3">
         <div className="w-16 h-16 rounded-full overflow-hidden border border-gray-300">
           <Image src="/img/deep_logo.png" alt="띱 로고 " width={64} height={64} />
@@ -87,7 +86,6 @@ export default function Home() {
           className="flex items-center px-5 py-3 bg-white border border-gray-300 rounded-lg shadow-md hover:bg-gray-50"
         >
           <Image src="/img/google_logo.png" alt="Google 로고" width={24} height={24} className="mr-3" />
-          Google 로그인
         </button>
       )}
     </div>
