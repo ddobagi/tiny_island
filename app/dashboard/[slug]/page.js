@@ -31,6 +31,7 @@ export default function VideoDetail() {
 
   useEffect(() => {
     console.log("📌 현재 sheetsId 값:", sheetsId); // ✅ sheetsId 업데이트 확인
+    console.log("📌 현재 uid 값: ", user.uid)
   }, [sheetsId]);
   
 
