@@ -36,6 +36,7 @@ export default function Dashboard() {
   useEffect(() => {
     if (!user) return;
 
+    const userId = auth.currentUser.uid;
     const videosRef = collection(db, "users", userId , "videos");
 
     const unsubscribe = onSnapshot(videosRef, (snapshot) => {
