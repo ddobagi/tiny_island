@@ -1,13 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { auth, provider } from "@/lib/firebase";
 import { signInWithPopup, getRedirectResult, onAuthStateChanged, signOut } from "firebase/auth";
 
 export default function Home() {
-  const [search, setSearch] = useState("");
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -58,57 +56,6 @@ export default function Home() {
         .catch((error) => console.error("❌ 로그아웃 오류:", error));
     }
   };
-
-  useEffect(() => {
-    const fetchGoogleSheetsData = async () => {
-      try {
-        const res = await fetch("https://python-island.onrender.com/google-sheets/all");
-
-        if (!res.ok) throw new Error(`Google Sheets API error: ${res.status}`);
-
-        const data = await res.json();
-        const rows = data.values;
-
-        if (!rows || rows.length === 0) throw new Error("No data found in Google Sheets");
-
-        const headers = rows[0];
-        const videoIndex = headers.indexOf("video");
-        const thumbnailIndex = headers.indexOf("thumbnail");
-        const nameIndex = headers.indexOf("name");
-        const slugIndex = headers.indexOf("slug");
-        const channelIndex = headers.indexOf("channel");
-        const viewIndex = headers.indexOf("view");
-        const dateIndex = headers.indexOf("date");
-        const profileIndex = headers.indexOf("profile");
-        const lengthIndex = headers.indexOf("length");
-
-        const parsedVideos = rows.slice(1).map((row) => ({
-          video: row[videoIndex],
-          thumbnail: row[thumbnailIndex] || "",
-          name: row[nameIndex],
-          slug: row[slugIndex],
-          channel: row[channelIndex],
-          view: row[viewIndex],
-          date: row[dateIndex],
-          profile: row[profileIndex],
-          length: row[lengthIndex],
-        }));
-
-        setVideos(parsedVideos);
-      } catch (error) {
-        console.error("Error fetching Google Sheets data: ", error);
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchGoogleSheetsData();
-  }, []);
-
-  const filteredVideos = videos.filter((video) =>
-    video.name.toLowerCase().includes(search.toLowerCase())
-  );
 
   return (
     <div style={{ textAlign: "center", padding: "20px" }}>
