@@ -117,6 +117,7 @@ export default function Dashboard() {
               <h3 className="text-lg font-bold truncate">{video.name}</h3>
               <p className="text-sm text-gray-500 truncate">{video.channel} ({video.views} views)</p>
             </CardContent>
+            <Button onClick={() => handleDeleteVideo(video.id)} className="bg-red-500 font-pretendard">삭제</Button>
           </Card>
         ))}
       </div>
