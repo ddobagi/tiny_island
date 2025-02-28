@@ -83,7 +83,7 @@ export default function Dashboard() {
         video: url,
         thumbnail: thumbnails.high.url,
         channel: channelTitle,
-        channelProfile,
+        chaennelProfile: channelProfile,
         views: viewCount,
         likes: likeCount,
         publishedAt 
@@ -199,7 +199,7 @@ export default function Dashboard() {
                   <Trash2 size={32} />
                 </button>
                 <div className = "rounded-lg shadow-lg cursor-pointer hover:shadow-2xl transition">
-                  <img src={video.thumbnail} alt={video.name} className="w-full h-72 rounded-t-lg object-cover" />
+                  <img src={video.thumbnail} alt={video.name} className="w-full h-80 rounded-t-lg object-cover" />
                 </div >
                 <CardContent className="p-4">
                   <div className="flex items-center space-x-3">
