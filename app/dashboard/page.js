@@ -157,7 +157,7 @@ export default function Dashboard() {
               />
               <Button 
                 onClick={handleAddVideo} 
-                className="absolute inset-y-0 right-1 px-4 py-1 h-full rounded-r bg-black text-white"
+                className="absolute inset-y-0 right-1 px-2 py-0.5 h-full rounded-r bg-black text-white"
               >
                 추가
               </Button>
@@ -185,7 +185,7 @@ export default function Dashboard() {
                   <Trash2 size={32} />
                 </button>
                 <div className="aspect-w-16 aspect-h-9">
-                  <img src={video.thumbnail} alt={video.name} className="w-full h-full object-cover rounded-t-lg" />
+                  <img src={video.thumbnail} alt={video.name} className="w-auto h-auto max-w-full max-h-full object-contain rounded-t-lg" />
                 </div>
                 <CardContent className="p-4">
                   <h3 className="text-lg font-bold truncate">{video.name}</h3>
