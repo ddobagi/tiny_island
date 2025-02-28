@@ -12,13 +12,12 @@ import { Input } from "@/components/ui/input";
 ///
 import { db } from "@/lib/firebase";
 import { doc, setDoc } from "firebase/firestore";
-import { useAuth } from "@/context/AuthContext";
 ///
 
 export default function Dashboard() {
 
   ///
-  const { user } = useAuth()
+  const [user, setUser] = useState(null);
   ///
 
   const [loading, setLoading] = useState(true);
