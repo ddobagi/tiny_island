@@ -70,8 +70,24 @@ export default function Dashboard() {
       const videoInfo = videoData.items[0];
       const { title, channelTitle, publishedAt, thumbnails, channelId } = videoInfo.snippet;
       const { viewCount, likeCount } = videoInfo.statistics;
+
+
+      const channelResponse = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${channelId}&key=${API_KEY}`);
+      const channelData = await channelResponse.json();
+      if (!channelData.items.length) throw new Error("채널 정보를 가져올 수 없습니다.");
       
-      return { name: title, video: url, thumbnail: thumbnails.high.url, channel: channelTitle, views: viewCount, likes: likeCount, publishedAt };
+      const channelProfile = channelData.items[0].snippet.thumbnails.default.url;
+      
+      return {
+        name: title,
+        video: url,
+        thumbnail: thumbnails.high.url,
+        channel: channelTitle,
+        channelProfile,
+        views: viewCount,
+        likes: likeCount,
+        publishedAt 
+      };
     } catch (error) {
       console.error("YouTube API 오류:", error);
       return null;
@@ -151,7 +167,7 @@ export default function Dashboard() {
                 placeholder="URL" 
                 value={newVideo.video} 
                 onChange={handleInputChange} 
-                className="w-full pr-16 px-4 py-2 rounded border border-gray-300" 
+                className="w-full pr-16 px-4 py-2 rounded border bg-white border-gray-300" 
               />
               <Button 
                 onClick={handleAddVideo} 
