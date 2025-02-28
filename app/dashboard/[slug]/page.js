@@ -32,6 +32,12 @@ export default function VideoDetail() {
     return () => unsubscribe();
   }, [slug, router]);
 
+  // ✅ Firestore에서 가져온 비디오 데이터의 URL이 전체 URL인지 확인하고 ID만 추출하는 함수
+  const getYouTubeVideoID = (url) => {
+    const match = url.match(/(?:youtu\.be\/|youtube\.com\/.*v=|youtube\.com\/embed\/|youtube\.com\/v\/|youtube\.com\/user\/.*#p\/u\/\d\/|youtube\.com\/watch\?v=|youtube\.com\/watch\?.+&v=)([^#&?\n]+)/);
+    return match ? match[1] : null;
+  };
+
   // ✅ Firestore에서 비디오 데이터 가져오기
   const fetchVideoData = async (slug) => {
     try {
@@ -67,7 +73,7 @@ export default function VideoDetail() {
           <div className="relative w-full aspect-video">
             <iframe
               className="w-full h-full rounded-t-lg"
-              src={`https://www.youtube.com/embed/${video.video}?autoplay=0&controls=1`}
+              src={`https://www.youtube.com/embed/${getYouTubeVideoID(video.video)}?autoplay=0&controls=1`}
               title={video.title}
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
