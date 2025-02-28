@@ -14,17 +14,16 @@ export default function Home() {
   const [user, setUser] = useState(null);
   const router = useRouter();
 
-
-  getRedirectResult(auth)
-  .then((result) => {
-    if (result && result.user) {
-      setUser(result.user);
-      router.push("/dashboard"); // 로그인 후 대시보드로 이동
-    }
-  })
-  .catch((error) => {
-    console.error("로그인 오류:", error);
-  });
+  useEffect(() => {
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result && result.user) {
+          setUser(result.user);
+          router.push("/dashboard"); // 로그인 후 대시보드로 이동
+        }
+      })
+      .catch((error) => console.error("로그인 오류:", error));
+    }, [router]);
 
 
   useEffect(() => {
@@ -36,8 +35,7 @@ export default function Home() {
         router.push("/dashboard"); // 로그인 후 대시보드로 이동
       }
     });
-
-
+    
     return () => unsubscribe();
   }, [router]);
 
