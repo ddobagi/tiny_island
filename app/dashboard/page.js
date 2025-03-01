@@ -206,9 +206,16 @@ export default function Dashboard() {
           .map((video) => (
             <Link key={video.id} href={`/dashboard/${video.id}`} passHref>
               <Card key={video.id} className="w-full max-w-[600px] rounded-lg shadow-lg cursor-pointer hover:shadow-2xl transition relative">
-                <div className = "relative w-full aspect-video">
-                  <img src={video.thumbnail} alt={video.name} className="w-full h rounded-t-lg object-cover" />
-                </div >
+                <div className="relative w-full aspect-video">
+                  <iframe
+                    className="w-full h-full rounded-t-lg"
+                    src={`https://www.youtube.com/embed/${getYouTubeVideoID(video.video)}?autoplay=0&controls=1`}
+                    title={video.title}
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  ></iframe>
+                </div>
                 <CardContent className="p-4">
                   <div className="flex items-center space-x-3">
                     {/* 채널 프로필 이미지 */}
@@ -227,7 +234,10 @@ export default function Dashboard() {
                   </div>
                 </CardContent>
                 <button 
-                  onClick={() => deleteDoc(doc(db, "users", user.uid, "videos", video.id))} 
+                  onClick={() => {
+                    deleteDoc(doc(db, "users", user.uid, "videos", video.id));
+                    router.push('/dashboard'); 
+                  }}
                   className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full shadow-md hover:bg-red-600">
                   <Trash2 size={32} />
                 </button>
