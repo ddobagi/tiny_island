@@ -22,7 +22,6 @@ export default function Dashboard() {
   const router = useRouter();
 
   const [searchMode, setSearchMode] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   
   const API_KEY = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY;
 
@@ -78,7 +77,6 @@ export default function Dashboard() {
       
       const channelProfile = channelData.items[0].snippet.thumbnails.default.url;
       
-      /// 여기서 불러올 데이터 지정 ///
       return {
         name: title,
         video: url,
