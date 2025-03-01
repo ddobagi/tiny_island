@@ -173,17 +173,17 @@ export default function Dashboard() {
       <div className="fixed bottom-6 right-6 flex flex-col items-end" ref={fabRef}>
         {fabOpen && (
           <div className="relative px-4 py-2 w-[400px] transition-transform transform translate-y-2 opacity-100 mb-2">
-            <div className="relative">
+            <div className="relative flex items-center bg-gray-100 rounded-lg px-4 py-2">
               <Input 
                 type="text" 
-                placeholder="URL" 
-                value={newVideo.video} 
+                placeholder="Youtube URL" 
+                value={newVideo} 
                 onChange={handleInputChange} 
-                className="z-10 w-full pr-16 px-4 py-2 rounded border bg-white border-gray-300" 
+                className="z-10 flex-1 bg-gray-100 focus:outline-none text-gray-700" 
               />
               <Button 
                 onClick={handleAddVideo} 
-                className="h-8 absolute inset-y-0 right-1 px-2 py-1 rounded-r bg-black test-sm text-white"
+                className="ml-2 h-10 px-4 rounded-full bg-black text-white font-bold text-sm"
               >
                 추가
               </Button>
@@ -225,7 +225,7 @@ export default function Dashboard() {
             
                       {/* 채널명, 조회수, 게시일 */}
                       <p className="text-sm text-gray-500 truncate">
-                        {video.channel} · {video.views} views · {video.uploadDate}
+                        {video.channel} · {video.views} views · {video.publishedAt}
                       </p>
                     </div>
                   </div>
