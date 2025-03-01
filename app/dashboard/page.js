@@ -130,7 +130,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="mx-auto flex flex-col items-center w-full p-6 relative">
+    <div className="rounded-lg shadow-lg max-w-2xl w-full flex flex-col p-6 relative">
       <div className="flex items-center justify-between max-w-[600px] w-full h-16 px-4 bg-transparent border border-gray-500 rounded text-white">
         {/* 왼쪽 아이콘 */}
         {searchMode ? (
@@ -211,7 +211,7 @@ export default function Dashboard() {
                   className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full shadow-md hover:bg-red-600">
                   <Trash2 size={32} />
                 </button>
-                <div className = "rounded-lg shadow-lg cursor-pointer hover:shadow-2xl transition">
+                <div className = "relative w-full aspect-video">
                   <img src={video.thumbnail} alt={video.name} className="w-full h rounded-t-lg object-cover" />
                 </div >
                 <CardContent className="p-4">
