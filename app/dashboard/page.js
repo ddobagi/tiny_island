@@ -129,6 +129,11 @@ export default function Dashboard() {
     return email ? email.split("@")[0] : "";
   };
 
+  const getYouTubeVideoID = (url) => {
+    const match = url.match(/(?:youtu\.be\/|youtube\.com\/.*v=|youtube\.com\/embed\/|youtube\.com\/v\/|youtube\.com\/user\/.*#p\/u\/\d\/|youtube\.com\/watch\?v=|youtube\.com\/watch\?.+&v=)([^#&?\n]+)/);
+    return match ? match[1] : null;
+  };
+
   return (
     <div className="rounded-lg shadow-lg max-w-2xl w-full flex flex-col p-6 relative mx-auto">
       <div className="flex items-center justify-between max-w-[600px] w-full h-16 px-4 bg-transparent border border-gray-500 rounded text-white">
@@ -209,7 +214,7 @@ export default function Dashboard() {
                 <div className="relative w-full aspect-video">
                   <iframe
                     className="w-full h-full rounded-t-lg"
-                    src={video.video}
+                    src={`https://www.youtube.com/embed/${getYouTubeVideoID(video.video)}?autoplay=0&controls=1`}
                     title={video.title}
                     frameBorder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
