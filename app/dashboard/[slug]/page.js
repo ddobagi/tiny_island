@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
@@ -6,7 +8,7 @@ import { doc, getDoc, updateDoc } from "firebase/firestore";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { HandThumbsUp } from "lucide-react";
+import { ThumbsUp } from "lucide-react";
 
 export default function VideoDetail() {
   const { slug } = useParams(); // URL에서 slug 가져오기
@@ -98,7 +100,7 @@ export default function VideoDetail() {
                 <span className="text-lg font-semibold">{video.channel}</span>
               </div>
               <div className="flex items-center">
-                <HandThumbsUp className="w-5 h-5 text-gray-500 mr-1" />
+                <ThumbsUp className="w-5 h-5 text-gray-500 mr-1" />
                 <span className="text-gray-600">{video.likes}</span>
               </div>
             </div>
