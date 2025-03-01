@@ -205,7 +205,7 @@ export default function Dashboard() {
           .filter((video) => video.name.toLowerCase().includes(search.toLowerCase()))
           .map((video) => (
             <Link key={video.id} href={`/dashboard/${video.id}`} passHref>
-              <Card key={video.id} className="w-full rounded-lg shadow-lg cursor-pointer hover:shadow-2xl transition relative">
+              <Card key={video.id} className="w-full max-w-[600px] rounded-lg shadow-lg cursor-pointer hover:shadow-2xl transition relative">
                 <button 
                   onClick={() => deleteDoc(doc(db, "users", user.uid, "videos", video.id))} 
                   className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full shadow-md hover:bg-red-600">

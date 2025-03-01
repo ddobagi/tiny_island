@@ -80,7 +80,7 @@ export default function VideoDetail() {
   return (
     <div className="flex flex-col items-center w-full p-6">
       <div className="w-full max-w-2xl flex justify-start">
-        <Link href="/dashboard" className="flex items-center mb-4">
+        <Link href="/dashboard" className="flex items-center mb-2">
           <ArrowLeft className="w-6 h-6 mr-2" />
         </Link>
       </div>
