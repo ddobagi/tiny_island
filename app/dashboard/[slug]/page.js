@@ -69,28 +69,39 @@ export default function VideoDetail() {
       {video && <h1 className="text-2xl font-bold mb-4">{video.title}</h1>}
 
       {video && (
-        <Card className="rounded-lg shadow-lg w-full max-w-2xl">
-          <div className="relative w-full aspect-video">
-            <iframe
-              className="w-full h-full rounded-t-lg"
-              src={`https://www.youtube.com/embed/${getYouTubeVideoID(video.video)}?autoplay=0&controls=1`}
-              title={video.title}
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            ></iframe>
+      <Card className="rounded-lg shadow-lg w-full max-w-2xl">
+      <div className="relative w-full aspect-video">
+        <iframe
+          className="w-full h-full rounded-t-lg"
+          src={`https://www.youtube.com/embed/${getYouTubeVideoID(video.video)}?autoplay=0&controls=1`}
+          title={video.title}
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        ></iframe>
+      </div>
+      <CardContent className="p-4">
+        {/* 제목 */}
+        <h1 className="text-xl font-bold mb-2">{video.title}</h1>
+        
+        {/* 채널 정보 및 좋아요 */}
+        <div className="flex items-center justify-between w-full">
+          <div className="flex items-center">
+            <img src={video.channelProfile} alt="Channel Profile" className="w-10 h-10 rounded-full mr-3" />
+            <span className="text-lg font-semibold">{video.channel}</span>
           </div>
-          <CardContent className="p-4">
-            <p className="text-sm text-gray-500">
-              채널: {video.channel} · 조회수: {video.views} · 좋아요: {video.likes}
-            </p>
-            <p className="mt-2">게시 날짜: {new Date(video.publishedAt).toLocaleDateString()}</p>
-            <div className="flex items-center mt-4">
-              <img src={video.channelProfile} alt="Channel Profile" className="w-10 h-10 rounded-full mr-2" />
-              <span className="text-lg font-semibold">{video.channel}</span>
-            </div>
-          </CardContent>
-        </Card>
+          <div className="flex items-center">
+            <ThumbsUp className="w-5 h-5 text-gray-500 mr-1" />
+            <span className="text-gray-600">{video.likes}</span>
+          </div>
+        </div>
+        
+        {/* 조회수 및 게시일 */}
+        <p className="text-sm text-gray-500 mt-2">
+          {video.views} views · {new Date(video.publishedAt).toLocaleDateString()}
+        </p>
+      </CardContent>
+    </Card>
       )}
       
       <Link href="/dashboard">
