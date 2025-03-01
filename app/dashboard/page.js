@@ -240,6 +240,7 @@ export default function Dashboard() {
                 </CardContent>
                 <button 
                   onClick={() => {
+                    e.stopPropagation();
                     deleteDoc(doc(db, "users", user.uid, "videos", video.id));
                     router.push('/dashboard'); 
                   }}
