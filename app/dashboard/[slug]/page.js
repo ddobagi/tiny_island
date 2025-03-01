@@ -84,7 +84,7 @@ export default function VideoDetail() {
           <ArrowLeft className="w-6 h-6 mr-2" />
         </Link>
       </div>
-      {video && <h1 className="text-2xl font-bold mb-4">{video.title}</h1>}
+      {video && <h1 className="text-2xl font-bold mb-0">{video.title}</h1>}
       {video && (
         <Card className="rounded-lg shadow-lg w-full max-w-2xl">
           <div className="relative w-full aspect-video">
