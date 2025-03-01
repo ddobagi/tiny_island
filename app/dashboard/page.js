@@ -206,11 +206,6 @@ export default function Dashboard() {
           .map((video) => (
             <Link key={video.id} href={`/dashboard/${video.id}`} passHref>
               <Card key={video.id} className="w-full max-w-[600px] rounded-lg shadow-lg cursor-pointer hover:shadow-2xl transition relative">
-                <button 
-                  onClick={() => deleteDoc(doc(db, "users", user.uid, "videos", video.id))} 
-                  className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full shadow-md hover:bg-red-600">
-                  <Trash2 size={32} />
-                </button>
                 <div className = "relative w-full aspect-video">
                   <img src={video.thumbnail} alt={video.name} className="w-full h rounded-t-lg object-cover" />
                 </div >
@@ -231,6 +226,11 @@ export default function Dashboard() {
                     </div>
                   </div>
                 </CardContent>
+                <button 
+                  onClick={() => deleteDoc(doc(db, "users", user.uid, "videos", video.id))} 
+                  className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full shadow-md hover:bg-red-600">
+                  <Trash2 size={32} />
+                </button>
               </Card>
             </Link>
           ))}
