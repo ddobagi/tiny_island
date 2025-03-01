@@ -79,9 +79,11 @@ export default function VideoDetail() {
 
   return (
     <div className="flex flex-col items-center w-full p-6">
+      <div className="w-full max-w-2xl flex justify-start">
         <Link href="/dashboard" className="flex items-center mb-4">
-          <ArrowLeft className="w-6 h-6 mr-2">Back</ArrowLeft>
+          <ArrowLeft className="w-6 h-6 mr-2" />
         </Link>
+      </div>
       {video && <h1 className="text-2xl font-bold mb-4">{video.title}</h1>}
       {video && (
         <Card className="rounded-lg shadow-lg w-full max-w-2xl">
@@ -100,6 +102,8 @@ export default function VideoDetail() {
             <div className="flex items-center justify-between w-full">
               <div className="flex items-center">
                 <h3 className="text-lg font-bold">{video.name}</h3>
+              </div>
+              <div className="flex items-center">
                 <img src={video.channelProfile} alt="Channel Profile" className="w-10 h-10 rounded-full mr-3" />
                 <span className="text-lg font-semibold">{video.channel}</span>
               </div>

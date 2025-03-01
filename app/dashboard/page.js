@@ -130,7 +130,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="mx-auto flex flex-col items-center max-w-[600px] w-full p-6 relative" style={{ backgroundColor: "#F3F4F6" }}>
+    <div className="mx-auto flex flex-col items-center w-full p-6 relative">
       <div className="flex items-center justify-between max-w-[600px] w-full h-16 px-4 bg-transparent border border-gray-500 rounded text-white">
         {/* 왼쪽 아이콘 */}
         {searchMode ? (
