@@ -59,30 +59,42 @@ export default function Dashboard() {
 
   const getYoutubeVideoDetails = async (url) => {
     try {
-      const videoId = url.split("v=")[1]?.split("&")[0] || url.split("/").pop();
-      if (!videoId) throw new Error("유효한 YouTube 링크가 아닙니다.");
+      // 유튜브 영상 ID 추출 정규식
+      const pattern = /(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|embed|shorts)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]+)/;
+      const match = url.match(pattern);
+  
+      // 영상 ID가 없으면 에러 처리
+      if (!match || !match[1]) throw new Error("유효한 YouTube 링크가 아닙니다.");
       
+      const videoId = match[1]; // 올바른 영상 ID 추출 
+  
+      // 📌 유튜브 영상 정보 가져오기
       const videoResponse = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=${videoId}&key=${API_KEY}`);
       const videoData = await videoResponse.json();
-      if (!videoData.items.length) throw new Error("비디오 정보를 가져올 수 없습니다.");
+  
+      // 비디오 정보 확인
+      if (!videoData.items || videoData.items.length === 0) throw new Error("비디오 정보를 가져올 수 없습니다.");
       
       const videoInfo = videoData.items[0];
       const { title, channelTitle, publishedAt, thumbnails, channelId } = videoInfo.snippet;
       const { viewCount, likeCount } = videoInfo.statistics;
-
-
+  
+      // 📌 유튜브 채널 정보 가져오기
       const channelResponse = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${channelId}&key=${API_KEY}`);
       const channelData = await channelResponse.json();
-      if (!channelData.items.length) throw new Error("채널 정보를 가져올 수 없습니다.");
+  
+      // 채널 정보 확인
+      if (!channelData.items || channelData.items.length === 0) throw new Error("채널 정보를 가져올 수 없습니다.");
       
       const channelProfile = channelData.items[0].snippet.thumbnails.default.url;
-      
+  
+      // 📌 최종 결과 반환
       return {
         name: title,
         video: url,
         thumbnail: thumbnails.high.url,
         channel: channelTitle,
-        chaennelProfile: channelProfile,
+        channelProfile: channelProfile, // ✅ 오타 수정 (chaennelProfile → channelProfile)
         views: viewCount,
         likes: likeCount,
         publishedAt: publishedAt
@@ -92,6 +104,7 @@ export default function Dashboard() {
       return null;
     }
   };
+  
 
   const handleInputChange = async (e) => {
     const url = e.target.value;
