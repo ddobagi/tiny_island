@@ -243,7 +243,7 @@ export default function Dashboard() {
                     deleteDoc(doc(db, "users", user.uid, "videos", video.id));
                     router.push('/dashboard'); 
                   }}
-                  className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full shadow-md hover:bg-red-600">
+                  className="absolute bottom-2 right-2 bg-red-500 text-white p-1 rounded-full shadow-md hover:bg-red-600">
                   <Trash2 size={32} />
                 </button>
               </Card>
