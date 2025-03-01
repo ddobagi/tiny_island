@@ -99,10 +99,8 @@ export default function VideoDetail() {
           </div>
           <CardContent className="p-4">
             <h1 className="text-xl font-bold mb-2">{video.title}</h1>
+            <h3 className="text-lg font-bold">{video.name}</h3>
             <div className="flex items-center justify-between w-full">
-              <div className="flex items-center">
-                <h3 className="text-lg font-bold">{video.name}</h3>
-              </div>
               <div className="flex items-center">
                 <img src={video.channelProfile} alt="Channel Profile" className="w-10 h-10 rounded-full mr-3" />
                 <span className="text-lg font-semibold">{video.channel}</span>

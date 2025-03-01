@@ -130,7 +130,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="rounded-lg shadow-lg max-w-2xl w-full flex flex-col p-6 relative justify-center">
+    <div className="rounded-lg shadow-lg max-w-2xl w-full flex flex-col p-6 relative mx-auto">
       <div className="flex items-center justify-between max-w-[600px] w-full h-16 px-4 bg-transparent border border-gray-500 rounded text-white">
         {/* 왼쪽 아이콘 */}
         {searchMode ? (
