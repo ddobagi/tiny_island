@@ -173,11 +173,12 @@ export default function Dashboard() {
       <div className="fixed bottom-6 right-6 flex flex-col items-end" ref={fabRef}>
         {fabOpen && (
           <div className="relative px-4 py-2 w-[400px] transition-transform transform translate-y-2 opacity-100 mb-2">
+            <p className="font-pretendard font-semibold text-gray-700">URL</p>
             <div className="relative flex items-center bg-gray-100 rounded-lg px-4 py-2">
               <Input 
                 type="text" 
                 placeholder="Youtube URL" 
-                value={newVideo} 
+                value={newVideo.video} 
                 onChange={handleInputChange} 
                 className="z-10 flex-1 bg-gray-100 focus:outline-none text-gray-700" 
               />
@@ -210,8 +211,8 @@ export default function Dashboard() {
                   className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full shadow-md hover:bg-red-600">
                   <Trash2 size={32} />
                 </button>
-                <div className = "rounded-lg shadow-lg cursor-pointer hover:shadow-2xl transition">
-                  <img src={video.thumbnail} alt={video.name} className="w-full h-76 rounded-t-lg object-cover" />
+                <div className = "h-72 rounded-lg shadow-lg cursor-pointer hover:shadow-2xl transition">
+                  <img src={video.thumbnail} alt={video.name} className="w-full h rounded-t-lg object-cover" />
                 </div >
                 <CardContent className="p-4">
                   <div className="flex items-center space-x-3">
