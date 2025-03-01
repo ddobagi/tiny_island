@@ -209,7 +209,7 @@ export default function Dashboard() {
                 <div className="relative w-full aspect-video">
                   <iframe
                     className="w-full h-full rounded-t-lg"
-                    src={`https://www.youtube.com/embed/${getYouTubeVideoID(video.video)}?autoplay=0&controls=1`}
+                    src={video.video}
                     title={video.title}
                     frameBorder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -224,10 +224,10 @@ export default function Dashboard() {
                     {/* 영상 제목 및 채널 정보 */}
                     <div className="flex flex-col flex-1">
                       {/* 영상 제목 */}
-                      <h3 className="text-lg font-bold">{video.name}</h3>
+                      <h3 className="text-lg font-bold mb-2">{video.name}</h3>
             
                       {/* 채널명, 조회수, 게시일 */}
-                      <p className="text-sm text-gray-500 truncate">
+                      <p className="text-sm text-gray-500">
                         {video.channel} · {video.views} views · {new Date(video.publishedAt).toLocaleDateString()}
                       </p>
                     </div>
