@@ -97,7 +97,7 @@ export default function Dashboard() {
         channelProfile: channelProfile, // ✅ 오타 수정 (chaennelProfile → channelProfile)
         views: viewCount,
         likes: likeCount,
-        publishedAt: publishedAt
+        publishedAt: publishedAt.slice(0, 10)
       };
     } catch (error) {
       console.error("YouTube API 오류:", error);
