@@ -15,6 +15,7 @@ export default {
 			noto: ['Noto Sans', 'sans-serif'],
 			signika: ['Signika', 'sans-serif'],
 			archivo: [ ' Archivo', 'sans-serif'],
+			nanum_pen: ['Nanum Pen Script', 'cursive'],
 
 		},
 		colors: {
