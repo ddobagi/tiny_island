@@ -8,7 +8,7 @@ import { doc, getDoc, updateDoc } from "firebase/firestore";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ThumbsUp } from "lucide-react";
+import { ThumbsUp, ArrowLeft } from "lucide-react";
 
 export default function VideoDetail() {
   const { slug } = useParams(); // URL에서 slug 가져오기
@@ -79,6 +79,9 @@ export default function VideoDetail() {
 
   return (
     <div className="flex flex-col items-center w-full p-6">
+        <Link href="/dashboard" className="flex items-center mb-4">
+          <ArrowLeft className="w-6 h-6 mr-2">Back</ArrowLeft>
+        </Link>
       {video && <h1 className="text-2xl font-bold mb-4">{video.title}</h1>}
       {video && (
         <Card className="rounded-lg shadow-lg w-full max-w-2xl">
@@ -96,6 +99,7 @@ export default function VideoDetail() {
             <h1 className="text-xl font-bold mb-2">{video.title}</h1>
             <div className="flex items-center justify-between w-full">
               <div className="flex items-center">
+                <h3 className="text-lg font-bold">{video.name}</h3>
                 <img src={video.channelProfile} alt="Channel Profile" className="w-10 h-10 rounded-full mr-3" />
                 <span className="text-lg font-semibold">{video.channel}</span>
               </div>
@@ -107,18 +111,18 @@ export default function VideoDetail() {
             <p className="text-sm text-gray-500 mt-2">{video.views} views · {new Date(video.publishedAt).toLocaleDateString()}</p>
             
             {/* Essay 입력 및 수정 */}
-            <div className="mt-4 font-nanum_pen">
-              <h2 className="text-lg font-semibold">Essay</h2>
+            <div className="mt-4">
+              <h2 className="text-lg font-semibold font-nanum_pen">Essay</h2>
               {isEditing ? (
                 <textarea
-                  className="w-full p-2 border rounded mt-2"
+                  className="w-full p-2 border rounded mt-2 font-nanum_pen"
                   value={essay}
                   onChange={(e) => setEssay(e.target.value)}
                 />
               ) : (
-                <p className="mt-2 p-2 border rounded bg-gray-100">{essay || "작성된 내용이 없습니다."}</p>
+                <p className="mt-2 p-2 border rounded bg-gray-100 font-nanum_pen">{essay || "작성된 내용이 없습니다."}</p>
               )}
-              <div className="flex mt-2 space-x-2">
+              <div className="flex mt-2 space-x-2 font-pretendard justify-end">
                 {isEditing ? (
                   <Button onClick={handleSaveEssay}>저장</Button>
                 ) : (
@@ -129,9 +133,6 @@ export default function VideoDetail() {
           </CardContent>
         </Card>
       )}
-      <Link href="/dashboard">
-        <Button className="mt-4">⬅️ 대시보드로 돌아가기</Button>
-      </Link>
     </div>
   );
 }
