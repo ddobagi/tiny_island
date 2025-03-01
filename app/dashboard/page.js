@@ -209,8 +209,8 @@ export default function Dashboard() {
         {videos
           .filter((video) => video.name.toLowerCase().includes(search.toLowerCase()))
           .map((video) => (
-            <Link key={video.id} href={`/dashboard/${video.id}`} passHref>
-              <Card key={video.id} className="w-full max-w-[600px] rounded-lg shadow-lg cursor-pointer hover:shadow-2xl transition relative">
+            <Card key={video.id} className="w-full max-w-[600px] rounded-lg shadow-lg cursor-pointer hover:shadow-2xl transition relative">
+              <Link key={video.id} href={`/dashboard/${video.id}`} passHref>
                 <div className="relative w-full aspect-video">
                   <iframe
                     className="w-full h-full rounded-t-lg"
@@ -221,7 +221,9 @@ export default function Dashboard() {
                     allowFullScreen
                   ></iframe>
                 </div>
-                <CardContent className="p-4">
+              </Link>
+              <CardContent className="p-4">
+                <Link key={video.id} href={`/dashboard/${video.id}`} passHref>
                   <div className="flex items-center space-x-3">
                     {/* 채널 프로필 이미지 */}
                     <img src={video.channelProfile} alt={video.channel} className="w-10 h-10 rounded-full object-cover" />
@@ -237,18 +239,17 @@ export default function Dashboard() {
                       </p>
                     </div>
                   </div>
-                </CardContent>
-                <button 
+                </Link>
+              </CardContent>
+              <button 
                   onClick={() => {
-                    e.stopPropagation();
-                    deleteDoc(doc(db, "users", user.uid, "videos", video.id));
-                    router.push('/dashboard'); 
-                  }}
-                  className="z-5 absolute bottom-2 right-2 bg-red-500 text-white p-1 rounded-full shadow-md hover:bg-red-600">
-                  <Trash2 size={32} />
-                </button>
-              </Card>
-            </Link>
+                  deleteDoc(doc(db, "users", user.uid, "videos", video.id));
+                  router.push('/dashboard'); 
+                }}
+                className="z-5 absolute bottom-2 right-2 bg-red-500 text-white p-1 rounded-full shadow-md hover:bg-red-600">
+                <Trash2 size={32} />
+              </button>
+            </Card>
           ))}
       </div>
     </div>
