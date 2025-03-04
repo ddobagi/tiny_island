@@ -50,6 +50,7 @@ export default function VideoDetail() {
         return;
       }
       setLoading(false);
+      console.log(isOn);
     });
     return () => unsubscribe();
   }, [slug, router]);
