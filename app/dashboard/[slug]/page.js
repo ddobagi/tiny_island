@@ -71,19 +71,38 @@ export default function VideoDetail() {
 
   const fetchVideoData = async (slug) => {
     try {
-      const userId = auth.currentUser?.uid;
-      if (!userId) throw new Error("사용자 인증이 필요합니다.");
-      
-      const docRef = doc(db, "users", userId, "videos", slug);
-      const docSnap = await getDoc(docRef);
 
-      if (docSnap.exists()) {
-        const videoData = docSnap.data();
-        setVideo(videoData);
-        setEssay(videoData.essay || "");
-        checkIfPosted(videoData.video);
+      let docRef;
+
+      if (isOn) {
+        const q = query(collection(db, "gallery"), where("video", "==", slug));
+        const querySnapshot = await getDocs(q);
+
+
+        if (!querySnapshot.empty) {
+          const videoData = querySnapshot.docs[0].data();
+          setVideo(videoData);
+          setEssay(videoData.essay || "");
+          setIsPosted(true);
+        } else {
+          throw new Error("해당 비디오를 찾을 수 없습니다.");
+        }
       } else {
-        throw new Error("해당 비디오를 찾을 수 없습니다.");
+        // ✅ `private` 모드일 때 기존 `users/{userId}/videos/{slug}` 경로 사용
+        const userId = auth.currentUser?.uid;
+        if (!userId) throw new Error("사용자 인증이 필요합니다.");
+    
+        docRef = doc(db, "users", userId, "videos", slug);
+        const docSnap = await getDoc(docRef);
+    
+        if (docSnap.exists()) {
+          const videoData = docSnap.data();
+          setVideo(videoData);
+          setEssay(videoData.essay || "");
+          checkIfPosted(videoData.video);
+        } else {
+          throw new Error("해당 비디오를 찾을 수 없습니다.");
+        }
       }
     } catch (error) {
       console.error("Firestore에서 비디오 데이터 가져오는 중 오류 발생: ", error);
