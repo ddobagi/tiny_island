@@ -42,9 +42,11 @@ export default function VideoDetail() {
 
                     // ✅ Mode 값이 반영된 후에 fetchVideoData 실행
                     fetchVideoData(slug, mode);
+                    setIsOn(mode)
                     
                 } else {
                   fetchVideoData(slug, false);
+                  setIsOn(false)
                 }
             } catch (error) {
                 console.error("사용자 Mode 데이터를 가져오는 중 오류 발생:", error);
@@ -238,16 +240,6 @@ export default function VideoDetail() {
                   </Button>
                 </div>
               )}
-              <div className="flex mt-2 space-x-2 font-pretendard justify-end">
-                {isEditing ? (
-                  <Button onClick={handleSaveEssay}>저장</Button>
-                ) : (
-                  <Button onClick={() => setIsEditing(true)}>수정</Button>  
-                )}
-                <Button onClick={handleTogglePost} className="bg-blue-500 text-white">
-                  {isPosted ? "게시 취소" : "게시"}
-                </Button>
-              </div>
             </div>
           </CardContent>
         </Card>
