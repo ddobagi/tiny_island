@@ -28,51 +28,44 @@ export default function Dashboard() {
   const API_KEY = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY;
 
   useEffect(() => {
-    // 🔥 비동기 데이터 가져오는 함수
-    const fetchVideoData = async (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+      } else {
+        router.push("/");
+      }
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, [router]);
+
+
+  useEffect(() => {
+    const fetchVideoData = async (currentuser) => {
       if (!currentUser) {
         router.push("/");
         return;
       }
-      setUserId(currentUser.uid);
 
       try {
-        const docRef = doc(db, "gallery", slug);
-        const docSnap = await getDoc(docRef);
-        if (!docSnap.exists()) throw new Error("해당 비디오를 찾을 수 없습니다.");
-
-        const videoData = docSnap.data();
-        setVideo(videoData);
-        setLikes(videoData.recommend || 0);
-
-        // 🔥 사용자의 좋아요 상태 가져오기
-        const userLikeRef = doc(db, "gallery", slug, "likes", currentUser.uid);
-        const userLikeSnap = await getDoc(userLikeRef);
-        setLiked(userLikeSnap.exists());
-
-        // 🔥 Firestore에서 사용자의 Mode 값 가져오기
         const userDocRef = doc(db, "users", currentUser.uid);
         const userDocSnap = await getDoc(userDocRef);
+
         if (userDocSnap.exists() && userDocSnap.data().Mode) {
-          setIsOn(userDocSnap.data().Mode === "public");
+          setIsOn(userDocSnap.data().Mode === "public"); // ✅ Mode 값에 따라 isOn 설정
         } else {
-          setIsOn(false);
+          setIsOn(false); // ✅ Mode 값이 없으면 기본값 설정
         }
+
       } catch (error) {
-        console.error("데이터 로드 중 오류:", error);
         setError(error.message);
       } finally {
         setLoading(false);
       }
     };
-
-    // 🔥 onAuthStateChanged 내에서 async 직접 사용하지 않음
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      fetchVideoData(currentUser);
-    });
-
-    return () => unsubscribe(); // ✅ 컴포넌트 언마운트 시 정리
   }, [slug, router]);
+
+
 
 
   useEffect(() => {
