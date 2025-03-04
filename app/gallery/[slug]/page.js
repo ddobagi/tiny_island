@@ -44,7 +44,7 @@ export default function VideoDetail() {
       const userId = auth.currentUser?.uid;
       if (!userId) throw new Error("사용자 인증이 필요합니다.");
       
-      const docRef = doc(db, "users", userId, "videos", slug);
+      const docRef = doc(db, "gallery", slug);
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
@@ -66,7 +66,7 @@ export default function VideoDetail() {
       const userId = auth.currentUser?.uid;
       if (!userId) throw new Error("사용자 인증이 필요합니다.");
       
-      const docRef = doc(db, "users", userId, "videos", slug);
+      const docRef = doc(db, "gallery", slug);
       await updateDoc(docRef, { essay });
       setIsEditing(false);
     } catch (error) {
