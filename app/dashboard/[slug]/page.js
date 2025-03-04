@@ -21,16 +21,35 @@ export default function VideoDetail() {
   const [essay, setEssay] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [isPosted, setIsPosted] = useState(false);
+  const [isOn, setIsOn] = useState(false);
+
+
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      if (!currentUser) {
+      if (currentUser) {
+        setUser(currentUser);
+        fetchVideoData(slug);
+
+        try {
+          const userDocRef = doc(db, "users", currentUser.uid);
+          const userDocSnap = await getDoc(userDocRef);
+  
+          if (userDocSnap.exists() && userDocSnap.data().Mode) {
+            setIsOn(userDocSnap.data().Mode === "public"); // ✅ Mode 값에 따라 isOn 설정
+          } else {
+            setIsOn(false); // ✅ Mode 값이 없으면 기본값 설정
+          }
+        } catch (error) {
+          console.error("사용자 Mode 데이터를 가져오는 중 오류 발생:", error);
+          setIsOn(false); // 오류 발생 시 기본값 설정
+        }
+      } else {
         router.push("/");
         setLoading(false);
         return;
       }
-      setUser(currentUser);
-      fetchVideoData(slug);
+      setLoading(false);
     });
     return () => unsubscribe();
   }, [slug, router]);
@@ -144,6 +163,7 @@ export default function VideoDetail() {
 
   return (
     <div className="flex flex-col items-center w-full p-6">
+      <h1>{isOn}</h1>
       <div className="w-full max-w-2xl flex justify-start">
         <Link href="/dashboard" className="flex items-center mb-2">
           <ArrowLeft className="w-6 h-6 mr-2" />
