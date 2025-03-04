@@ -155,9 +155,16 @@ export default function VideoDetail() {
         setLoading(false);
       }
     };
-  
-
-
+    
+    return (
+      <div className="flex mt-2 space-x-2 font-pretendard justify-end">
+        <Button onClick={isPosted ? handleUnpostVideo : handlePostVideo} disabled={loading}>
+          {loading ? "처리 중..." : isPosted ? "게시 취소" : "게시"}
+        </Button>
+        {error && <p className="text-red-500 mt-2">{error}</p>}
+      </div>
+    );
+  };
 
   if (loading) return <p className="text-center mt-10">로딩 중...</p>;
   if (error) return <p className="text-center mt-10 text-red-500">{error}</p>;
@@ -216,14 +223,7 @@ export default function VideoDetail() {
                   <Button onClick={() => setIsEditing(true)}>수정</Button>
                 )}
               </div>
-              {/* 📌 게시 버튼을 VideoPostButton으로 이동 */}
-              <VideoPostButton userId={auth.currentUser?.uid} videoId={slug} />
-              <div className="flex mt-2 space-x-2 font-pretendard justify-end">
-                <Button onClick={isPosted ? handleUnpostVideo : handlePostVideo} disabled={loading}>
-                  {loading ? "처리 중..." : isPosted ? "게시 취소" : "게시"}
-                </Button>
-                {error && <p className="text-red-500 mt-2">{error}</p>}
-              </div>
+
             </div>
           </CardContent>
         </Card>
