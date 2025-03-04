@@ -37,12 +37,12 @@ export default function VideoDetail() {
 
                 if (userDocSnap.exists() && userDocSnap.data().Mode) {
                     const mode = userDocSnap.data().Mode === "public";
-                    setIsOn(mode);
 
                     console.log(`Mode 값이 Firestore에서 로드됨: ${mode}`);
 
                     // ✅ Mode 값이 반영된 후에 fetchVideoData 실행
                     fetchVideoData(slug, mode);
+                    setIsOn(mode);
                 } else {
                     setIsOn(false);
                     fetchVideoData(slug, false);
@@ -77,42 +77,7 @@ export default function VideoDetail() {
     }
   };
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-        if (currentUser) {
-            setUser(currentUser);
-            setLoading(true);
 
-            try {
-                const userDocRef = doc(db, "users", currentUser.uid);
-                const userDocSnap = await getDoc(userDocRef);
-
-                if (userDocSnap.exists() && userDocSnap.data().Mode) {
-                    const mode = userDocSnap.data().Mode === "public";
-                    setIsOn(mode);
-
-                    console.log(`Mode 값이 Firestore에서 로드됨: ${mode}`);
-
-                    // ✅ Mode 값이 반영된 후에 fetchVideoData 실행
-                    fetchVideoData(slug, mode);
-                } else {
-                    setIsOn(false);
-                    fetchVideoData(slug, false);
-                }
-            } catch (error) {
-                console.error("사용자 Mode 데이터를 가져오는 중 오류 발생:", error);
-                setIsOn(false);
-                fetchVideoData(slug, false);
-            }
-        } else {
-            router.push("/");
-            setLoading(false);
-            return;
-        }
-    });
-
-    return () => unsubscribe();
-}, [router]);
 
   // ✅ `isOn`이 변경될 때 fetchVideoData를 실행하지 않고, 위 `useEffect`에서 직접 실행함
   const fetchVideoData = async (slug, mode) => {
