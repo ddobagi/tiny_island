@@ -58,12 +58,15 @@ export default function Dashboard() {
         }
 
       } catch (error) {
-        setError(error.message);
+        console.error("Firestore에서 Mode 데이터 불러오기 실패:", error);
       } finally {
         setLoading(false);
       }
     };
-  }, [router]);
+
+    fetchVideoData(); // 함수 실행 
+
+  }, [user, router]);
 
   useEffect(() => {
     if (!user) return;
