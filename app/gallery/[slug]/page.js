@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "@/lib/firebase";
-import { doc, getDoc, updateDoc, increment } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc, increment } from "firebase/firestore";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { ThumbsUp, ArrowLeft, Heart, HeartOff } from "lucide-react";
@@ -71,7 +71,9 @@ export default function VideoDetail() {
     const userLikeRef = doc(db, "gallery", slug, "likes", userId);
 
     try {
-      if (liked) {
+      const userLikeSnap = await getDoc(userLikeRef);
+
+      if (userLikeSnap.exists()) {
         // 이미 좋아요 눌렀다면 취소 (recommend -1)
         await updateDoc(docRef, { recommend: increment(-1) });
         await updateDoc(userLikeRef, { liked: false });
@@ -80,8 +82,8 @@ export default function VideoDetail() {
         setLikes((prevLikes) => prevLikes - 1);
       } else {
         // 좋아요 누름 (recommend +1)
+        await setDoc(userLikeRef, { liked: true }); // 새 문서 생성
         await updateDoc(docRef, { recommend: increment(1) });
-        await updateDoc(userLikeRef, { liked: true });
 
         setLiked(true);
         setLikes((prevLikes) => prevLikes + 1);
