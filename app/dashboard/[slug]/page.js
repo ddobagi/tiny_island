@@ -163,7 +163,6 @@ export default function VideoDetail() {
 
   return (
     <div className="flex flex-col items-center w-full p-6">
-      <h1>{isOn}</h1>
       <div className="w-full max-w-2xl flex justify-start">
         <Link href="/dashboard" className="flex items-center mb-2">
           <ArrowLeft className="w-6 h-6 mr-2" />
@@ -198,6 +197,7 @@ export default function VideoDetail() {
             <p className="text-sm text-gray-500 mt-2">{video.views} views · {new Date(video.publishedAt).toLocaleDateString()}</p>
             
             {/* Essay 입력 및 수정 */}
+
             <div className="mt-4">
               <h2 className="text-lg font-semibold font-nanum_pen">Essay</h2>
               {isEditing ? (
@@ -208,6 +208,18 @@ export default function VideoDetail() {
                 />
               ) : (
                 <p className="mt-2 p-2 border rounded bg-gray-100 font-nanum_pen">{essay || "작성된 내용이 없습니다."}</p>
+              )}
+              { !isOn && (
+                <div className="flex mt-2 space-x-2 font-pretendard justify-end">
+                  {isEditing ? (
+                    <Button onClick={handleSaveEssay}>저장</Button>
+                  ) : (
+                    <Button onClick={() => setIsEditing(true)}>수정</Button>
+                  )}
+                  <Button onClick={handleTogglePost} className="bg-blue-500 text-white">
+                    {isPosted ? "게시 취소" : "게시"}
+                  </Button>
+                </div>
               )}
               <div className="flex mt-2 space-x-2 font-pretendard justify-end">
                 {isEditing ? (
