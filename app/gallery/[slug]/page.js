@@ -4,10 +4,9 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "@/lib/firebase";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { ThumbsUp, ArrowLeft } from "lucide-react";
 
 export default function VideoDetail() {
@@ -17,8 +16,6 @@ export default function VideoDetail() {
   const [video, setVideo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [essay, setEssay] = useState("");
-  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -32,9 +29,7 @@ export default function VideoDetail() {
         const docSnap = await getDoc(docRef);
         if (!docSnap.exists()) throw new Error("해당 비디오를 찾을 수 없습니다.");
 
-        const videoData = docSnap.data();
-        setVideo(videoData);
-        setEssay(videoData.essay || "");
+        setVideo(docSnap.data());
       } catch (error) {
         setError(error.message);
       } finally {
@@ -44,15 +39,6 @@ export default function VideoDetail() {
 
     return () => unsubscribe();
   }, [slug, router]);
-
-  const handleSaveEssay = async () => {
-    try {
-      await updateDoc(doc(db, "gallery", slug), { essay });
-      setIsEditing(false);
-    } catch {
-      setError("Essay 업데이트 중 오류가 발생했습니다.");
-    }
-  };
 
   if (loading) return <p className="text-center mt-10">로딩 중...</p>;
   if (error) return <p className="text-center mt-10 text-red-500">{error}</p>;
@@ -97,23 +83,10 @@ export default function VideoDetail() {
             </div>
             <p className="text-sm text-gray-500 mt-2">{video.views} views · {new Date(video.publishedAt).toLocaleDateString()}</p>
 
-            {/* Essay 입력 및 수정 */}
+            {/* Essay 표시 */}
             <div className="mt-4">
               <h2 className="text-lg font-semibold font-nanum_pen">Essay</h2>
-              {isEditing ? (
-                <textarea
-                  className="w-full p-2 border rounded mt-2 font-nanum_pen"
-                  value={essay}
-                  onChange={(e) => setEssay(e.target.value)}
-                />
-              ) : (
-                <p className="mt-2 p-2 border rounded bg-gray-100 font-nanum_pen">{essay || "작성된 내용이 없습니다."}</p>
-              )}
-              {isEditing ? (
-                <Button onClick={handleSaveEssay} className="mt-2">저장</Button>
-              ) : (
-                <Button onClick={() => setIsEditing(true)} className="mt-2">수정</Button>
-              )}
+              <p className="mt-2 p-2 border rounded bg-gray-100 font-nanum_pen">{video.essay || "작성된 내용이 없습니다."}</p>
             </div>
           </CardContent>
         </Card>
