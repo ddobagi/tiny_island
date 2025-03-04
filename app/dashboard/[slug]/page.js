@@ -35,11 +35,13 @@ export default function VideoDetail() {
           const userDocSnap = await getDoc(userDocRef);
   
           if (userDocSnap.exists() && userDocSnap.data().Mode) {
-            setIsOn(userDocSnap.data().Mode === "public"); // ✅ Mode 값에 따라 isOn 설정
+            const mode = userDocSnap.data().Mode === "public";
+            setIsOn(mode);
+
+            console.log(`Mode 값이 Firestore에서 로드됨: ${mode}`);
           } else {
             setIsOn(false); // ✅ Mode 값이 없으면 기본값 설정
           }
-          fetchVideoData(slug);
         } catch (error) {
           console.error("사용자 Mode 데이터를 가져오는 중 오류 발생:", error);
           setIsOn(false); // 오류 발생 시 기본값 설정
@@ -49,10 +51,9 @@ export default function VideoDetail() {
         setLoading(false);
         return;
       }
-      setLoading(false);
     });
     return () => unsubscribe();
-}, [isOn, slug, user, router]);
+  }, [router]);
 
   const getYouTubeVideoID = (url) => {
     const match = url.match(/(?:youtu\.be\/|youtube\.com\/.*v=|youtube\.com\/embed\/|youtube\.com\/v\/|youtube\.com\/user\/.*#p\/u\/\d\/|youtube\.com\/watch\?v=|youtube\.com\/watch\?.+&v=)([^#&?\n]+)/);
@@ -99,6 +100,13 @@ export default function VideoDetail() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+      if (user !== null) {  // user 값이 설정된 이후 실행되도록 추가
+          console.log(`isOn 값이 변경됨: ${isOn}`);
+          fetchVideoData(slug);
+      }
+  }, [isOn, slug, user]); // ✅ isOn 값이 변경되면 fetchVideoData 다시 실행
 
   const handleTogglePost = async () => {
     try {
