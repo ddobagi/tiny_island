@@ -10,6 +10,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, X, Trash2, Search, ArrowLeft, LogOut  } from "lucide-react";
+import Image from "next/image";
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
