@@ -182,12 +182,6 @@ export default function Dashboard() {
               <LogOut size={24} />
             </button>
           )}
-          
-          {user && !searchMode && (
-            <Link href="/gallery" className="w-12 h-12 flex items-center px-2 py-2 bg-transparent border border-gray-300 rounded-lg shadow-md hover:bg-gray-50">
-                <Image src="/all.png" className="object-contain" />
-            </Link>
-          )}
                   
         </div>
       </div>
