@@ -225,9 +225,10 @@ export default function VideoDetail() {
               </div>
 
             </div>
+            <VideoPostButton userId={auth.currentUser?.uid} videoId={slug} />
           </CardContent>
         </Card>
       )}
     </div>
   );
-}}
+}
