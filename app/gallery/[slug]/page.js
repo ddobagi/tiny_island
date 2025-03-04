@@ -20,13 +20,17 @@ export default function VideoDetail() {
   const [likes, setLikes] = useState(1);
   const [userId, setUserId] = useState(null);
 
+  const [isOn, setIsOn] = useState(null); // 🔥 Firestore에서 Mode 가져와 설정
+
+
+
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+    const fetchVideoData = async (currentuser) => {
       if (!currentUser) {
         router.push("/");
         return;
       }
-      setUserId(currentUser.uid);
+      setUserId(currentUser.uid);      
 
       try {
         const docRef = doc(db, "gallery", slug);
@@ -40,17 +44,26 @@ export default function VideoDetail() {
         // 🔥 Firestore에서 사용자의 좋아요 상태 가져오기
         const userLikeRef = doc(db, "gallery", slug, "likes", currentUser.uid);
         const userLikeSnap = await getDoc(userLikeRef);
+        setLiked(userLikeSnap.exists());
 
-        if (userLikeSnap.exists()) {
-          setLiked(true); // 이미 좋아요를 눌렀음
+        const userDocRef = doc(db, "users", currentUser.uid);
+        const userDocSnap = await getDoc(userDocRef);
+
+        if (userDocSnap.exists() && userDocSnap.data().Mode) {
+          setIsOn(userDocSnap.data().Mode === "public"); // ✅ Mode 값에 따라 isOn 설정
         } else {
-          setLiked(false); // 아직 좋아요를 누르지 않음
+          setIsOn(false); // ✅ Mode 값이 없으면 기본값 설정
         }
+
       } catch (error) {
         setError(error.message);
       } finally {
         setLoading(false);
       }
+    };
+
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      fetchVideoData(currentUser); // ✅ 비동기 함수 호출 (직접 `async` 사용 X)
     });
 
     return () => unsubscribe();
