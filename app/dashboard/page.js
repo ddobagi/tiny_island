@@ -191,38 +191,33 @@ export default function Dashboard() {
                   
         </div>
       </div>
-      <div
-        className={`justify-end relative w-20 h-10 flex items-center px-2 rounded-full cursor-pointer ${
-          isOn ? "bg-black" : "bg-black"
-        }`}
-        onClick={() => setIsOn(!isOn)}
-      >
-        {/* ON / OFF 텍스트 */}
-        <span
-          className={`absolute left-3 text-sm font-bold transition-opacity duration-300 ${
-            isOn ? "text-white opacity-100" : "opacity-0"
+      <div className="flex justify-end p-5">
+        <div 
+          className={`relative w-24 h-6 flex items-center px-2 rounded-full cursor-pointer ${
+            isOn ? "bg-black" : "bg-black"
           }`}
+          onClick={() => setIsOn(!isOn)}
         >
-          ON
-        </span>
-        <span
-          className={`absolute right-3 text-sm font-bold transition-opacity duration-300 ${
-            isOn ? "opacity-0" : "text-white opacity-100"
-          }`}
-        >
-          MY
-        </span>
+          {/* ON / OFF 텍스트 */}
+          <span
+            className={`absolute left-3 text-sm transition-opacity duration-300 ${
+              isOn ? "text-white opacity-100" : "opacity-0"
+            }`}
+          >
+            MY
+          </span>
 
-        {/* 모핑되는 토글 버튼 */}
-        <motion.div
-          className="w-8 h-8 bg-white rounded-full shadow-md"
-          layout
-          transition={{ type: "spring", stiffness: 700, damping: 30 }}
-          style={{
-            x: isOn ? 36 : 0,
-          }}
-        />
-      </div> 
+          {/* 모핑되는 토글 버튼 */}
+          <motion.div
+            className="w-8 h-8 bg-white rounded-full shadow-md"
+            layout
+            transition={{ type: "spring", stiffness: 700, damping: 30 }}
+            style={{
+              x: isOn ? 36 : 0,
+            }}
+          />
+        </div> 
+      </div>
 
 
       <div className="z-10 fixed bottom-6 right-6 flex flex-col items-end" ref={fabRef}>
