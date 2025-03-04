@@ -47,6 +47,8 @@ export default function VideoDetail() {
     try {
       const userId = auth.currentUser?.uid;
       if (!userId) throw new Error("사용자 인증이 필요합니다.");
+
+      if (!db) throw new Error("Firestore가 초기화되지 않았습니다.");
       
       const docRef = doc(db, "users", userId, "videos", slug);
       const docSnap = await getDoc(docRef);
