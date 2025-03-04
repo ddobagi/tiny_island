@@ -76,15 +76,14 @@ export default function VideoDetail() {
       let docRef;
 
       if (isOn) {
-        const q = query(collection(db, "gallery"), where("video", "==", slug));
-        const querySnapshot = await getDocs(q);
-
-
-        if (!querySnapshot.empty) {
-          const videoData = querySnapshot.docs[0].data();
+        docRef = doc(db, "gallery", slug);
+        const docSnap = await getDoc(docRef);
+    
+        if (docSnap.exists()) {
+          const videoData = docSnap.data();
           setVideo(videoData);
           setEssay(videoData.essay || "");
-          setIsPosted(true);
+          checkIfPosted(videoData.video);
         } else {
           throw new Error("해당 비디오를 찾을 수 없습니다.");
         }
@@ -93,7 +92,7 @@ export default function VideoDetail() {
         const userId = auth.currentUser?.uid;
         if (!userId) throw new Error("사용자 인증이 필요합니다.");
     
-        docRef = doc(db, "users", userId, "videos", slug);
+        docRef = doc(db, "users", userId , slug);
         const docSnap = await getDoc(docRef);
     
         if (docSnap.exists()) {
