@@ -40,7 +40,7 @@ export default function Dashboard() {
   useEffect(() => {
     if (!user) return;
     const userId = auth.currentUser.uid;
-    const videosRef = collection(db, "users", userId, "videos");
+    const videosRef = collection(db, "videos");
     const unsubscribe = onSnapshot(videosRef, (snapshot) => {
       setVideos(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
     });
@@ -117,7 +117,7 @@ export default function Dashboard() {
       const videoDetails = await getYoutubeVideoDetails(newVideo.video);
       if (!videoDetails) return;
       const userId = auth.currentUser.uid;
-      await addDoc(collection(db, "users", userId, "videos"), videoDetails);
+      await addDoc(collection(db, "videos"), videoDetails);
       setNewVideo({ name: "", video: "", thumbnail: "", channel: "", views: "", likes: "", publishedAt: "", channelProfile: "" });
       setFabOpen(false);
     } catch (error) {
@@ -211,7 +211,7 @@ export default function Dashboard() {
           .filter((video) => video.name.toLowerCase().includes(search.toLowerCase()))
           .map((video) => (
             <Card key={video.id} className="w-full max-w-[600px] rounded-lg shadow-lg cursor-pointer hover:shadow-2xl transition relative">
-              <Link key={video.id} href={`/collection/${video.id}`} passHref>
+              <Link key={video.id} href={`/gallery/${video.id}`} passHref>
                 <div className="relative w-full aspect-video">
                   <iframe
                     className="w-full h-full rounded-t-lg"
@@ -224,7 +224,7 @@ export default function Dashboard() {
                 </div>
               </Link>
               <CardContent className="p-4">
-                <Link key={video.id} href={`/collection/${video.id}`} passHref>
+                <Link key={video.id} href={`/gallery/${video.id}`} passHref>
                   <div className="flex items-center space-x-3">
                     {/* 채널 프로필 이미지 */}
                     <img src={video.channelProfile} alt={video.channel} className="w-10 h-10 rounded-full object-cover" />
@@ -244,7 +244,7 @@ export default function Dashboard() {
               </CardContent>
               <button 
                   onClick={() => {
-                  deleteDoc(doc(db, "users", user.uid, "videos", video.id));
+                  deleteDoc(doc(db, "videos", video.id));
                   router.push('/dashboard'); 
                 }}
                 className="z-5 absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full shadow-md hover:bg-red-600">
