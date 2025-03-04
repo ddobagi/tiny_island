@@ -116,10 +116,10 @@ export default function VideoDetail() {
 
   useEffect(() => {
       if (user !== null) {  // user 값이 설정된 이후 실행되도록 추가
-          console.log(`mode 값이 변경됨: ${mode}`);
-          fetchVideoData(slug);
+          console.log(`mode 값이 변경됨: ${isOn}`);
+          fetchVideoData(slug, isOn);
       }
-  }, [mode, slug, user]); // ✅ isOn 값이 변경되면 fetchVideoData 다시 실행
+  }, [isOn, slug, user]); // ✅ isOn 값이 변경되면 fetchVideoData 다시 실행
 
   const handleTogglePost = async () => {
     try {
