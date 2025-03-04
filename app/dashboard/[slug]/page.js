@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "@/lib/firebase";
-import { doc, getDoc, updateDoc, setDoc, deleteDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -20,7 +20,6 @@ export default function VideoDetail() {
   const [error, setError] = useState(null);
   const [essay, setEssay] = useState("");
   const [isEditing, setIsEditing] = useState(false);
-  const [isPosted, setIsPosted] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -44,8 +43,6 @@ export default function VideoDetail() {
     try {
       const userId = auth.currentUser?.uid;
       if (!userId) throw new Error("사용자 인증이 필요합니다.");
-
-      if (!db) throw new Error("Firestore가 초기화되지 않았습니다.");
       
       const docRef = doc(db, "users", userId, "videos", slug);
       const docSnap = await getDoc(docRef);
@@ -140,4 +137,4 @@ export default function VideoDetail() {
       )}
     </div>
   );
-};
+}
