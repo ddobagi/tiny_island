@@ -1,10 +1,8 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "@/lib/firebase";
-import { doc, getDoc, setDoc, updateDoc, increment } from "firebase/firestore";
+import { doc, getDoc, setDoc, deleteDoc, updateDoc, increment } from "firebase/firestore";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { ThumbsUp, ArrowLeft, Heart, HeartOff } from "lucide-react";
@@ -18,7 +16,7 @@ export default function VideoDetail() {
   const [error, setError] = useState(null);
   const [liked, setLiked] = useState(false);
   const [likes, setLikes] = useState(0);
-  const [userId, setUserId] = useState(null); // 현재 사용자 ID 저장
+  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -37,14 +35,14 @@ export default function VideoDetail() {
         setVideo(videoData);
         setLikes(videoData.recommend || 0);
 
-        // 🔥 Firestore에서 사용자의 좋아요 여부 가져오기
+        // 🔥 Firestore에서 사용자의 좋아요 상태 가져오기
         const userLikeRef = doc(db, "gallery", slug, "likes", currentUser.uid);
         const userLikeSnap = await getDoc(userLikeRef);
 
         if (userLikeSnap.exists()) {
-          setLiked(true);
+          setLiked(true); // 이미 좋아요를 눌렀음
         } else {
-          setLiked(false);
+          setLiked(false); // 아직 좋아요를 누르지 않음
         }
       } catch (error) {
         setError(error.message);
@@ -59,11 +57,6 @@ export default function VideoDetail() {
   if (loading) return <p className="text-center mt-10">로딩 중...</p>;
   if (error) return <p className="text-center mt-10 text-red-500">{error}</p>;
 
-  const getYouTubeVideoID = (url) => {
-    const match = url.match(/(?:youtu\.be\/|youtube\.com\/.*v=|youtube\.com\/watch\?v=)([^#&?\n]+)/);
-    return match ? match[1] : null;
-  };
-
   const handleLike = async () => {
     if (!video || !userId) return;
 
@@ -71,19 +64,17 @@ export default function VideoDetail() {
     const userLikeRef = doc(db, "gallery", slug, "likes", userId);
 
     try {
-      const userLikeSnap = await getDoc(userLikeRef);
-
-      if (userLikeSnap.exists()) {
-        // 이미 좋아요 눌렀다면 취소 (recommend -1)
-        await updateDoc(docRef, { recommend: increment(-1) });
-        await updateDoc(userLikeRef, { liked: false });
+      if (liked) {
+        // 🟥 이미 좋아요를 누른 상태 → 좋아요 취소
+        await updateDoc(docRef, { recommend: increment(-1) }); // 추천 감소
+        await deleteDoc(userLikeRef); // 사용자의 좋아요 기록 삭제
 
         setLiked(false);
         setLikes((prevLikes) => prevLikes - 1);
       } else {
-        // 좋아요 누름 (recommend +1)
-        await setDoc(userLikeRef, { liked: true }); // 새 문서 생성
-        await updateDoc(docRef, { recommend: increment(1) });
+        // 🟩 아직 좋아요를 누르지 않은 상태 → 좋아요 추가
+        await updateDoc(docRef, { recommend: increment(1) }); // 추천 증가
+        await setDoc(userLikeRef, { liked: true }); // 사용자의 좋아요 기록 추가
 
         setLiked(true);
         setLikes((prevLikes) => prevLikes + 1);
