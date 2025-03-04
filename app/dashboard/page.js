@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { auth, provider, db } from "@/lib/firebase";
 import { signInWithPopup, onAuthStateChanged, signOut } from "firebase/auth";
-import { collection, onSnapshot, addDoc, deleteDoc, doc } from "firebase/firestore";
+import { collection, onSnapshot, addDoc, deleteDoc, doc, getDoc } from "firebase/firestore";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -28,9 +28,27 @@ export default function Dashboard() {
   const API_KEY = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY;
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async(currentUser) => {
       if (currentUser) {
         setUser(currentUser);
+
+
+        try {
+          const userDocRef = doc(db, "users", currentUser.uid);
+          const userDocSnap = await getDoc(userDocRef);
+  
+          if (userDocSnap.exists() && userDocSnap.data().Mode) {
+            setIsOn(userDocSnap.data().Mode === "public"); // ✅ Mode 값에 따라 isOn 설정
+          } else {
+            setIsOn(false); // ✅ Mode 값이 없으면 기본값 설정
+          }
+        } catch (error) {
+          console.error("사용자 Mode 데이터를 가져오는 중 오류 발생:", error);
+          setIsOn(false); // 오류 발생 시 기본값 설정
+        }
+
+
+        
       } else {
         router.push("/");
       }
