@@ -28,12 +28,13 @@ export default function Dashboard() {
   const API_KEY = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY;
 
   useEffect(() => {
-    const fetchVideoData = async (currentuser) => {
+    // 🔥 비동기 데이터 가져오는 함수
+    const fetchVideoData = async (currentUser) => {
       if (!currentUser) {
         router.push("/");
         return;
       }
-      setUserId(currentUser.uid);      
+      setUserId(currentUser.uid);
 
       try {
         const docRef = doc(db, "gallery", slug);
@@ -42,28 +43,35 @@ export default function Dashboard() {
 
         const videoData = docSnap.data();
         setVideo(videoData);
+        setLikes(videoData.recommend || 0);
 
+        // 🔥 사용자의 좋아요 상태 가져오기
+        const userLikeRef = doc(db, "gallery", slug, "likes", currentUser.uid);
+        const userLikeSnap = await getDoc(userLikeRef);
+        setLiked(userLikeSnap.exists());
+
+        // 🔥 Firestore에서 사용자의 Mode 값 가져오기
         const userDocRef = doc(db, "users", currentUser.uid);
         const userDocSnap = await getDoc(userDocRef);
-
         if (userDocSnap.exists() && userDocSnap.data().Mode) {
-          setIsOn(userDocSnap.data().Mode === "public"); // ✅ Mode 값에 따라 isOn 설정
+          setIsOn(userDocSnap.data().Mode === "public");
         } else {
-          setIsOn(false); // ✅ Mode 값이 없으면 기본값 설정
+          setIsOn(false);
         }
-
       } catch (error) {
+        console.error("데이터 로드 중 오류:", error);
         setError(error.message);
       } finally {
         setLoading(false);
       }
     };
 
+    // 🔥 onAuthStateChanged 내에서 async 직접 사용하지 않음
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      fetchVideoData(currentUser); // ✅ 비동기 함수 호출 (직접 `async` 사용 X)
+      fetchVideoData(currentUser);
     });
 
-    return () => unsubscribe();
+    return () => unsubscribe(); // ✅ 컴포넌트 언마운트 시 정리
   }, [slug, router]);
 
 
