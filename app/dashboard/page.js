@@ -159,6 +159,23 @@ export default function Dashboard() {
     return match ? match[1] : null;
   };
 
+  const handleToggleMode = async () => {
+    if (!user) return;
+  
+    const userId = auth.currentUser.uid;
+    const userDocRef = doc(db, "users", userId); // ✅ Firestore에서 해당 유저 문서 참조
+  
+    const newMode = isOn ? "private" : "public"; // ✅ 상태 반전 후 적용할 모드 설정
+  
+    try {
+      await setDoc(userDocRef, { Mode: newMode }, { merge: true }); // ✅ Firestore에 Mode 필드 저장 (merge: true 옵션으로 기존 데이터 유지)
+      setIsOn(!isOn); // ✅ 상태 업데이트
+    } catch (error) {
+      console.error("Firestore 모드 업데이트 오류:", error);
+    }
+  };
+
+
 
   return (
     <div className="rounded-lg shadow-lg max-w-2xl w-full flex flex-col p-6 relative mx-auto">
@@ -204,7 +221,7 @@ export default function Dashboard() {
       <div className="flex justify-end p-1">
         <div 
           className="relative w-24 h-10 bg-black flex overflow-hidden justify-between items-center px-2 rounded-full cursor-pointer"
-          onClick={() => setIsOn(!isOn)}
+          onClick={handleToggleMode}
         >
 
           {!isOn && (
