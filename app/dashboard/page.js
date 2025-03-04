@@ -300,7 +300,7 @@ export default function Dashboard() {
                 </div>
               </Link>
               <CardContent className="p-4">
-                <Link key={video.id} href={isOn ? `gallery/${video.id}` : `dashboard/${video.id}`} passHref>
+                <Link key={video.id} href={`dashboard/${video.id}`} passHref>
                   <div className="flex items-center space-x-3">
                     {/* 채널 프로필 이미지 */}
                     <img src={video.channelProfile} alt={video.channel} className="w-10 h-10 rounded-full object-cover" />
