@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "@/lib/firebase";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, setDoc, collection, serverTimestamp } from "firebase/firestore";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -74,6 +74,41 @@ export default function VideoDetail() {
     }
   };
 
+  const handlePostVideo = async () => {
+    try {
+      if (!video) throw new Error("비디오 데이터가 없습니다.");
+  
+      const userId = auth.currentUser?.uid;
+      if (!userId) throw new Error("사용자 인증이 필요합니다.");
+  
+      await addDoc(collection(db, "gallery"), {
+        name: video.name || "제목 없음",
+        video: video.video || "",
+        thumbnail: video.thumbnail || "",
+        channel: video.channel || "알 수 없음",
+        views: video.views || 0,
+        likes: video.likes || 0,
+        publishedAt: video.publishedAt || serverTimestamp(),
+        channelProfile: video.channelProfile || "",
+        post: true, // 새로운 문서에 post 필드 추가
+        createdAt: serverTimestamp(), // 문서 생성 시간 추가
+      });
+  
+      alert("새로운 게시물이 생성되었습니다!");
+    } catch (error) {
+      console.error("Firestore에서 새로운 문서 생성 중 오류 발생: ", error);
+    }
+  };
+  
+
+
+
+
+
+
+
+
+
   if (loading) return <p className="text-center mt-10">로딩 중...</p>;
   if (error) return <p className="text-center mt-10 text-red-500">{error}</p>;
 
@@ -128,8 +163,9 @@ export default function VideoDetail() {
                 {isEditing ? (
                   <Button onClick={handleSaveEssay}>저장</Button>
                 ) : (
-                  <Button onClick={() => setIsEditing(true)}>수정</Button>
+                  <Button onClick={() => setIsEditing(true)}>수정</Button>  
                 )}
+                <Button onClick={handlePostVideo} className="bg-blue-500 text-white">게시</Button>
               </div>
             </div>
           </CardContent>
