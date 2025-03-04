@@ -22,11 +22,22 @@ export default function VideoDetail() {
 
   const [isOn, setIsOn] = useState(null); // 🔥 Firestore에서 Mode 가져와 설정
 
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+      } else {
+        router.push("/");
+      }
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, [router]);
 
 
   useEffect(() => {
-    const fetchVideoData = async (currentuser) => {
-      if (!currentUser) {
+    const fetchVideoData = async () => {
+      if (!user) {
         router.push("/");
         return;
       }
