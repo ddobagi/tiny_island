@@ -29,6 +29,12 @@ export default function Dashboard() {
   const API_KEY = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY;
 
   useEffect(() => {
+    if (isOn) {
+      router.push("https://tiny-island.vercel.app/gallery");
+    }
+  }, [isOn, router]);
+
+  useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
@@ -185,11 +191,38 @@ export default function Dashboard() {
                   
         </div>
       </div>
-      <div>
-        <Link href="/gallery" className="flex items-center mb-2 justify-end">
-          gallery 모드 보기
-        </Link>
-      </div>  
+      <div
+        className={`justify-end relative w-20 h-10 flex items-center px-2 rounded-full cursor-pointer ${
+          isOn ? "bg-black" : "bg-black"
+        }`}
+        onClick={() => setIsOn(!isOn)}
+      >
+        {/* ON / OFF 텍스트 */}
+        <span
+          className={`absolute left-3 text-sm font-bold transition-opacity duration-300 ${
+            isOn ? "text-white opacity-100" : "opacity-0"
+          }`}
+        >
+          ON
+        </span>
+        <span
+          className={`absolute right-3 text-sm font-bold transition-opacity duration-300 ${
+            isOn ? "opacity-0" : "text-white opacity-100"
+          }`}
+        >
+          MY
+        </span>
+
+        {/* 모핑되는 토글 버튼 */}
+        <motion.div
+          className="w-8 h-8 bg-white rounded-full shadow-md"
+          layout
+          transition={{ type: "spring", stiffness: 700, damping: 30 }}
+          style={{
+            x: isOn ? 36 : 0,
+          }}
+        />
+      </div> 
 
 
       <div className="z-10 fixed bottom-6 right-6 flex flex-col items-end" ref={fabRef}>
@@ -269,45 +302,6 @@ export default function Dashboard() {
             </Card>
           ))}
       </div>
-
-
-
-
-      <div
-        className={`relative w-20 h-10 flex items-center px-2 rounded-full cursor-pointer ${
-          isOn ? "bg-black" : "bg-black"
-        }`}
-        onClick={() => setIsOn(!isOn)}
-      >
-        {/* ON / OFF 텍스트 */}
-        <span
-          className={`absolute left-3 text-sm font-bold transition-opacity duration-300 ${
-            isOn ? "text-white opacity-100" : "opacity-0"
-          }`}
-        >
-          ON
-        </span>
-        <span
-          className={`absolute right-3 text-sm font-bold transition-opacity duration-300 ${
-            isOn ? "opacity-0" : "text-white opacity-100"
-          }`}
-        >
-          OFF
-        </span>
-
-        {/* 모핑되는 토글 버튼 */}
-        <motion.div
-          className="w-8 h-8 bg-white rounded-full shadow-md"
-          layout
-          transition={{ type: "spring", stiffness: 700, damping: 30 }}
-          style={{
-            x: isOn ? 36 : 0,
-          }}
-        />
-      </div>
-
-
-
 
     </div>
   );
