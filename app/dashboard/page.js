@@ -39,6 +39,7 @@ export default function Dashboard() {
     return () => unsubscribe();
   }, [router]);
 
+
   useEffect(() => {
     if (!user) return;
 
@@ -184,7 +185,7 @@ export default function Dashboard() {
       </div>
       <div className="flex justify-end p-5">
         <div 
-          className="relative w-24 h-8 bg-black flex overflow-hidden justify-between items-center px-2 rounded-full cursor-pointer"
+          className="relative w-24 h-10 bg-black flex overflow-hidden justify-between items-center px-2 rounded-full cursor-pointer"
           onClick={() => setIsOn(!isOn)}
         >
 
@@ -195,7 +196,7 @@ export default function Dashboard() {
             </span>
           )}
 
-          {!isOn && (
+          {isOn && (
             <span
               className="absolute left-3 text-sm font-bold text-white">
               Public
@@ -264,7 +265,7 @@ export default function Dashboard() {
                 </div>
               </Link>
               <CardContent className="p-4">
-                <Link key={video.id} href={`dashboard/${video.id}`} passHref>
+                <Link key={video.id} href={isOn ? `gallery/${video.id}` : `dashboard/${video.id}`} passHref>
                   <div className="flex items-center space-x-3">
                     {/* 채널 프로필 이미지 */}
                     <img src={video.channelProfile} alt={video.channel} className="w-10 h-10 rounded-full object-cover" />
