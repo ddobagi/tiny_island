@@ -40,7 +40,7 @@ export default function Dashboard() {
   useEffect(() => {
     if (!user) return;
     const userId = auth.currentUser.uid;
-    const videosRef = collection(db, "videos");
+    const videosRef = collection(db, "gallery");
     const unsubscribe = onSnapshot(videosRef, (snapshot) => {
       setVideos(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
     });
@@ -117,7 +117,7 @@ export default function Dashboard() {
       const videoDetails = await getYoutubeVideoDetails(newVideo.video);
       if (!videoDetails) return;
       const userId = auth.currentUser.uid;
-      await addDoc(collection(db, "videos"), videoDetails);
+      await addDoc(collection(db, "gallery"), videoDetails);
       setNewVideo({ name: "", video: "", thumbnail: "", channel: "", views: "", likes: "", publishedAt: "", channelProfile: "" });
       setFabOpen(false);
     } catch (error) {
@@ -244,7 +244,7 @@ export default function Dashboard() {
               </CardContent>
               <button 
                   onClick={() => {
-                  deleteDoc(doc(db, "videos", video.id));
+                  deleteDoc(doc(db, "gallery", video.id));
                   router.push('/dashboard'); 
                 }}
                 className="z-5 absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full shadow-md hover:bg-red-600">
