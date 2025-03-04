@@ -10,7 +10,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, X, Trash2, Search, ArrowLeft, LogOut  } from "lucide-react";
-import Image from "next/image";
 import { motion } from "framer-motion";
 
 export default function Dashboard() {
@@ -48,9 +47,14 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (!user) return;
-    const userId = auth.currentUser.uid;
-    const videosRef = collection(db, "users", userId, "videos");
-    const unsubscribe = onSnapshot(videosRef, (snapshot) => {
+
+    const userId = auth.currentUser?.uid;
+
+    const collectionPath = isOn 
+    ? collection(db, "gallery")  // ✅ isOn이 true이면 "gallery" 컬렉션 사용
+    : collection(db, "users", userId, "videos");  // ✅ isOn이 false이면 사용자별 "videos" 컬렉션 사용
+
+    const unsubscribe = onSnapshot(collectionPath, (snapshot) => {
       setVideos(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
     });
     return () => unsubscribe();
@@ -126,16 +130,17 @@ export default function Dashboard() {
       const videoDetails = await getYoutubeVideoDetails(newVideo.video);
       if (!videoDetails) return;
       const userId = auth.currentUser.uid;
-      await addDoc(collection(db, "users", userId, "videos"), videoDetails);
+
+      const collectionPath = isOn
+        ? collection(db, "gallery") // isOn이 true면 gallery
+        : collection(db, "users", userId, "videos"); // isOn이 false면 users/videos
+
+      await addDoc(collectionPath, videoDetails);
       setNewVideo({ name: "", video: "", thumbnail: "", channel: "", views: "", likes: "", publishedAt: "", channelProfile: "" });
       setFabOpen(false);
     } catch (error) {
       console.error("Firestore에 비디오 추가 중 오류 발생: ", error);
     }
-  };
-
-  const extractEmailPrefix = (email) => {
-    return email ? email.split("@")[0] : "";
   };
 
   const getYouTubeVideoID = (url) => {
@@ -194,7 +199,14 @@ export default function Dashboard() {
           {!isOn && (
             <span
               className="absolute right-3 text-sm font-bold text-white">
-              My
+              Private
+            </span>
+          )}
+
+          {!isOn && (
+            <span
+              className="absolute left-3 text-sm font-bold text-white">
+              Public
             </span>
           )}
 
@@ -259,7 +271,7 @@ export default function Dashboard() {
                 </div>
               </Link>
               <CardContent className="p-4">
-                <Link key={video.id} href={`/dashboard/${video.id}`} passHref>
+                <Link key={video.id} href={isOn ? `/gallery/${video.id}` : `dashboard/${video.id}`} passHref>
                   <div className="flex items-center space-x-3">
                     {/* 채널 프로필 이미지 */}
                     <img src={video.channelProfile} alt={video.channel} className="w-10 h-10 rounded-full object-cover" />
@@ -277,14 +289,16 @@ export default function Dashboard() {
                   </div>
                 </Link>
               </CardContent>
-              <button 
-                  onClick={() => {
+              {!isOn && (
+                <button onClick={() => {
                   deleteDoc(doc(db, "users", user.uid, "videos", video.id));
-                  router.push('/dashboard'); 
-                }}
-                className="z-5 absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full shadow-md hover:bg-red-600">
-                <Trash2 size={32} />
-              </button>
+                  router.push("/dashboard");
+                }} 
+                className="z-5 absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full shadow-md hover:bg-red-600"
+                >
+                  <Trash2 size={32} />
+                </button>
+              )}
             </Card>
           ))}
       </div>
