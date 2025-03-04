@@ -40,6 +40,16 @@ export default function VideoDetail() {
     return match ? match[1] : null;
   };
 
+  const checkIfPosted = async (videoUrl) => {
+    try {
+      const q = query(collection(db, "gallery"), where("video", "==", videoUrl));
+      const querySnapshot = await getDocs(q);
+      setIsPosted(!querySnapshot.empty); // 문서가 있으면 게시됨
+    } catch (error) {
+      console.error("게시 여부 확인 중 오류 발생: ", error);
+    }
+  };
+
   const fetchVideoData = async (slug) => {
     try {
       const userId = auth.currentUser?.uid;
@@ -49,8 +59,10 @@ export default function VideoDetail() {
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
-        setVideo(docSnap.data());
-        setEssay(docSnap.data().essay || "");
+        const videoData = docSnap.data();
+        setVideo(videoData);
+        setEssay(videoData.essay || "");
+        checkIfPosted(videoData.video);
       } else {
         throw new Error("해당 비디오를 찾을 수 없습니다.");
       }
