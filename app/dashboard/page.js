@@ -193,19 +193,16 @@ export default function Dashboard() {
       </div>
       <div className="flex justify-end p-5">
         <div 
-          className={`relative w-24 h-6 flex items-center px-2 rounded-full cursor-pointer ${
-            isOn ? "bg-black" : "bg-black"
-          }`}
+          className="relative w-20 h-7 flex items-center px-2 rounded-full cursor-pointer"
           onClick={() => setIsOn(!isOn)}
         >
-          {/* ON / OFF 텍스트 */}
-          <span
-            className={`absolute left-3 text-sm transition-opacity duration-300 ${
-              isOn ? "text-white opacity-100" : "opacity-0"
-            }`}
-          >
-            MY
-          </span>
+
+          {!isOn && (
+            <span
+              className="absolute right-3 text-sm font-bold text-white">
+              My
+            </span>
+          )}
 
           {/* 모핑되는 토글 버튼 */}
           <motion.div
