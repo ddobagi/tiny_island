@@ -7,7 +7,7 @@ import { auth, db } from "@/lib/firebase";
 import { doc, getDoc, setDoc, deleteDoc, updateDoc, increment } from "firebase/firestore";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
-import { ThumbsUp, ArrowLeft, Heart, HeartOff } from "lucide-react";
+import { ThumbsUp, ArrowLeft, Heart } from "lucide-react";
 
 export default function VideoDetail() {
   const { slug } = useParams();
@@ -17,7 +17,7 @@ export default function VideoDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [liked, setLiked] = useState(false);
-  const [likes, setLikes] = useState(0);
+  const [likes, setLikes] = useState(1);
   const [userId, setUserId] = useState(null);
 
   useEffect(() => {
@@ -126,25 +126,29 @@ export default function VideoDetail() {
             </div>
             <p className="text-sm text-gray-500 mt-2">{video.views} views · {new Date(video.publishedAt).toLocaleDateString()}</p>
 
-            {/* 좋아요 버튼 */}
-            <div className="mt-4 flex items-center justify-center">
-              <button
-                className="flex items-center p-2 rounded-lg transition"
-                onClick={handleLike}
-              >
-                {liked ? (
-                  <Heart className="w-6 h-6 text-red-500" />
-                ) : (
-                  <HeartOff className="w-6 h-6 text-gray-500" />
-                )}
-                <span className="ml-2 text-lg font-semibold">{likes}</span>
-              </button>
-            </div>
+
 
             {/* Essay 표시 */}
-            <div className="mt-4">
-              <h2 className="text-lg font-semibold font-nanum_pen">Essay</h2>
-              <p className="mt-2 p-2 border rounded bg-gray-100 font-nanum_pen">{video.essay || "작성된 내용이 없습니다."}</p>
+            <div className="mt-4 flex justify-between items-center">
+              {/* Essay 텍스트 */}
+              <div className="flex-1">
+                <h2 className="text-lg font-semibold font-nanum_pen">Essay</h2>
+                <p className="mt-2 p-2 border rounded bg-gray-100 font-nanum_pen">
+                  {video.essay || "작성된 내용이 없습니다."}
+                </p>
+              </div>
+
+              {/* 좋아요 버튼 */}
+              <div className="ml-4">
+                <button className="flex items-center p-2 rounded-lg transition" onClick={handleLike}>
+                  {liked ? (
+                    <Heart className="w-6 h-6 text-red-500" />
+                  ) : (
+                    <Heart className="w-6 h-6 text-red-500" fill="currentColor" />
+                  )}
+                  <span className="ml-2 text-lg font-semibold">{likes}</span>
+                </button>
+              </div>
             </div>
           </CardContent>
         </Card>
