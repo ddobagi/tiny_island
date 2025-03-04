@@ -42,6 +42,8 @@ export default function Dashboard() {
 
   useEffect(() => {
     const fetchVideoData = async () => {
+      if (loading) return;
+
       if (!user) {
         router.push("/");
         return;
