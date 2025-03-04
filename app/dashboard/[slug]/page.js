@@ -42,16 +42,13 @@ export default function VideoDetail() {
 
                     // ✅ Mode 값이 반영된 후에 fetchVideoData 실행
                     setIsOn(mode);
-                    fetchVideoData(slug, mode);
                     
                 } else {
                     setIsOn(false);
-                    fetchVideoData(slug, false);
                 }
             } catch (error) {
                 console.error("사용자 Mode 데이터를 가져오는 중 오류 발생:", error);
                 setIsOn(false);
-                fetchVideoData(slug, false);
             }
         } else {
             router.push("/");
