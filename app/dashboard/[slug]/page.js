@@ -133,7 +133,6 @@ export default function VideoDetail() {
       // UI 업데이트
       setIsPosted(false);
       setIsEditing(false);
-      alert("에세이가 저장되었으며, 게시가 취소되었습니다.");
     } catch (error) {
       console.error("Firestore에서 essay 데이터 업데이트 중 오류 발생: ", error);
     }
@@ -150,6 +149,9 @@ export default function VideoDetail() {
           <ArrowLeft className="w-6 h-6 mr-2" />
         </Link>
       </div>
+      <Link href="/gallery" className="flex items-center mb-2 justify-end">
+          gallery 모드 보기
+        </Link>
       {video && <h1 className="text-2xl font-bold mb-1">{video.title}</h1>}
       {video && (
         <Card className="rounded-lg shadow-lg w-full max-w-2xl">
