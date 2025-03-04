@@ -59,6 +59,11 @@ export default function VideoDetail() {
   if (loading) return <p className="text-center mt-10">로딩 중...</p>;
   if (error) return <p className="text-center mt-10 text-red-500">{error}</p>;
 
+  const getYouTubeVideoID = (url) => {
+    const match = url.match(/(?:youtu\.be\/|youtube\.com\/.*v=|youtube\.com\/watch\?v=)([^#&?\n]+)/);
+    return match ? match[1] : null;
+  };
+
   const handleLike = async () => {
     if (!video || !userId) return;
 
