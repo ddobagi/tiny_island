@@ -149,9 +149,6 @@ export default function VideoDetail() {
           <ArrowLeft className="w-6 h-6 mr-2" />
         </Link>
       </div>
-      <Link href="/gallery" className="flex items-center mb-2 justify-end">
-          gallery 모드 보기
-        </Link>
       {video && <h1 className="text-2xl font-bold mb-1">{video.title}</h1>}
       {video && (
         <Card className="rounded-lg shadow-lg w-full max-w-2xl">

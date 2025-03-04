@@ -173,7 +173,13 @@ export default function Dashboard() {
             </button>
           )}
         </div>
-      </div>      
+      </div>
+      <div>
+        <Link href="/gallery" className="flex items-center mb-2 justify-end">
+          gallery 모드 보기
+        </Link>
+      </div>  
+
 
       <div className="z-10 fixed bottom-6 right-6 flex flex-col items-end" ref={fabRef}>
         {fabOpen && (
