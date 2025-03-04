@@ -82,7 +82,7 @@ export default function VideoDetail() {
       if (!userId) throw new Error("사용자 인증이 필요합니다.");
   
       await addDoc(collection(db, "gallery"), {
-        name: video.name || "제목 없음",
+        name: video.name || "알 수 없음",
         video: video.video || "",
         thumbnail: video.thumbnail || "",
         channel: video.channel || "알 수 없음",
