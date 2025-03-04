@@ -104,12 +104,6 @@ export default function Dashboard() {
       return null;
     }
   };
-  
-
-  const handleInputChange = async (e) => {
-    const url = e.target.value;
-    setNewVideo({ ...newVideo, video: url });
-  };
 
   const handleAddVideo = async () => {
     if (!user || !newVideo.video) return;
@@ -123,10 +117,6 @@ export default function Dashboard() {
     } catch (error) {
       console.error("Firestore에 비디오 추가 중 오류 발생: ", error);
     }
-  };
-
-  const extractEmailPrefix = (email) => {
-    return email ? email.split("@")[0] : "";
   };
 
   const getYouTubeVideoID = (url) => {
@@ -176,36 +166,6 @@ export default function Dashboard() {
         </div>
       </div>      
 
-      <div className="z-10 fixed bottom-6 right-6 flex flex-col items-end" ref={fabRef}>
-        {fabOpen && (
-          <div className="relative px-4 py-2 w-[350px] transition-transform transform translate-y-2 opacity-100 mb-2">
-            <p className="font-pretendard font-semibold text-gray-700">URL</p>
-            <div className="relative flex items-center bg-gray-100 rounded-lg px-4 py-2">
-              <Input 
-                type="text" 
-                placeholder="Youtube URL" 
-                value={newVideo.video} 
-                onChange={handleInputChange} 
-                className="flex-1 bg-gray-100 focus:outline-none text-gray-700" 
-              />
-              <Button 
-                onClick={handleAddVideo} 
-                className="ml-2 h-10 px-4 rounded-full bg-black text-white font-bold text-sm"
-              >
-                추가
-              </Button>
-            </div>
-          </div>
-        )}
-        <Button 
-          onClick={() => setFabOpen(!fabOpen)} 
-          className="rounded-full w-12 h-12 flex items-center justify-center shadow-lg"
-        >
-          {fabOpen ? <X size={24} /> : <Plus size={24} />}
-        </Button>
-      </div>
-
-
       <div className="grid grid-cols-1 gap-6 mt-6 w-full max-w-6xl">
         {videos
           .filter((video) => video.name.toLowerCase().includes(search.toLowerCase()))
@@ -242,14 +202,6 @@ export default function Dashboard() {
                   </div>
                 </Link>
               </CardContent>
-              <button 
-                  onClick={() => {
-                  deleteDoc(doc(db, "gallery", video.id));
-                  router.push('/dashboard'); 
-                }}
-                className="z-5 absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full shadow-md hover:bg-red-600">
-                <Trash2 size={32} />
-              </button>
             </Card>
           ))}
       </div>
