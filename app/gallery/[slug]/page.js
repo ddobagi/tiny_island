@@ -16,9 +16,9 @@ export default function VideoDetail() {
   const [video, setVideo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  const [liked, setLiked ] = useState(false);
-  const [likes, setLikes ] = useState(0);
+  const [liked, setLiked] = useState(false);
+  const [likes, setLikes] = useState(0);
+  const [userId, setUserId] = useState(null); // 현재 사용자 ID 저장
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -26,6 +26,7 @@ export default function VideoDetail() {
         router.push("/");
         return;
       }
+      setUserId(currentUser.uid);
 
       try {
         const docRef = doc(db, "gallery", slug);
@@ -35,6 +36,16 @@ export default function VideoDetail() {
         const videoData = docSnap.data();
         setVideo(videoData);
         setLikes(videoData.recommend || 0);
+
+        // 🔥 Firestore에서 사용자의 좋아요 여부 가져오기
+        const userLikeRef = doc(db, "gallery", slug, "likes", currentUser.uid);
+        const userLikeSnap = await getDoc(userLikeRef);
+
+        if (userLikeSnap.exists()) {
+          setLiked(true);
+        } else {
+          setLiked(false);
+        }
       } catch (error) {
         setError(error.message);
       } finally {
@@ -53,19 +64,30 @@ export default function VideoDetail() {
     return match ? match[1] : null;
   };
 
-  consthandleLike = async () => {
-    if (!video) return;
+  const handleLike = async () => {
+    if (!video || !userId) return;
 
     const docRef = doc(db, "gallery", slug);
-    try {
-      await updateDoc(docRef, {
-        recommend: increment(liked ? -1 : 1),
-      });
+    const userLikeRef = doc(db, "gallery", slug, "likes", userId);
 
-      setLiked(!liked);
-      setLikes((prevLikes) => (liked ? prevLikes -1 : prevLikes + 1));
-    } catch(error) {
-      console.error("좋아요 업데이트 실패: ", error);
+    try {
+      if (liked) {
+        // 이미 좋아요 눌렀다면 취소 (recommend -1)
+        await updateDoc(docRef, { recommend: increment(-1) });
+        await updateDoc(userLikeRef, { liked: false });
+
+        setLiked(false);
+        setLikes((prevLikes) => prevLikes - 1);
+      } else {
+        // 좋아요 누름 (recommend +1)
+        await updateDoc(docRef, { recommend: increment(1) });
+        await updateDoc(userLikeRef, { liked: true });
+
+        setLiked(true);
+        setLikes((prevLikes) => prevLikes + 1);
+      }
+    } catch (error) {
+      console.error("좋아요 업데이트 실패:", error);
     }
   };
 
@@ -99,12 +121,12 @@ export default function VideoDetail() {
               </div>
               <div className="flex items-center">
                 <ThumbsUp className="w-5 h-5 text-gray-500 mr-1" />
-                <span className="text-gray-600">{video.likes}</span>
+                <span className="text-gray-600">{likes}</span>
               </div>
             </div>
             <p className="text-sm text-gray-500 mt-2">{video.views} views · {new Date(video.publishedAt).toLocaleDateString()}</p>
 
-
+            {/* 좋아요 버튼 */}
             <div className="mt-4 flex items-center justify-center">
               <button
                 className="flex items-center p-2 rounded-lg transition"
@@ -118,8 +140,6 @@ export default function VideoDetail() {
                 <span className="ml-2 text-lg font-semibold">{likes}</span>
               </button>
             </div>
-
-
 
             {/* Essay 표시 */}
             <div className="mt-4">
