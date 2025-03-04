@@ -28,16 +28,43 @@ export default function Dashboard() {
   const API_KEY = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY;
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      if (currentUser) {
-        setUser(currentUser);
-      } else {
+    const fetchVideoData = async (currentuser) => {
+      if (!currentUser) {
         router.push("/");
+        return;
       }
-      setLoading(false);
+      setUserId(currentUser.uid);      
+
+      try {
+        const docRef = doc(db, "gallery", slug);
+        const docSnap = await getDoc(docRef);
+        if (!docSnap.exists()) throw new Error("해당 비디오를 찾을 수 없습니다.");
+
+        const videoData = docSnap.data();
+        setVideo(videoData);
+
+        const userDocRef = doc(db, "users", currentUser.uid);
+        const userDocSnap = await getDoc(userDocRef);
+
+        if (userDocSnap.exists() && userDocSnap.data().Mode) {
+          setIsOn(userDocSnap.data().Mode === "public"); // ✅ Mode 값에 따라 isOn 설정
+        } else {
+          setIsOn(false); // ✅ Mode 값이 없으면 기본값 설정
+        }
+
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      fetchVideoData(currentUser); // ✅ 비동기 함수 호출 (직접 `async` 사용 X)
     });
+
     return () => unsubscribe();
-  }, [router]);
+  }, [slug, router]);
 
 
   useEffect(() => {
