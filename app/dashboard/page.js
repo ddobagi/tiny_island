@@ -183,7 +183,7 @@ export default function Dashboard() {
                   
         </div>
       </div>
-      <div className="flex justify-end p-5">
+      <div className="flex justify-end p-1">
         <div 
           className="relative w-24 h-10 bg-black flex overflow-hidden justify-between items-center px-2 rounded-full cursor-pointer"
           onClick={() => setIsOn(!isOn)}
@@ -191,25 +191,25 @@ export default function Dashboard() {
 
           {!isOn && (
             <span
-              className="absolute right-3 text-sm font-bold text-white">
+              className="absolute right-3 text-xs font-bold text-white">
               Private
             </span>
           )}
 
           {isOn && (
             <span
-              className="absolute left-3 text-sm font-bold text-white">
+              className="absolute left-3 text-xs font-bold text-white">
               Public
             </span>
           )}
 
           {/* 모핑되는 토글 버튼 */}
           <motion.div
-            className="w-8 h-8 bg-white rounded-full shadow-md"
+            className="w-6 h-6 bg-white rounded-full shadow-md"
             layout
             transition={{ type: "spring", stiffness: 700, damping: 30 }}
             style={{
-              x: isOn ? 36 : 0,
+              x: isOn ? 40 : 0,
             }}
           />
         </div> 

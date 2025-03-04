@@ -4,10 +4,10 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "@/lib/firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, increment } from "firebase/firestore";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
-import { ThumbsUp, ArrowLeft } from "lucide-react";
+import { ThumbsUp, ArrowLeft, Heart, HeartOff } from "lucide-react";
 
 export default function VideoDetail() {
   const { slug } = useParams();
@@ -16,6 +16,9 @@ export default function VideoDetail() {
   const [video, setVideo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const [liked, setLiked ] = useState(false);
+  const [likes, setLikes ] = useState(0);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -29,7 +32,9 @@ export default function VideoDetail() {
         const docSnap = await getDoc(docRef);
         if (!docSnap.exists()) throw new Error("해당 비디오를 찾을 수 없습니다.");
 
-        setVideo(docSnap.data());
+        const videoData = docSnap.data();
+        setVideo(videoData);
+        setLikes(videoData.recommend || 0);
       } catch (error) {
         setError(error.message);
       } finally {
@@ -46,6 +51,22 @@ export default function VideoDetail() {
   const getYouTubeVideoID = (url) => {
     const match = url.match(/(?:youtu\.be\/|youtube\.com\/.*v=|youtube\.com\/watch\?v=)([^#&?\n]+)/);
     return match ? match[1] : null;
+  };
+
+  consthandleLike = async () => {
+    if (!video) return;
+
+    const docRef = doc(db, "gallery", slug);
+    try {
+      await updateDoc(docRef, {
+        recommend: increment(liked ? -1 : 1),
+      });
+
+      setLiked(!liked);
+      setLikes((prevLikes) => (liked ? prevLikes -1 : prevLikes + 1));
+    } catch(error) {
+      console.error("좋아요 업데이트 실패: ", error);
+    }
   };
 
   return (
@@ -82,6 +103,23 @@ export default function VideoDetail() {
               </div>
             </div>
             <p className="text-sm text-gray-500 mt-2">{video.views} views · {new Date(video.publishedAt).toLocaleDateString()}</p>
+
+
+            <div className="mt-4 flex items-center justify-center">
+              <button
+                className="flex items-center p-2 rounded-lg transition"
+                onClick={handleLike}
+              >
+                {liked ? (
+                  <Heart className="w-6 h-6 text-red-500" />
+                ) : (
+                  <HeartOff className="w-6 h-6 text-gray-500" />
+                )}
+                <span className="ml-2 text-lg font-semibold">{likes}</span>
+              </button>
+            </div>
+
+
 
             {/* Essay 표시 */}
             <div className="mt-4">
