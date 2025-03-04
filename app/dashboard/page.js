@@ -125,9 +125,7 @@ export default function Dashboard() {
       if (!videoDetails) return;
       const userId = auth.currentUser.uid;
 
-      const collectionPath = isOn
-        ? collection(db, "gallery") // isOn이 true면 gallery
-        : collection(db, "users", userId, "videos"); // isOn이 false면 users/videos
+      collection(db, "users", userId, "videos"); 
 
       await addDoc(collectionPath, videoDetails);
       setNewVideo({ name: "", video: "", thumbnail: "", channel: "", views: "", likes: "", publishedAt: "", channelProfile: "" });
@@ -186,7 +184,7 @@ export default function Dashboard() {
       </div>
       <div className="flex justify-end p-5">
         <div 
-          className="relative w-30 h-7 bg-black flex items-center px-2 rounded-full cursor-pointer"
+          className="relative w-15 h-7 bg-black flex items-center px-2 rounded-full cursor-pointer"
           onClick={() => setIsOn(!isOn)}
         >
 
@@ -216,35 +214,36 @@ export default function Dashboard() {
         </div> 
       </div>
 
-
-      <div className="z-10 fixed bottom-6 right-6 flex flex-col items-end" ref={fabRef}>
-        {fabOpen && (
-          <div className="relative px-4 py-2 w-[350px] transition-transform transform translate-y-2 opacity-100 mb-2">
-            <p className="font-pretendard font-semibold text-gray-700">URL</p>
-            <div className="relative flex items-center bg-gray-100 rounded-lg px-4 py-2">
-              <Input 
-                type="text" 
-                placeholder="Youtube URL" 
-                value={newVideo.video} 
-                onChange={handleInputChange} 
-                className="flex-1 bg-gray-100 focus:outline-none text-gray-700" 
-              />
-              <Button 
-                onClick={handleAddVideo} 
-                className="ml-2 h-10 px-4 rounded-full bg-black text-white font-bold text-sm"
-              >
-                추가
-              </Button>
+      { !isOn && (
+        <div className="z-10 fixed bottom-6 right-6 flex flex-col items-end" ref={fabRef}>
+          {fabOpen && (
+            <div className="relative px-4 py-2 w-[350px] transition-transform transform translate-y-2 opacity-100 mb-2">
+              <p className="font-pretendard font-semibold text-gray-700">URL</p>
+              <div className="relative flex items-center bg-gray-100 rounded-lg px-4 py-2">
+                <Input 
+                  type="text" 
+                  placeholder="Youtube URL" 
+                  value={newVideo.video} 
+                  onChange={handleInputChange} 
+                  className="flex-1 bg-gray-100 focus:outline-none text-gray-700" 
+                />
+                <Button 
+                  onClick={handleAddVideo} 
+                  className="ml-2 h-10 px-4 rounded-full bg-black text-white font-bold text-sm"
+                >
+                  추가
+                </Button>
+              </div>
             </div>
-          </div>
-        )}
-        <Button 
-          onClick={() => setFabOpen(!fabOpen)} 
-          className="rounded-full w-12 h-12 flex items-center justify-center shadow-lg"
-        >
-          {fabOpen ? <X size={24} /> : <Plus size={24} />}
-        </Button>
-      </div>
+          )}
+          <Button 
+            onClick={() => setFabOpen(!fabOpen)} 
+            className="rounded-full w-12 h-12 flex items-center justify-center shadow-lg"
+          >
+            {fabOpen ? <X size={24} /> : <Plus size={24} />}
+          </Button>
+        </div>
+      )}
 
 
       <div className="grid grid-cols-1 gap-6 mt-6 w-full max-w-6xl">
