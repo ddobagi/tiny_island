@@ -63,10 +63,7 @@ export default function Dashboard() {
         setLoading(false);
       }
     };
-  }, [slug, router]);
-
-
-
+  }, [router]);
 
   useEffect(() => {
     if (!user) return;
