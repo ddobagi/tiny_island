@@ -193,7 +193,7 @@ export default function Dashboard() {
       </div>
       <div className="flex justify-end p-5">
         <div 
-          className="relative w-20 h-7 flex items-center px-2 rounded-full cursor-pointer"
+          className="relative w-20 h-7 bg-black flex items-center px-2 rounded-full cursor-pointer"
           onClick={() => setIsOn(!isOn)}
         >
 
