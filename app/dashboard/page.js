@@ -23,6 +23,13 @@ export default function Dashboard() {
   const fabRef = useRef(null);
   const router = useRouter();
 
+
+  const toggleWidth = style?.width || 60;
+  const toggleHeight = style?.height || 30;
+  const circleSize = toggleHeight * 0.8; // 동그라미 크기
+  const padding = (toggleHeight - circleSize) / 2; // 여백
+  const textSize = toggleHeight * 0.4;
+
   const [searchMode, setSearchMode] = useState(false);
   
   const API_KEY = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY;
@@ -52,7 +59,7 @@ export default function Dashboard() {
       setVideos(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
     });
     return () => unsubscribe();
-  }, [user]);
+  }, [user, isOn]);
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -125,7 +132,7 @@ export default function Dashboard() {
       if (!videoDetails) return;
       const userId = auth.currentUser.uid;
 
-      collectionPath = collection(db, "users", userId, "videos"); 
+      const collectionPath = collection(db, "users", userId, "videos"); 
 
       await addDoc(collectionPath, videoDetails);
       setNewVideo({ name: "", video: "", thumbnail: "", channel: "", views: "", likes: "", publishedAt: "", channelProfile: "" });
@@ -208,7 +215,9 @@ export default function Dashboard() {
             layout
             transition={{ type: "spring", stiffness: 700, damping: 30 }}
             style={{
-              left: isOn ? "calc(100% - 2.5rem)" : "0.5rem",
+              width: toggleWidth,
+              height: toggleHeight,
+              left: isOn ? toggleWidth - circleSize - padding * 2 : padding,
             }}
           />
         </div> 
