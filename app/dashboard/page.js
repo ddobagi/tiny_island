@@ -23,13 +23,6 @@ export default function Dashboard() {
   const fabRef = useRef(null);
   const router = useRouter();
 
-
-  const toggleWidth = style?.width || 60;
-  const toggleHeight = style?.height || 30;
-  const circleSize = toggleHeight * 0.8; // 동그라미 크기
-  const padding = (toggleHeight - circleSize) / 2; // 여백
-  const textSize = toggleHeight * 0.4;
-
   const [searchMode, setSearchMode] = useState(false);
   
   const API_KEY = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY;
@@ -191,7 +184,7 @@ export default function Dashboard() {
       </div>
       <div className="flex justify-end p-5">
         <div 
-          className="relative w-24 h-10 bg-black flex overflow-hidden justify-between items-center px-2 rounded-full cursor-pointer"
+          className="relative w-24 h-8 bg-black flex overflow-hidden justify-between items-center px-2 rounded-full cursor-pointer"
           onClick={() => setIsOn(!isOn)}
         >
 
@@ -215,9 +208,7 @@ export default function Dashboard() {
             layout
             transition={{ type: "spring", stiffness: 700, damping: 30 }}
             style={{
-              width: toggleWidth,
-              height: toggleHeight,
-              left: isOn ? toggleWidth - circleSize - padding * 2 : padding,
+              x: isOn ? 36 : 0,
             }}
           />
         </div> 
