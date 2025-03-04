@@ -41,14 +41,14 @@ export default function VideoDetail() {
                     console.log(`Mode 값이 Firestore에서 로드됨: ${mode}`);
 
                     // ✅ Mode 값이 반영된 후에 fetchVideoData 실행
-                    setIsOn(mode);
+                    fetchVideoData(slug, mode);
                     
                 } else {
-                    setIsOn(false);
+                  fetchVideoData(slug, false);
                 }
             } catch (error) {
                 console.error("사용자 Mode 데이터를 가져오는 중 오류 발생:", error);
-                setIsOn(false);
+                fetchVideoData(slug, false);
             }
         } else {
             router.push("/");
@@ -58,7 +58,7 @@ export default function VideoDetail() {
     });
 
     return () => unsubscribe();
-  }, [router]);
+  }, [slug, user, router]);
 
   const getYouTubeVideoID = (url) => {
     const match = url.match(/(?:youtu\.be\/|youtube\.com\/.*v=|youtube\.com\/embed\/|youtube\.com\/v\/|youtube\.com\/user\/.*#p\/u\/\d\/|youtube\.com\/watch\?v=|youtube\.com\/watch\?.+&v=)([^#&?\n]+)/);
@@ -109,14 +109,6 @@ export default function VideoDetail() {
         setLoading(false);
     }
   };
-
-
-  useEffect(() => {
-      if (user !== null) {  // user 값이 설정된 이후 실행되도록 추가
-          console.log(`mode 값이 변경됨: ${isOn}`);
-          fetchVideoData(slug, isOn);
-      }
-  }, [isOn, slug, user]); // ✅ isOn 값이 변경되면 fetchVideoData 다시 실행
 
   const handleTogglePost = async () => {
     try {
