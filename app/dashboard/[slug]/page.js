@@ -39,6 +39,7 @@ export default function VideoDetail() {
           } else {
             setIsOn(false); // ✅ Mode 값이 없으면 기본값 설정
           }
+          fetchVideoData(slug);
         } catch (error) {
           console.error("사용자 Mode 데이터를 가져오는 중 오류 발생:", error);
           setIsOn(false); // 오류 발생 시 기본값 설정
@@ -50,9 +51,8 @@ export default function VideoDetail() {
       }
       setLoading(false);
     });
-
     return () => unsubscribe();
-}, [router]);
+}, [isOn, slug, user, router]);
 
   const getYouTubeVideoID = (url) => {
     const match = url.match(/(?:youtu\.be\/|youtube\.com\/.*v=|youtube\.com\/embed\/|youtube\.com\/v\/|youtube\.com\/user\/.*#p\/u\/\d\/|youtube\.com\/watch\?v=|youtube\.com\/watch\?.+&v=)([^#&?\n]+)/);
@@ -68,13 +68,6 @@ export default function VideoDetail() {
       console.error("게시 여부 확인 중 오류 발생: ", error);
     }
   };
-
-  // ✅ isOn이 변경될 때 fetchVideoData 호출
-  useEffect(() => {
-    if (user) {  // ✅ user 값이 설정된 이후 실행되도록 추가
-      fetchVideoData(slug);
-    }
-  }, [isOn, slug, user]); // ✅ isOn 값이 변경되면 fetchVideoData 다시 실행
 
   const fetchVideoData = async (slug) => {
     try {
@@ -106,7 +99,7 @@ export default function VideoDetail() {
       setLoading(false);
     }
   };
-  
+
   const handleTogglePost = async () => {
     try {
       if (!video) throw new Error("비디오 데이터가 없습니다.");
