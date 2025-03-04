@@ -41,8 +41,9 @@ export default function VideoDetail() {
                     console.log(`Mode 값이 Firestore에서 로드됨: ${mode}`);
 
                     // ✅ Mode 값이 반영된 후에 fetchVideoData 실행
-                    fetchVideoData(slug, mode);
                     setIsOn(mode);
+                    fetchVideoData(slug, mode);
+                    
                 } else {
                     setIsOn(false);
                     fetchVideoData(slug, false);
@@ -115,10 +116,10 @@ export default function VideoDetail() {
 
   useEffect(() => {
       if (user !== null) {  // user 값이 설정된 이후 실행되도록 추가
-          console.log(`isOn 값이 변경됨: ${isOn}`);
+          console.log(`mode 값이 변경됨: ${mode}`);
           fetchVideoData(slug);
       }
-  }, [isOn, slug, user]); // ✅ isOn 값이 변경되면 fetchVideoData 다시 실행
+  }, [mode, slug, user]); // ✅ isOn 값이 변경되면 fetchVideoData 다시 실행
 
   const handleTogglePost = async () => {
     try {
