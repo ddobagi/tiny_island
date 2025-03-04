@@ -75,9 +75,8 @@ export default function Home() {
           <p className="mb-4">로그인한 사용자: {user.displayName} ({user.email})</p>
           <button
             onClick={handleLogout}
-            className="px-5 py-2 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600"
+            className="px-5 py-2 bg-transparent text-white rounded-lg shadow-md"
           >
-            로그아웃
           </button>
         </div>
       ) : (
