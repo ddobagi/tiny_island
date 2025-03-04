@@ -85,7 +85,7 @@ export default function VideoDetail() {
           setEssay(videoData.essay || "");
           checkIfPosted(videoData.video);
         } else {
-          throw new Error("해당 비디오를 찾을 수 없습니다.");
+          throw new Error("해당 비디오를 찾을 수 없습니다. is On이 true일 때 ");
         }
       } else {
         // ✅ `private` 모드일 때 기존 `users/{userId}/videos/{slug}` 경로 사용
@@ -101,7 +101,7 @@ export default function VideoDetail() {
           setEssay(videoData.essay || "");
           checkIfPosted(videoData.video);
         } else {
-          throw new Error("해당 비디오를 찾을 수 없습니다.");
+          throw new Error("해당 비디오를 찾을 수 없습니다.is On이 false일 때");
         }
       }
     } catch (error) {
