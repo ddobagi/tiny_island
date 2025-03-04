@@ -121,7 +121,7 @@ export default function VideoDetail() {
               </div>
               <div className="flex items-center">
                 <ThumbsUp className="w-5 h-5 text-gray-500 mr-1" />
-                <span className="text-gray-600">{likes}</span>
+                <span className="text-gray-600">{video.likes}</span>
               </div>
             </div>
             <p className="text-sm text-gray-500 mt-2">{video.views} views · {new Date(video.publishedAt).toLocaleDateString()}</p>
@@ -133,6 +133,8 @@ export default function VideoDetail() {
               {/* Essay 텍스트 */}
               <div className="flex-1">
                 <h2 className="text-lg font-semibold font-nanum_pen">Essay</h2>
+              </div>
+              <div className ="flex-1">
                 <p className="mt-2 p-2 border rounded bg-gray-100 font-nanum_pen">
                   {video.essay || "작성된 내용이 없습니다."}
                 </p>
@@ -142,9 +144,9 @@ export default function VideoDetail() {
               <div className="ml-4">
                 <button className="flex items-center p-2 rounded-lg transition" onClick={handleLike}>
                   {liked ? (
-                    <Heart className="w-6 h-6 text-red-500" />
+                    <Heart className="w-6 h-6 text-red-500" fill="currentColor"/>
                   ) : (
-                    <Heart className="w-6 h-6 text-red-500" fill="currentColor" />
+                    <Heart className="w-6 h-6 text-red-500"  />
                   )}
                   <span className="ml-2 text-lg font-semibold">{likes}</span>
                 </button>

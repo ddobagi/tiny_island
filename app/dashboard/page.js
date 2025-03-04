@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { auth, provider, db } from "@/lib/firebase";
 import { signInWithPopup, onAuthStateChanged, signOut } from "firebase/auth";
-import { collection, onSnapshot, addDoc, deleteDoc, doc } from "firebase/firestore";
+import { collection, onSnapshot, addDoc, deleteDoc, doc, setDoc } from "firebase/firestore";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -64,6 +64,25 @@ export default function Dashboard() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const handleToggleMode = async () => {
+    if (!user) return;
+  
+    const userId = auth.currentUser.uid;
+    const userDocRef = doc(db, "users", userId); // ✅ Firestore에서 해당 유저 문서 참조
+  
+    const newMode = isOn ? "private" : "public"; // ✅ 상태 반전 후 적용할 모드 설정
+  
+    try {
+      await setDoc(userDocRef, { Mode: newMode }, { merge: true }); // ✅ Firestore에 Mode 필드 저장 (merge: true 옵션으로 기존 데이터 유지)
+      setIsOn(!isOn); // ✅ 상태 업데이트
+    } catch (error) {
+      console.error("Firestore 모드 업데이트 오류:", error);
+    }
+  };
+
+
+
 
   const getYoutubeVideoDetails = async (url) => {
     try {
@@ -186,7 +205,7 @@ export default function Dashboard() {
       <div className="flex justify-end p-1">
         <div 
           className="relative w-24 h-10 bg-black flex overflow-hidden justify-between items-center px-2 rounded-full cursor-pointer"
-          onClick={() => setIsOn(!isOn)}
+          onClick={handleToggleMode}
         >
 
           {!isOn && (
