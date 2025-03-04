@@ -125,7 +125,7 @@ export default function Dashboard() {
       if (!videoDetails) return;
       const userId = auth.currentUser.uid;
 
-      collection(db, "users", userId, "videos"); 
+      collectionPath = collection(db, "users", userId, "videos"); 
 
       await addDoc(collectionPath, videoDetails);
       setNewVideo({ name: "", video: "", thumbnail: "", channel: "", views: "", likes: "", publishedAt: "", channelProfile: "" });
@@ -184,7 +184,7 @@ export default function Dashboard() {
       </div>
       <div className="flex justify-end p-5">
         <div 
-          className="relative w-15 h-7 bg-black flex items-center px-2 rounded-full cursor-pointer"
+          className="relative w-24 h-10 bg-black flex overflow-hidden justify-between items-center px-2 rounded-full cursor-pointer"
           onClick={() => setIsOn(!isOn)}
         >
 
@@ -208,7 +208,7 @@ export default function Dashboard() {
             layout
             transition={{ type: "spring", stiffness: 700, damping: 30 }}
             style={{
-              x: isOn ? 36 : 0,
+              left: isOn ? "calc(100% - 2.5rem)" : "0.5rem",
             }}
           />
         </div> 
