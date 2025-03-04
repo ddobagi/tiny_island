@@ -120,7 +120,20 @@ export default function VideoDetail() {
       
       const docRef = doc(db, "users", userId, "videos", slug);
       await updateDoc(docRef, { essay });
+
+
+      // 🔥 추가된 코드: gallery 컬렉션에서 해당 영상 삭제
+      const q = query(collection(db, "gallery"), where("video", "==", video.video));
+      const querySnapshot = await getDocs(q);
+
+      querySnapshot.forEach(async (doc) => {
+        await deleteDoc(doc.ref);
+      });
+
+      // UI 업데이트
+      setIsPosted(false);
       setIsEditing(false);
+      alert("에세이가 저장되었으며, 게시가 취소되었습니다.");
     } catch (error) {
       console.error("Firestore에서 essay 데이터 업데이트 중 오류 발생: ", error);
     }
