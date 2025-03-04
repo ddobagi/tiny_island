@@ -22,9 +22,6 @@ export default function VideoDetail() {
   const [isEditing, setIsEditing] = useState(false);
   const [isPosted, setIsPosted] = useState(false);
 
-  const [userId, setUserId] = useState(null);
-  const[videoId, setVideoId] = useState(null);
-
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (!currentUser) {
@@ -77,83 +74,6 @@ export default function VideoDetail() {
       setIsEditing(false);
     } catch (error) {
       console.error("Firestore에서 essay 데이터 업데이트 중 오류 발생: ", error);
-    }
-  };
-  
-  useEffect(() => {
-    const checkPostStatus = async () => {
-      if (!userId || !videoId) return;
-  
-      const galleryRef = doc(db, "gallery", videoId);
-      const docSnap = await getDoc(galleryRef);
-  
-      if (docSnap.exists()) {
-        setIsPosted(true);
-      }
-    };
-  
-    checkPostStatus();
-  }, [userId, videoId]);
-
-
-
-  // 🔹 Firestore에 비디오 게시
-  const handlePostVideo = async () => {
-    if (!userId || !videoId) {
-      setError("유효한 사용자 또는 비디오 ID가 필요합니다.");
-      return;
-    }
-      
-    setLoading(true);
-    setError(null);
-  
-    try {
-      // 1️⃣ users/{userId}/videos/{videoId}에서 videoDetails 가져오기
-      const videoRef = doc(db, "users", userId, "videos", videoId);
-      const videoSnap = await getDoc(videoRef);
-  
-      if (!videoSnap.exists()) {
-        throw new Error("비디오 데이터를 찾을 수 없습니다.");
-      }
-  
-      const videoDetails = videoSnap.data();
-  
-      // 2️⃣ gallery/{videoId}에 videoDetails 저장
-      const galleryRef = doc(db, "gallery", videoId);
-      await setDoc(galleryRef, videoDetails);
-  
-      // 3️⃣ 버튼 상태 변경
-      setIsPosted(true);
-    } catch (error) {
-      console.error("게시 중 오류 발생: ", error);
-      setError(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-  
-  // 🔹 Firestore에서 비디오 게시 취소
-  const handleUnpostVideo = async () => {
-    if (!userId || !videoId) {
-      setError("유효한 사용자 또는 비디오 ID가 필요합니다.");
-      return;
-    }  
-
-    setLoading(true);
-    setError(null);
-  
-    try {
-      // 1️⃣ gallery/{videoId}에서 삭제
-      const galleryRef = doc(db, "gallery", videoId);
-      await deleteDoc(galleryRef);
-  
-      // 2️⃣ 버튼 상태 변경
-      setIsPosted(false);
-    } catch (error) {
-      console.error("게시 취소 중 오류 발생: ", error);
-      setError(error.message);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -213,12 +133,6 @@ export default function VideoDetail() {
                 ) : (
                   <Button onClick={() => setIsEditing(true)}>수정</Button>
                 )}
-              </div>
-              <div className="flex mt-2 space-x-2 font-pretendard justify-end">
-                <Button onClick={isPosted ? handleUnpostVideo : handlePostVideo} disabled={loading}>
-                  {loading ? "처리 중..." : isPosted ? "게시 취소" : "게시"}
-                </Button>
-                {error && <p className="text-red-500 mt-2">{error}</p>}
               </div>
             </div>
           </CardContent>
