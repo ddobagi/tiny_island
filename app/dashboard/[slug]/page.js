@@ -92,7 +92,7 @@ export default function VideoDetail() {
         const userId = auth.currentUser?.uid;
         if (!userId) throw new Error("사용자 인증이 필요합니다.");
     
-        docRef = doc(db, "users", userId , slug);
+        docRef = doc(db, "users", userId , "videos", slug);
         const docSnap = await getDoc(docRef);
     
         if (docSnap.exists()) {
