@@ -34,23 +34,13 @@ export default function VideoDetail() {
             try {
                 const userDocRef = doc(db, "users", currentUser.uid);
                 const userDocSnap = await getDoc(userDocRef);
+                const mode = userDocSnap.exists() && userDocSnap.data().Mode === "public";
 
-                if (userDocSnap.exists() && userDocSnap.data().Mode) {
-                    const mode = userDocSnap.data().Mode === "public";
-
-                    console.log(`Mode 값이 Firestore에서 로드됨: ${mode}`);
-
-                    // ✅ Mode 값이 반영된 후에 fetchVideoData 실행
-                    fetchVideoData(slug, mode);
-                    setIsOn(mode)
-                    
-                } else {
-                  fetchVideoData(slug, false);
-                  setIsOn(false)
-                }
+                setIsOn(mode);
+                await fetchVideoData(slug, mode);
             } catch (error) {
                 console.error("사용자 Mode 데이터를 가져오는 중 오류 발생:", error);
-                fetchVideoData(slug, false);
+                await fetchVideoData(slug, false);
             }
         } else {
             router.push("/");
@@ -60,39 +50,19 @@ export default function VideoDetail() {
     });
 
     return () => unsubscribe();
-  }, [slug, user, router]);
+  }, [slug, router]);
 
   const getYouTubeVideoID = (url) => {
     const match = url.match(/(?:youtu\.be\/|youtube\.com\/.*v=|youtube\.com\/embed\/|youtube\.com\/v\/|youtube\.com\/user\/.*#p\/u\/\d\/|youtube\.com\/watch\?v=|youtube\.com\/watch\?.+&v=)([^#&?\n]+)/);
     return match ? match[1] : null;
   };
 
-  const checkIfPosted = async (videoUrl) => {
-    try {
-      const q = query(collection(db, "gallery"), where("video", "==", videoUrl));
-      const querySnapshot = await getDocs(q);
-      setIsPosted(!querySnapshot.empty); // 문서가 있으면 게시됨
-    } catch (error) {
-      console.error("게시 여부 확인 중 오류 발생: ", error);
-    }
-  };
-
-
-
   // ✅ `isOn`이 변경될 때 fetchVideoData를 실행하지 않고, 위 `useEffect`에서 직접 실행함
   const fetchVideoData = async (slug, mode) => {
     try {
         setLoading(true);
-        let docRef;
-
-        if (mode) {
-            docRef = doc(db, "gallery", slug);
-        } else {
-            const userId = auth.currentUser?.uid;
-            if (!userId) throw new Error("사용자 인증이 필요합니다.");
-
-            docRef = doc(db, "users", userId, "videos", slug);
-        }
+        let docRef = mode
+          ? doc(db, "gallery", slug) : doc(db, "users", auth.currentUser?.uid, "videos", slug)
 
         const docSnap = await getDoc(docRef);
 
@@ -100,7 +70,7 @@ export default function VideoDetail() {
             const videoData = docSnap.data();
             setVideo(videoData);
             setEssay(videoData.essay || "");
-            checkIfPosted(videoData.video);
+            setIsPosted(mode);
         } else {
             throw new Error(`해당 비디오를 찾을 수 없습니다. (isOn: ${mode})`);
         }
@@ -113,18 +83,18 @@ export default function VideoDetail() {
   };
 
   const handleTogglePost = async () => {
-    try {
-      if (!video) throw new Error("비디오 데이터가 없습니다.");
-      const userId = auth.currentUser?.uid;
-      if(!userId) throw new Error("로그인 후 이용해주세요.");
+    if (!video) return alert("비디오 데이터가 없습니다.");
+    if (!auth.currentUser) return alert("로그인 후 이용해주세요");
 
+    try {
       if (isPosted) {
         const q = query(collection(db, "gallery"), where ("video", "==", video.video));
         const querySnapshot = await getDocs(q);
 
-        querySnapshot.forEach(async (doc) => {
-          await deleteDoc(doc.ref);
-      });
+        const batch = writeBatch(db);
+
+        querySnapshot.forEach((doc) => batch.delete(doc.ref));
+        await batch.commit();
 
         setIsPosted(false);
         alert("게시가 취소되었습니다.");
@@ -152,11 +122,10 @@ export default function VideoDetail() {
   };
 
   const handleSaveEssay = async () => {
+    if (!auth.currentUser) return alert("사용자 인증이 필요합니다.");
+
     try {
-      const userId = auth.currentUser?.uid;
-      if (!userId) throw new Error("사용자 인증이 필요합니다.");
-      
-      const docRef = doc(db, "users", userId, "videos", slug);
+      const docRef = doc(db, "users", auth.currentUser.uid, "videos", slug);
       await updateDoc(docRef, { essay });
 
 
@@ -164,15 +133,15 @@ export default function VideoDetail() {
       const q = query(collection(db, "gallery"), where("video", "==", video.video));
       const querySnapshot = await getDocs(q);
 
-      querySnapshot.forEach(async (doc) => {
-        await deleteDoc(doc.ref);
-      });
+      const batch = writeBatch(db);
+      querySnapshot.forEach((doc) => batch.delete(doc.ref));
+      await batch.commit();
 
       // UI 업데이트
       setIsPosted(false);
       setIsEditing(false);
     } catch (error) {
-      console.error("Firestore에서 essay 데이터 업데이트 중 오류 발생: ", error);
+      console.error("에세이 저장 오류: ", error);
     }
   };
   
@@ -187,7 +156,7 @@ export default function VideoDetail() {
           <ArrowLeft className="w-6 h-6 mr-2" />
         </Link>
       </div>
-      {video && <h1 className="text-2xl font-bold mb-1">{video.title}</h1>}
+
       {video && (
         <Card className="rounded-lg shadow-lg w-full max-w-2xl">
           <div className="relative w-full aspect-video">
