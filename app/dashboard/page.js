@@ -111,32 +111,19 @@ export default function Dashboard() {
     setNewVideo({ ...newVideo, video: url });
   };
 
-  const handlePostVideo = async () => {
+  const handleAddVideo = async () => {
+    if (!user || !newVideo.video) return;
     try {
-      if (!video) throw new Error("비디오 데이터가 없습니다.");
-  
-      const userId = auth.currentUser?.uid;
-      if (!userId) throw new Error("사용자 인증이 필요합니다.");
-  
-      await addDoc(collection(db, "gallery"), {
-        name: video.name || "제목 없음",
-        video: video.video || "",
-        thumbnail: video.thumbnail || "",
-        channel: video.channel || "알 수 없음",
-        views: video.views || 0,
-        likes: video.likes || 0,
-        publishedAt: video.publishedAt || serverTimestamp(),
-        channelProfile: video.channelProfile || "",
-        post: true, // 새로운 문서에 post 필드 추가
-        createdAt: serverTimestamp(), // 문서 생성 시간 추가
-      });
-  
-      alert("새로운 게시물이 생성되었습니다!");
+      const videoDetails = await getYoutubeVideoDetails(newVideo.video);
+      if (!videoDetails) return;
+      const userId = auth.currentUser.uid;
+      await addDoc(collection(db, "users", userId, "videos"), videoDetails);
+      setNewVideo({ name: "", video: "", thumbnail: "", channel: "", views: "", likes: "", publishedAt: "", channelProfile: "" });
+      setFabOpen(false);
     } catch (error) {
-      console.error("Firestore에서 새로운 문서 생성 중 오류 발생: ", error);
+      console.error("Firestore에 비디오 추가 중 오류 발생: ", error);
     }
   };
-  
 
   const extractEmailPrefix = (email) => {
     return email ? email.split("@")[0] : "";
