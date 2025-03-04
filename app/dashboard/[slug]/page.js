@@ -156,11 +156,6 @@ export default function VideoDetail() {
       }
     };
   
-    return (
-      
-    );
-  };
-  
 
 
 
@@ -235,4 +230,4 @@ export default function VideoDetail() {
       )}
     </div>
   );
-}
+}}
