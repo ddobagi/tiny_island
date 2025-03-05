@@ -9,7 +9,7 @@ import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, X, Trash2, Search, ArrowLeft, LogOut  } from "lucide-react";
+import { Plus, X, Trash2, Search, ArrowLeft, LogOut, Heart  } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 
 export default function Dashboard() {
@@ -239,9 +239,7 @@ export default function Dashboard() {
           )}
 
           {user && !searchMode && (
-            <button onClick={() => signOut(auth)} className="text-black">
-              <LogOut size={24} />
-            </button>
+            <Link href={"/dashboard/likes"} passHref><Heart size={24} className="cursor-pointer" /></Link>
           )}
                   
         </div>
