@@ -204,7 +204,8 @@ export default function Dashboard() {
   return (
     <div className="rounded-lg shadow-lg max-w-2xl w-full flex flex-col p-6 relative mx-auto">
       <div className="flex items-center max-w-[600px] w-full h-10 space-x-2 justify-end">
-        <p className="text-sm">{getEmailUsername(userEmail)} 님</p>
+        <p className="text-gray-500 text-sm font-pretendard">{getEmailUsername(userEmail)} 님</p>
+        <p onClick={() => signOut(auth)} className="text-gray-500 text-sm font-pretendard underline">로그아웃</p>
       </div>
       <div className="flex items-center justify-between max-w-[600px] w-full h-16 px-4 bg-transparent border border-gray-500 rounded text-white">
         {/* 왼쪽 아이콘 */}
