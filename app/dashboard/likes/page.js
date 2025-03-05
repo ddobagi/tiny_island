@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { auth, db } from "@/lib/firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { query, collection, getDocs, onSnapshot, orderBy, doc, deleteDoc, where } from "firebase/firestore";
+import { query, collection, getDocs, onSnapshot, orderBy, doc, deleteDoc, where, setDoc } from "firebase/firestore";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { LogOut, Trash2, ArrowLeft } from "lucide-react";
