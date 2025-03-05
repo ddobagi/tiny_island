@@ -69,25 +69,15 @@ export default function LikesDashboard() {
 
   return (
     <div className="rounded-lg shadow-lg max-w-2xl w-full flex flex-col p-6 relative mx-auto">
-      <div className="flex items-center max-w-[600px] w-full h-10 space-x-2 justify-end">
-        <p className="text-gray-500 text-sm font-pretendard">{getEmailUsername(userEmail)} 님</p>
-        <p onClick={() => signOut(auth)} className="cursor-pointer text-gray-500 text-sm font-pretendard underline">로그아웃</p>
-      </div>
-      <div className="w-full max-w-2xl flex justify-start">
+      <div className="w-full max-w-2xl flex justify-between">
         <Link href="/dashboard" className="flex items-center mb-2">
           <ArrowLeft className="w-6 h-6 mr-2" />
         </Link>
-      </div>
-      <div className="flex items-center justify-between w-full h-16 px-4 border border-gray-500 rounded text-white">
-        <h1 className="text-lg font-bold">Liked Videos</h1>
-        {user && (
-          <button onClick={() => signOut(auth)} className="text-black">
-            <LogOut size={24} />
-          </button>
-        )}
-      </div>
-
-      
+        <div className="flex items-center max-w-[600px] w-full h-10 space-x-2 justify-end">
+          <p className="text-gray-500 text-sm font-pretendard">{getEmailUsername(userEmail)} 님</p>
+          <p onClick={() => signOut(auth)} className="cursor-pointer text-gray-500 text-sm font-pretendard underline">로그아웃</p>
+        </div>
+      </div>      
 
       <div className="grid grid-cols-1 gap-6 mt-6 w-full max-w-6xl">
         {videos.map((video) => (
@@ -115,15 +105,6 @@ export default function LikesDashboard() {
                 </div>
               </Link>
             </CardContent>
-            <button
-              onClick={async () => {
-                await deleteDoc(doc(db, "gallery", video.id, "likes", user.uid));
-                router.push("/dashboard/likes");
-              }}
-              className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full shadow-md hover:bg-red-600"
-            >
-              <Trash2 size={32} />
-            </button>
           </Card>
         ))}
       </div>

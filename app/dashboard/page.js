@@ -239,7 +239,7 @@ export default function Dashboard() {
           )}
 
           {user && !searchMode && (
-            <Link href={"/dashboard/likes"} passHref><Heart size={24} className="cursor-pointer" /></Link>
+            <Link href={"/dashboard/likes"} passHref><Heart size={24} className="cursor-pointer text-black" /></Link>
           )}
                   
         </div>
