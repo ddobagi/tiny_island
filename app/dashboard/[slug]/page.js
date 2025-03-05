@@ -29,7 +29,7 @@ export default function VideoDetail() {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
         if (currentUser) {
             console.log("✅ 로그인된 사용자:", currentUser);
-            setUser({ ...currentUser });
+            setUser(currentUser);
             setLoading(true);
 
             try {
@@ -62,7 +62,7 @@ export default function VideoDetail() {
 
   // ✅ `isOn`이 변경될 때 fetchVideoData를 실행하지 않고, 위 `useEffect`에서 직접 실행함
   const fetchVideoData = async (slug, mode) => {
-    if (!user) {
+    if (!auth.currentUser) {
       console.warn("user가 아직 설정되지 않음, 500ms 후 다시 실행");
       setTimeout(() => fetchVideoData(slug, mode), 500); // 🔥 0.5초 후 다시 실행
       return;
@@ -116,7 +116,7 @@ export default function VideoDetail() {
 
   const handleTogglePost = async () => {
     if (!video) return alert("비디오 데이터가 없습니다.");
-    if (!user) return alert("로그인 후 이용해주세요");
+    if (!auth.currentUser) return alert("로그인 후 이용해주세요");
 
     try {
       if (isPosted) {
@@ -154,7 +154,7 @@ export default function VideoDetail() {
   };
 
   const handleSaveEssay = async () => {
-    if (!user) return alert("사용자 인증이 필요합니다.");
+    if (!auth.currentUser) return alert("사용자 인증이 필요합니다.");
 
     try {
       const userId = auth.currentUser?.uid;
@@ -180,8 +180,8 @@ export default function VideoDetail() {
   };
   
   const handleLike = async () => {
-    if (!video || !userId) return;
-    if (!user) return alert(" ");
+    if (!video) return;
+    if (!auth.currentUser) return alert(" ");
 
     const docRef = doc(db, "gallery", slug);
     const userLikeRef = doc(db, "gallery", slug, "likes", userId);
