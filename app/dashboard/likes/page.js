@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { auth, db } from "@/lib/firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { query, collection, onSnapshot, orderBy, doc, deleteDoc } from "firebase/firestore";
+import { query, collection, onSnapshot, orderBy, doc, deleteDoc, where } from "firebase/firestore";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { LogOut, Trash2 } from "lucide-react";
@@ -31,12 +31,12 @@ export default function LikesDashboard() {
     if (!user) return;
     
     const userId = user.uid;
-    const collectionPath = collection(db, "gallery", videoId, "likes");
-    const q = query(collectionPath);
+    const collectionPath = collection(db, "gallery"); // 모든 비디오 컬렉션 가져오기
+    const q = query(collectionPath, orderBy("createdAt", "desc")); // 최신순 정렬
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const likedVideos = snapshot.docs
-        .filter((doc) => doc.data().likedBy?.includes(userId)) // 현재 사용자가 좋아요 누른 영상만 필터링
+        .filter((doc) => doc.data().likes?.includes(userId)) // 현재 사용자가 좋아요 누른 영상만 필터링
         .map((doc) => ({ id: doc.id, ...doc.data() }));
       setVideos(likedVideos);
     });
@@ -85,7 +85,7 @@ export default function LikesDashboard() {
             </CardContent>
             <button
               onClick={async () => {
-                await deleteDoc(doc(db, "gallery", "videos", "likes", video.id));
+                await deleteDoc(doc(db, "gallery", video.id, "likes", user.uid));
                 router.push("/dashboard/likes");
               }}
               className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full shadow-md hover:bg-red-600"
