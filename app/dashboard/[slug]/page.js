@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "@/lib/firebase";
-import { doc, getDoc, updateDoc, addDoc, collection, serverTimestamp, query, where, getDocs, deleteDoc, writeBatch } from "firebase/firestore";
+import { doc, getDoc, updateDoc, addDoc, collection, serverTimestamp, query, where, getDocs, deleteDoc, writeBatch, setDoc, increment } from "firebase/firestore";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ThumbsUp, ArrowLeft } from "lucide-react";
+import { ThumbsUp, ArrowLeft, Heart } from "lucide-react";
 
 export default function VideoDetail() {
   const { slug } = useParams(); // URL에서 slug 가져오기
@@ -71,6 +71,24 @@ export default function VideoDetail() {
             setIsPosted(mode);
         } else {
             throw new Error(`해당 비디오를 찾을 수 없습니다. (isOn: ${mode})`);
+        }
+
+        if (mode) {
+          const videoData = docSnap.data();
+          setLikes(videoData.recommend || 0);
+
+          const [userLikeSnap, userDocSnap] = await Promise.all([
+            getDoc(doc(db, "gallery", slug, "likes", currentUser.uid)),
+            getDoc(doc(db, "users", currentUser.uid))
+          ]);
+
+          setLiked(userLikeSnap.exists());
+
+          if (userDocSnap.exists() && userDocSnap.data().Mode) {
+            setIsOn(userDocSnap.data().Mode === "public"); // ✅ Mode 값에 따라 isOn 설정
+          } else {
+            setIsOn(false); // ✅ Mode 값이 없으면 기본값 설정
+          }
         }
     } catch (error) {
         console.error("Firestore에서 비디오 데이터 가져오는 중 오류 발생: ", error);
@@ -143,6 +161,32 @@ export default function VideoDetail() {
     }
   };
   
+  const handleLike = async () => {
+    if (!video || !userId) return;
+
+    const docRef = doc(db, "gallery", slug);
+    const userLikeRef = doc(db, "gallery", slug, "likes", userId);
+
+    try {
+      if (liked) {
+        // 🟥 이미 좋아요를 누른 상태 → 좋아요 취소
+        await updateDoc(docRef, { recommend: increment(-1) }); // 추천 감소
+        await deleteDoc(userLikeRef); // 사용자의 좋아요 기록 삭제
+
+        setLiked(false);
+        setLikes((prevLikes) => prevLikes - 1);
+      } else {
+        // 🟩 아직 좋아요를 누르지 않은 상태 → 좋아요 추가
+        await updateDoc(docRef, { recommend: increment(1) }); // 추천 증가
+        await setDoc(userLikeRef, { liked: true }); // 사용자의 좋아요 기록 추가
+
+        setLiked(true);
+        setLikes((prevLikes) => prevLikes + 1);
+      }
+    } catch (error) {
+      console.error("좋아요 업데이트 실패:", error);
+    }
+  };
 
   if (loading) return <p className="text-center mt-10">로딩 중...</p>;
   if (error) return <p className="text-center mt-10 text-red-500">{error}</p>;
@@ -184,18 +228,33 @@ export default function VideoDetail() {
             
             {/* Essay 입력 및 수정 */}
 
-            <div className="mt-4">
+            <div className="mt-4 flex flex-col">
               <h2 className="text-lg font-semibold font-nanum_pen">Essay</h2>
-              {isEditing ? (
-                <textarea
-                  className="w-full p-2 border rounded mt-2 font-nanum_pen"
+
+              {!isOn ? (
+                // 🔥 isOn이 false일 때 (편집 가능)
+                isEditing ? (
+                  <textarea
+                    className="w-full p-2 border rounded mt-2 font-nanum_pen"
                   value={essay}
                   onChange={(e) => setEssay(e.target.value)}
                 />
+                ) : (
+                  <p className="mt-2 p-2 border rounded bg-gray-100 font-nanum_pen">
+                    {essay || "작성된 내용이 없습니다."}
+                  </p>
+                )
               ) : (
-                <p className="mt-2 p-2 border rounded bg-gray-100 font-nanum_pen">{essay || "작성된 내용이 없습니다."}</p>
+                // 🔥 isOn이 true일 때 (읽기 전용)
+                <div className="flex-1">
+                  <p className="mt-2 p-2 border rounded bg-gray-100 font-nanum_pen">
+                    {video.essay || "작성된 내용이 없습니다."}
+                  </p>
+                </div>
               )}
-              { !isOn && (
+
+              {/* 🔥 isOn이 false일 때만 버튼 표시 */}
+              {!isOn && (
                 <div className="flex mt-2 space-x-2 font-pretendard justify-end">
                   {isEditing ? (
                     <Button onClick={handleSaveEssay}>저장</Button>
