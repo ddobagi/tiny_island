@@ -154,7 +154,7 @@ export default function Dashboard() {
       const collectionPath = collection(db, "users", userId, "videos"); 
 
       await addDoc(collectionPath, videoDetails);
-      setNewVideo({ name: "", video: "", thumbnail: "", channel: "", views: "", likes: "", publishedAt: "", channelProfile: "" });
+      setNewVideo({ name: "", video: "", thumbnail: "", channel: "", views: "", likes: "", publishedAt: "", channelProfile: "", createdAt: serverTimestamp() });
       setFabOpen(false);
     } catch (error) {
       console.error("Firestore에 비디오 추가 중 오류 발생: ", error);
@@ -310,6 +310,7 @@ export default function Dashboard() {
               {!isOn && (
                 <button onClick={() => {
                   deleteDoc(doc(db, "users", user.uid, "videos", video.id));
+                  deleteDoc(doc(db, "gallery", video.id));
                   router.push("/dashboard");
                 }} 
                 className="z-5 absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full shadow-md hover:bg-red-600"
