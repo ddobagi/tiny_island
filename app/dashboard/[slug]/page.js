@@ -73,7 +73,7 @@ export default function VideoDetail() {
 
   // ✅ `isOn`이 변경될 때 fetchVideoData를 실행하지 않고, 위 `useEffect`에서 직접 실행함
   const fetchVideoData = async (slug, mode) => {
-    if (!auth.currentUser) return alert("사용자 인증이 필요합니다");
+    if (!auth.currentUser) return;
     try {
         setLoading(true);
         const userId = auth.currentUser?.uid;
@@ -121,8 +121,8 @@ export default function VideoDetail() {
   };
 
   const handleTogglePost = async () => {
-    if (!video) return alert("비디오 데이터가 없습니다.");
-    if (!auth.currentUser) return alert("로그인 후 이용해주세요");
+    if (!video) return;
+    if (!auth.currentUser) return;
 
     try {
       if (isPosted) {
@@ -138,7 +138,6 @@ export default function VideoDetail() {
         await updateDoc(doc(db, "users", userId, "videos", slug), { isPosted: false });
 
         setIsPosted(false);
-        alert("게시가 취소되었습니다.");
       } else {
         await addDoc(collection(db, "gallery"), {
           name: video.name || "알 수 없음",
@@ -159,7 +158,6 @@ export default function VideoDetail() {
         await updateDoc(doc(db, "users", userId, "videos", slug), { isPosted: true });
 
         setIsPosted(true);
-        alert("게시되었습니다!");
       }
     } catch (error) {
       console.error("게시/게시 취소 중 오류 발생: ", error);
@@ -167,7 +165,7 @@ export default function VideoDetail() {
   };
 
   const handleSaveEssay = async () => {
-    if (!auth.currentUser) return alert("사용자 인증이 필요합니다.");
+    if (!auth.currentUser) return;
 
     try {
       const userId = auth.currentUser?.uid;
@@ -194,7 +192,7 @@ export default function VideoDetail() {
   
   const handleLike = async () => {
     if (!video) return;
-    if (!auth.currentUser) return alert(" ");
+    if (!auth.currentUser) return;
 
     const userId = auth.currentUser?.uid;
     const docRef = doc(db, "gallery", slug);
@@ -301,7 +299,7 @@ export default function VideoDetail() {
                 )
               ) : (
                 <p className="mt-2 p-2 border rounded bg-gray-100 font-nanum_pen">
-                  {video.essay || "작성된 내용이 없습니다."}
+                  {essay || "작성된 내용이 없습니다."}
                 </p>
               )}
 
