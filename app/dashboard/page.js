@@ -153,7 +153,10 @@ export default function Dashboard() {
 
       const collectionPath = collection(db, "users", userId, "videos"); 
 
-      await addDoc(collectionPath, videoDetails);
+      await addDoc(collectionPath, {
+        ...videoDetails,
+        recommend: 0, // ✅ 여기에서 recommend 필드 추가
+      });
       setNewVideo({ name: "", video: "", thumbnail: "", channel: "", views: "", likes: "", publishedAt: "", channelProfile: "", createdAt: serverTimestamp(), recommend: 0 });
       setFabOpen(false);
     } catch (error) {
