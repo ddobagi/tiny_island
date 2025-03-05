@@ -88,7 +88,7 @@ export default function VideoDetail() {
             const videoData = docSnap.data();
             setVideo(videoData);
             setEssay(videoData.essay || "");
-            setIsPosted(mode);
+            setIsPosted(videoData.isPosted || false);
         } else {
             throw new Error(`해당 비디오를 찾을 수 없습니다. (isOn: ${mode})`);
         }
@@ -135,6 +135,9 @@ export default function VideoDetail() {
         querySnapshot.forEach((doc) => batch.delete(doc.ref));
         await batch.commit();
 
+        const userId = auth.currentUser?.uid;
+        await updateDoc(doc(db, "users", userId, "videos", slug), { isPosted: false });
+
         setIsPosted(false);
         alert("게시가 취소되었습니다.");
       } else {
@@ -152,6 +155,9 @@ export default function VideoDetail() {
           createdAt: video.createdAt, // 문서 생성 시간 추가
           recommend: video.recommend,
         });
+
+        const userId = auth.currentUser?.uid;
+        await updateDoc(doc(db, "users", userId, "videos", slug), { isPosted: true });
 
         setIsPosted(true);
         alert("게시되었습니다!");
