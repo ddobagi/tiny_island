@@ -234,7 +234,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="flex items-center space-x-2 justify-end p-1">
+      <div className="flex items-center space-x-2 justify-end p-1 pr-4">
         <Switch checked={isOn} onCheckedChange={(checked) => handleToggleMode(checked)} />
         <span>{isOn ? "Public" : "Private"}</span>
       </div>

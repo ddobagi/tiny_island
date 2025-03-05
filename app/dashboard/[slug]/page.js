@@ -243,52 +243,42 @@ export default function VideoDetail() {
             
             {/* Essay 입력 및 수정 */}
 
-            <div className="mt-4 flex justify-between items-center">
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold font-nanum_pen">Essay</h2>
+            <div className="mt-4">
+              <h2 className="text-lg font-semibold font-nanum_pen">Essay</h2>
 
-                {isOn && (
-                  <button
-                    className="flex items-center p-2 rounded-lg transition"
-                    onClick={handleLike}
-                  >
-                    <Heart
-                      className="w-4 h-4 text-red-500"
-                      fill={liked ? "currentColor" : "none"} // 🔥 불필요한 삼항 연산자 제거
-                    />
-                    <span className="ml-2 text-lg font-semibold">{likes}</span>
-                  </button>
-                )}
-              </div>
-            </div>
-            <div>
+              {/* 🔥 isOn이 true일 때 좋아요 버튼 표시 */}
+              {isOn && (
+                <button
+                  className="flex items-center p-2 rounded-lg transition"
+                  onClick={handleLike}
+                >
+                  <Heart className="w-4 h-4 text-red-500" fill={liked && "currentColor"} />
+                  <span className="ml-2 text-lg font-semibold">{likes}</span>
+                </button>
+              )}
+
+              {/* 🔥 Essay 입력 또는 표시 */}
               {!isOn ? (
-                // 🔥 isOn이 false일 때 (편집 가능)
                 isEditing ? (
                   <textarea
                     className="w-full p-2 border rounded mt-2 font-nanum_pen"
-                  value={essay}
-                  onChange={(e) => setEssay(e.target.value)}
-                />
+                    value={essay}
+                    onChange={(e) => setEssay(e.target.value)}
+                  />
                 ) : (
                   <p className="mt-2 p-2 border rounded bg-gray-100 font-nanum_pen">
                     {essay || "작성된 내용이 없습니다."}
                   </p>
                 )
               ) : (
-                // 🔥 isOn이 true일 때 (읽기 전용)
-                <div className="flex-1">
-                  <p className="mt-2 p-2 border rounded bg-gray-100 font-nanum_pen">
-                    {video.essay || "작성된 내용이 없습니다."}
-                  </p>
-                </div>
+                <p className="mt-2 p-2 border rounded bg-gray-100 font-nanum_pen">
+                  {video.essay || "작성된 내용이 없습니다."}
+                </p>
               )}
-            </div>
-              
-            <div flex mt-2 space-x-2 font-pretendard justify-end>
+
               {/* 🔥 isOn이 false일 때만 버튼 표시 */}
               {!isOn && (
-                <div >
+                <div className="flex mt-2 space-x-2 font-pretendard justify-end">
                   {isEditing ? (
                     <Button onClick={handleSaveEssay}>저장</Button>
                   ) : (
@@ -300,6 +290,7 @@ export default function VideoDetail() {
                 </div>
               )}
             </div>
+
           </CardContent>
         </Card>
       )}
