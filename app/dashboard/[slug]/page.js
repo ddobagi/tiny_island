@@ -63,6 +63,7 @@ export default function VideoDetail() {
   useEffect(() => {
     if (document.referrer.includes("/dashboard/likes")) {
       setPreviousPage("/dashboard/likes");
+      setIsOn(true);
     }
   }, []);
 
@@ -79,15 +80,8 @@ export default function VideoDetail() {
         const userId = auth.currentUser?.uid;
         console.log("2번 uid 통과");
 
-        let docRef;
-        if (previousPage === "/dashboard/likes") {
-          docRef = doc(db, "gallery", slug);
-        } else {
-          docRef = mode
-              ? doc(db, "gallery", slug) 
-              : doc(db, "users", userId, "videos", slug);
-        }
-        
+        let docRef = mode ? doc(db, "gallery", slug) : doc(db, "users", userId, "videos", slug);
+
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
