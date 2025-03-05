@@ -346,10 +346,25 @@ export default function Dashboard() {
             </Card>
           ))}
       </div>
-      <div className="flex items-center space-x-2">
-        <span>{isOn ? "Public" : "Private"}</span>
-        <Switch checked={isOn} onCheckedChange={setIsOn} />
+      <div className="flex items-center space-x-4">
+        <Switch
+          checked={isOn}
+          onCheckedChange={setIsOn}
+          className="relative w-20 h-10 rounded-full bg-gray-300 flex items-center px-1 cursor-pointer"
+        >
+          <motion.div
+            className="absolute w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center text-xs font-bold text-black"
+            layout
+            transition={{ type: "spring", stiffness: 700, damping: 30 }}
+            style={{
+              left: isOn ? "calc(100% - 2.5rem)" : "0.25rem", // ✅ 위치 조정
+            }}
+          >
+            {isOn ? "Public" : "Private"} {/* ✅ 상태에 따라 내부 글자 변경 */}
+          </motion.div>
+        </Switch>
       </div>
+
 
       <div className="flex justify-end mb-4">
         <select 
