@@ -14,13 +14,16 @@ export default function LikesDashboard() {
   const [loading, setLoading] = useState(true);
   const [videos, setVideos] = useState([]);
   const router = useRouter();
+  const [userEmail, setUserEmail] = useState("");
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
+        setUserEmail(currentUser.email);
       } else {
         router.push("/");
+        setUserEmail("")
       }
       setLoading(false);
     });
@@ -55,11 +58,21 @@ export default function LikesDashboard() {
   
     return () => unsubscribe();
   }, [user]);
+
+  function getEmailUsername(email) {
+    if (!email || typeof email !== "string") return "";
+    return email.split("@")[0];
+  }
+
   
   if (loading) return <p>Loading...</p>;
 
   return (
     <div className="rounded-lg shadow-lg max-w-2xl w-full flex flex-col p-6 relative mx-auto">
+      <div className="flex items-center max-w-[600px] w-full h-10 space-x-2 justify-end">
+        <p className="text-gray-500 text-sm font-pretendard">{getEmailUsername(userEmail)} 님</p>
+        <p onClick={() => signOut(auth)} className="cursor-pointer text-gray-500 text-sm font-pretendard underline">로그아웃</p>
+      </div>
       <div className="w-full max-w-2xl flex justify-start">
         <Link href="/dashboard" className="flex items-center mb-2">
           <ArrowLeft className="w-6 h-6 mr-2" />
@@ -73,6 +86,8 @@ export default function LikesDashboard() {
           </button>
         )}
       </div>
+
+      
 
       <div className="grid grid-cols-1 gap-6 mt-6 w-full max-w-6xl">
         {videos.map((video) => (
