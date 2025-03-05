@@ -17,8 +17,6 @@ export default function LikesDashboard() {
   const [userEmail, setUserEmail] = useState("");
 
   useEffect(() => {
-        
-
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
@@ -39,7 +37,7 @@ export default function LikesDashboard() {
       setLoading(false);
     });
     return () => unsubscribe();
-  }, [router]);
+  }, [router.pathname]);
 
   useEffect(() => {
     if (!auth.currentUser) return;
