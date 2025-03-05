@@ -25,6 +25,7 @@ export default function VideoDetail() {
   const [liked, setLiked] = useState(false);
   const [likes, setLikes] = useState(1);
   const [userEmail, setUserEmail] = useState("");
+  const [previousPage, setPreviousPage] = useState("/dashboard");
 
 
   useEffect(() => {
@@ -58,6 +59,12 @@ export default function VideoDetail() {
 
     return () => unsubscribe();
   }, [slug, router]);
+
+  useEffect(() => {
+    if (document.referrer.includes("/dashboard/likes")) {
+      setPreviousPage("/dashboard/likes");
+    }
+  }, []);
 
   const getYouTubeVideoID = (url) => {
     const match = url.match(/(?:youtu\.be\/|youtube\.com\/.*v=|youtube\.com\/embed\/|youtube\.com\/v\/|youtube\.com\/user\/.*#p\/u\/\d\/|youtube\.com\/watch\?v=|youtube\.com\/watch\?.+&v=)([^#&?\n]+)/);
@@ -220,9 +227,9 @@ export default function VideoDetail() {
   return (
     <div className="flex flex-col items-center w-full p-6">
       <div className="w-full max-w-2xl flex justify-between">
-        <Link href="/dashboard" className="flex items-center mb-2">
+        <button onClick={() => router.push(previousPage)} className="flex items-center mb-2 cursor-pointor">
           <ArrowLeft className="w-6 h-6 mr-2" />
-        </Link>
+        </button>
         <div className="flex items-center max-w-[600px] w-full h-10 space-x-2 justify-end">
           <p className="text-gray-500 text-sm font-pretendard">{getEmailUsername(userEmail)} 님</p>
           <p onClick={() => signOut(auth)} className="cursor-pointer text-gray-500 text-sm font-pretendard underline">로그아웃</p>
