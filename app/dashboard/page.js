@@ -25,8 +25,10 @@ export default function Dashboard() {
   const router = useRouter();
 
   const [searchMode, setSearchMode] = useState(false);
-  
+
   const API_KEY = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY;
+
+
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async(currentUser) => {
@@ -176,6 +178,18 @@ export default function Dashboard() {
     }
   };
 
+  const [sortCriteria, setSortCriteria] = useState("publishedAt"); // 기본값: 업로드 날짜 최신순
+
+  const sortedVideos = [...videos].sort((a, b) => {
+    if (sortCriteria === "views") {
+      return Number(b.views) - Number(a.views); // 조회수 기준 내림차순
+    } else if (sortCriteria === "likes") {
+      return Number(b.likes) - Number(a.likes); // 좋아요 기준 내림차순
+    } else if (sortCriteria === "publishedAt") {
+      return new Date(b.publishedAt) - new Date(a.publishedAt); // 업로드 날짜 기준 최신순
+    }
+    return 0;
+  });
 
 
   return (
@@ -284,7 +298,7 @@ export default function Dashboard() {
 
 
       <div className="grid grid-cols-1 gap-6 mt-6 w-full max-w-6xl">
-        {videos
+        {sortedVideos
           .filter((video) => video.name.toLowerCase().includes(search.toLowerCase()))
           .map((video) => (
             <Card key={video.id} className="w-full max-w-[600px] rounded-lg shadow-lg cursor-pointer hover:shadow-2xl transition relative">
@@ -336,6 +350,19 @@ export default function Dashboard() {
         <span>{isOn ? "Public" : "Private"}</span>
         <Switch checked={isOn} onCheckedChange={setIsOn} />
       </div>
+
+      <div className="flex justify-end mb-4">
+        <select 
+          value={sortCriteria} 
+          onChange={(e) => setSortCriteria(e.target.value)} 
+          className="border rounded px-3 py-1 bg-white text-gray-700"
+        >
+          <option value="publishedAt">최신순</option>
+          <option value="views">조회수 순</option>
+          <option value="likes">좋아요 순</option>
+        </select>
+      </div>
+
 
     </div>
   );
