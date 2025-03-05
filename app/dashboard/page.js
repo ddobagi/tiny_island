@@ -154,7 +154,7 @@ export default function Dashboard() {
       const collectionPath = collection(db, "users", userId, "videos"); 
 
       await addDoc(collectionPath, videoDetails);
-      setNewVideo({ name: "", video: "", thumbnail: "", channel: "", views: "", likes: "", publishedAt: "", channelProfile: "", createdAt: serverTimestamp() });
+      setNewVideo({ name: "", video: "", thumbnail: "", channel: "", views: "", likes: "", publishedAt: "", channelProfile: "", createdAt: serverTimestamp(), recommend: 0 });
       setFabOpen(false);
     } catch (error) {
       console.error("Firestore에 비디오 추가 중 오류 발생: ", error);
