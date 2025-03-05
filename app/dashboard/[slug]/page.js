@@ -139,6 +139,7 @@ export default function VideoDetail() {
           post: true, // 새로운 문서에 post 필드 추가
           essay: video.essay || "작성된 내용이 없습니다.",
           createdAt: video.createdAt, // 문서 생성 시간 추가
+          recommend: video.recommend,
         });
 
         setIsPosted(true);
