@@ -21,7 +21,7 @@ export default function VideoDetail() {
   const [essay, setEssay] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [isPosted, setIsPosted] = useState(false);
-  const [isOn, setIsOn] = useState(false);
+  const [isOn, setIsOn] = useState(true);
   const [liked, setLiked] = useState(false);
   const [likes, setLikes] = useState(1);
   const [userEmail, setUserEmail] = useState("");
