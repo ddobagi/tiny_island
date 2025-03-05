@@ -137,7 +137,7 @@ export default function VideoDetail() {
           publishedAt: video.publishedAt || serverTimestamp(),
           channelProfile: video.channelProfile || "",
           post: true, // 새로운 문서에 post 필드 추가
-          essay: video.essay,
+          essay: video.essay || "작성된 내용이 없습니다.",
           createdAt: serverTimestamp(), // 문서 생성 시간 추가
         });
 
