@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { auth, provider, db } from "@/lib/firebase";
 import { signInWithPopup, onAuthStateChanged, signOut } from "firebase/auth";
-import { collection, onSnapshot, addDoc, deleteDoc, doc, getDoc, setDoc } from "firebase/firestore";
+import { collection, onSnapshot, addDoc, deleteDoc, doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -126,7 +126,8 @@ export default function Dashboard() {
         channelProfile: channelProfile, 
         views: viewCount,
         likes: likeCount,
-        publishedAt: publishedAt.slice(0, 10)
+        publishedAt: publishedAt.slice(0, 10),
+        createdAt: serverTimestamp(),
       };
     } catch (error) {
       console.error("YouTube API 오류:", error);
@@ -182,7 +183,7 @@ export default function Dashboard() {
     if (isOn) {
       return Number(b.recommend) - Number(a.recommend); // recommend 기준 내림차순
     } else {
-      return new Date(b.publishedAt) - new Date(a.publishedAt); // 업로드 날짜 기준 최신순
+      return new Date(b.createdAt) - new Date(a.createdAt); // 업로드 날짜 기준 최신순
     }
   });
 
@@ -229,7 +230,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="flex items-center space-x-2 justify-end p-1 pr-8">
+      <div className="flex items-center space-x-2 justify-end p-0 pr-7">
         <Switch checked={isOn} onCheckedChange={(checked) => handleToggleMode(checked)} />
         <span>{isOn ? "Public" : "Private"}</span>
       </div>

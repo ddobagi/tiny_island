@@ -254,7 +254,7 @@ export default function VideoDetail() {
                     className="flex items-center p-2 rounded-lg transition"
                     onClick={handleLike}
                   >
-                    <Heart className="w-4 h-4 text-red-500" fill={liked && "currentColor"} />
+                    <Heart className="w-4 h-4 text-red-500" fill={liked ? "currentColor" : "none"} />
                     <span className="ml-2 text-lg font-semibold">{likes}</span>
                   </button>
                 )}
