@@ -29,7 +29,7 @@ export default function VideoDetail() {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
         if (currentUser) {
             console.log("✅ 로그인된 사용자:", currentUser);
-            setUser(currentUser);
+            setUser({ ...currentUser });
             setLoading(true);
 
             try {
