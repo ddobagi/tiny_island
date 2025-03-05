@@ -62,11 +62,7 @@ export default function VideoDetail() {
 
   // ✅ `isOn`이 변경될 때 fetchVideoData를 실행하지 않고, 위 `useEffect`에서 직접 실행함
   const fetchVideoData = async (slug, mode) => {
-    if (!auth.currentUser) {
-      console.warn("user가 아직 설정되지 않음, 500ms 후 다시 실행");
-      setTimeout(() => fetchVideoData(slug, mode), 500); // 🔥 0.5초 후 다시 실행
-      return;
-    }
+    if (!auth.currentUser) return alert("사용자 인증이 필요합니다");
     try {
         setLoading(true);
         const userId = auth.currentUser?.uid;
@@ -257,7 +253,7 @@ export default function VideoDetail() {
                     onClick={handleLike}
                   >
                     <Heart
-                      className="w-6 h-6 text-red-500"
+                      className="w-4 h-4 text-red-500"
                       fill={liked ? "currentColor" : "none"} // 🔥 불필요한 삼항 연산자 제거
                     />
                     <span className="ml-2 text-lg font-semibold">{likes}</span>
@@ -265,27 +261,29 @@ export default function VideoDetail() {
                 )}
               </div>
 
-              {!isOn ? (
-                // 🔥 isOn이 false일 때 (편집 가능)
-                isEditing ? (
-                  <textarea
-                    className="w-full p-2 border rounded mt-2 font-nanum_pen"
-                  value={essay}
-                  onChange={(e) => setEssay(e.target.value)}
-                />
+              <div>
+                {!isOn ? (
+                  // 🔥 isOn이 false일 때 (편집 가능)
+                  isEditing ? (
+                    <textarea
+                      className="w-full p-2 border rounded mt-2 font-nanum_pen"
+                    value={essay}
+                    onChange={(e) => setEssay(e.target.value)}
+                  />
+                  ) : (
+                    <p className="mt-2 p-2 border rounded bg-gray-100 font-nanum_pen">
+                      {essay || "작성된 내용이 없습니다."}
+                    </p>
+                  )
                 ) : (
-                  <p className="mt-2 p-2 border rounded bg-gray-100 font-nanum_pen">
-                    {essay || "작성된 내용이 없습니다."}
-                  </p>
-                )
-              ) : (
-                // 🔥 isOn이 true일 때 (읽기 전용)
-                <div className="flex-1">
-                  <p className="mt-2 p-2 border rounded bg-gray-100 font-nanum_pen">
-                    {video.essay || "작성된 내용이 없습니다."}
-                  </p>
-                </div>
-              )}
+                  // 🔥 isOn이 true일 때 (읽기 전용)
+                  <div className="flex-1">
+                    <p className="mt-2 p-2 border rounded bg-gray-100 font-nanum_pen">
+                      {video.essay || "작성된 내용이 없습니다."}
+                    </p>
+                  </div>
+                )}
+              </div>
 
               {/* 🔥 isOn이 false일 때만 버튼 표시 */}
               {!isOn && (
