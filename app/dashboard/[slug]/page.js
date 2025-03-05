@@ -60,7 +60,11 @@ export default function VideoDetail() {
 
   // ✅ `isOn`이 변경될 때 fetchVideoData를 실행하지 않고, 위 `useEffect`에서 직접 실행함
   const fetchVideoData = async (slug, mode) => {
-    if (!user) return alert(" ");
+    if (!user) {
+      console.warn("user가 아직 설정되지 않음, 500ms 후 다시 실행");
+      setTimeout(() => fetchVideoData(slug, mode), 500); // 🔥 0.5초 후 다시 실행
+      return;
+    }
     try {
         setLoading(true);
         const userId = auth.currentUser?.uid;
