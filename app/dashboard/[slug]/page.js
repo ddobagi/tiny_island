@@ -172,9 +172,6 @@ export default function VideoDetail() {
       const docRef1 = doc(db, "users", userId, "videos", slug);
       await updateDoc(docRef1, { essay });
 
-      const galleryVideoId = await findGalleryVideoId();
-      const docRef2 = doc(db, "gallery", galleryVideoId);
-      await updateDoc(docRef2, { essay });
 
 
       // 🔥 추가된 코드: gallery 컬렉션에서 해당 영상 삭제
@@ -227,46 +224,6 @@ export default function VideoDetail() {
     return email.split("@")[0];
   }
 
-  const findGalleryVideoId = async () => {
-    if (!auth.currentUser) return null; // 🔥 로그인 확인
-    const userId = auth.currentUser.uid;
-  
-    // 1️⃣ 현재 페이지의 slug 가져오기
-    if (!slug) return null; // 🚨 slug가 없으면 중단
-  
-    try {
-      // 2️⃣ 현재 페이지의 slug 값을 videoId로 하는 문서 찾기
-      const userDocRef = doc(db, "users", userId, "videos", slug);
-      const userDocSnap = await getDoc(userDocRef);
-  
-      if (!userDocSnap.exists()) {
-        console.error("❌ 해당 slug에 대한 문서를 찾을 수 없습니다.");
-        return null;
-      }
-  
-      // 3️⃣ 해당 문서에서 video 필드 값(URL) 가져오기
-      const videoUrl = userDocSnap.data().video;
-      if (!videoUrl) {
-        console.error("❌ video 필드가 존재하지 않습니다.");
-        return null;
-      }
-  
-      // 4️⃣ gallery에서 video 필드 값이 videoUrl과 일치하는 문서 찾기
-      const galleryQuery = query(collection(db, "gallery"), where("video", "==", videoUrl));
-      const galleryQuerySnapshot = await getDocs(galleryQuery);
-  
-      if (galleryQuerySnapshot.empty) {
-        console.error("❌ gallery에서 해당 video URL을 찾을 수 없습니다.");
-        return null;
-      }
-  
-      // 5️⃣ 해당 문서의 videoId 반환 (FireStore 문서 ID)
-      return galleryQuerySnapshot.docs[0].id; // ✅ 첫 번째 일치하는 문서의 ID 반환
-    } catch (error) {
-      console.error("🔥 Firestore 조회 중 오류 발생:", error);
-      return null;
-    }
-  };
 
 
 
