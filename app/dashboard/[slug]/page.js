@@ -59,6 +59,7 @@ export default function VideoDetail() {
 
   // ✅ `isOn`이 변경될 때 fetchVideoData를 실행하지 않고, 위 `useEffect`에서 직접 실행함
   const fetchVideoData = async (slug, mode) => {
+    if (!user?.uid) return alert(" ");
     try {
         setLoading(true);
         let docRef = mode
@@ -165,6 +166,7 @@ export default function VideoDetail() {
   
   const handleLike = async () => {
     if (!video || !userId) return;
+    if (!user?.uid) return alert(" ");
 
     const docRef = doc(db, "gallery", slug);
     const userLikeRef = doc(db, "gallery", slug, "likes", userId);
