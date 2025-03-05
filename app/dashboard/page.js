@@ -233,37 +233,12 @@ export default function Dashboard() {
                   
         </div>
       </div>
-      <div className="flex justify-end p-1">
-        <div 
-          className="relative w-24 h-10 bg-black flex overflow-hidden justify-between items-center px-2 rounded-full cursor-pointer"
-          onClick={handleToggleMode}
-        >
 
-          {!isOn && (
-            <span
-              className="absolute right-3 text-xs font-bold text-white">
-              Private
-            </span>
-          )}
-
-          {isOn && (
-            <span
-              className="absolute left-3 text-xs font-bold text-white">
-              Public
-            </span>
-          )}
-
-          {/* 모핑되는 토글 버튼 */}
-          <motion.div
-            className="w-6 h-6 bg-white rounded-full shadow-md"
-            layout
-            transition={{ type: "spring", stiffness: 700, damping: 30 }}
-            style={{
-              x: isOn ? 40 : 0,
-            }}
-          />
-        </div> 
+      <div className="flex items-center space-x-2 justify-end p-1">
+        <Switch checked={isOn} onCheckedChange={(checked) => handleToggleMode(checked)} />
+        <span>{isOn ? "Public" : "Private"}</span>
       </div>
+
 
       { !isOn && (
         <div className="z-10 fixed bottom-6 right-6 flex flex-col items-end" ref={fabRef}>
@@ -345,24 +320,6 @@ export default function Dashboard() {
               )}
             </Card>
           ))}
-      </div>
-      <div className="flex items-center space-x-4">
-        <Switch
-          checked={isOn}
-          onCheckedChange={setIsOn}
-          className="relative w-20 h-10 rounded-full bg-gray-300 flex items-center px-1 cursor-pointer"
-        >
-          <motion.div
-            className="absolute w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center text-xs font-bold text-black"
-            layout
-            transition={{ type: "spring", stiffness: 700, damping: 30 }}
-            style={{
-              left: isOn ? "calc(100% - 2.5rem)" : "0.25rem", // ✅ 위치 조정
-            }}
-          >
-            {isOn ? "Public" : "Private"} {/* ✅ 상태에 따라 내부 글자 변경 */}
-          </motion.div>
-        </Switch>
       </div>
 
 
