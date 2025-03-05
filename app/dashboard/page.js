@@ -4,13 +4,12 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { auth, provider, db } from "@/lib/firebase";
 import { signInWithPopup, onAuthStateChanged, signOut } from "firebase/auth";
-import { collection, onSnapshot, addDoc, deleteDoc, doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
+import { query, orderBy, collection, onSnapshot, addDoc, deleteDoc, doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, X, Trash2, Search, ArrowLeft, LogOut  } from "lucide-react";
-import { motion } from "framer-motion";
 import { Switch } from "@/components/ui/switch";
 
 export default function Dashboard() {
@@ -70,7 +69,11 @@ export default function Dashboard() {
     ? collection(db, "gallery")  // ✅ isOn이 true이면 "gallery" 컬렉션 사용
     : collection(db, "users", userId, "videos");  // ✅ isOn이 false이면 사용자별 "videos" 컬렉션 사용
 
-    const unsubscribe = onSnapshot(collectionPath, (snapshot) => {
+    const q = isOn
+    ? query(collectionPath, orderBy("recommend", "desc"))
+    : query(collectionPath, orderBy("createdAt", "desc"))
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
       setVideos(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
     });
     return () => unsubscribe();
