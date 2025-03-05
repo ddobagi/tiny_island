@@ -83,6 +83,10 @@ export default function LikesDashboard() {
     return email.split("@")[0];
   }
 
+  const getYouTubeVideoID = (url) => {
+    const match = url.match(/(?:youtu\.be\/|youtube\.com\/.*v=|youtube\.com\/embed\/|youtube\.com\/v\/|youtube\.com\/user\/.*#p\/u\/\d\/|youtube\.com\/watch\?v=|youtube\.com\/watch\?.+&v=)([^#&?\n]+)/);
+    return match ? match[1] : null;
+  };
   
   if (loading) return <p>Loading...</p>;
 
@@ -105,7 +109,7 @@ export default function LikesDashboard() {
               <div className="relative w-full aspect-video">
                 <iframe
                   className="w-full h-full rounded-t-lg"
-                  src={`https://www.youtube.com/embed/${video.video}?autoplay=0&controls=1`}
+                  src={`https://www.youtube.com/embed/${getYouTubeVideoID(video.video)}?autoplay=0&controls=1`}
                   title={video.name}
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
