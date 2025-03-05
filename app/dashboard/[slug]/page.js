@@ -28,6 +28,7 @@ export default function VideoDetail() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
         if (currentUser) {
+            console.log("✅ 로그인된 사용자:", currentUser);
             setUser(currentUser);
             setLoading(true);
 
@@ -44,6 +45,7 @@ export default function VideoDetail() {
                 await fetchVideoData(slug, false);
             }
         } else {
+            console.log("❌ 로그인되지 않음");
             router.push("/");
             setLoading(false);
             return;
