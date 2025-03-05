@@ -179,6 +179,7 @@ export default function VideoDetail() {
     if (!video) return;
     if (!auth.currentUser) return alert(" ");
 
+    const userId = auth.currentUser?.uid;
     const docRef = doc(db, "gallery", slug);
     const userLikeRef = doc(db, "gallery", slug, "likes", userId);
 
@@ -244,18 +245,20 @@ export default function VideoDetail() {
             {/* Essay 입력 및 수정 */}
 
             <div className="mt-4">
-              <h2 className="text-lg font-semibold font-nanum_pen">Essay</h2>
+              <div className = "flex items-center justify-between">
+                <h2 className="text-lg font-semibold font-nanum_pen">Essay</h2>
 
-              {/* 🔥 isOn이 true일 때 좋아요 버튼 표시 */}
-              {isOn && (
-                <button
-                  className="flex items-center p-2 rounded-lg transition"
-                  onClick={handleLike}
-                >
-                  <Heart className="w-4 h-4 text-red-500" fill={liked && "currentColor"} />
-                  <span className="ml-2 text-lg font-semibold">{likes}</span>
-                </button>
-              )}
+                {/* 🔥 isOn이 true일 때 좋아요 버튼 표시 */}
+                {isOn && (
+                  <button
+                    className="flex items-center p-2 rounded-lg transition"
+                    onClick={handleLike}
+                  >
+                    <Heart className="w-4 h-4 text-red-500" fill={liked && "currentColor"} />
+                    <span className="ml-2 text-lg font-semibold">{likes}</span>
+                  </button>
+                )}
+              </div>
 
               {/* 🔥 Essay 입력 또는 표시 */}
               {!isOn ? (

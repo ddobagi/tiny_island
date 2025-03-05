@@ -123,7 +123,7 @@ export default function Dashboard() {
         video: url,
         thumbnail: thumbnails.high.url,
         channel: channelTitle,
-        channelProfile: channelProfile, // ✅ 오타 수정 (chaennelProfile → channelProfile)
+        channelProfile: channelProfile, 
         views: viewCount,
         likes: likeCount,
         publishedAt: publishedAt.slice(0, 10)
@@ -178,17 +178,12 @@ export default function Dashboard() {
     }
   };
 
-  const [sortCriteria, setSortCriteria] = useState("publishedAt"); // 기본값: 업로드 날짜 최신순
-
   const sortedVideos = [...videos].sort((a, b) => {
-    if (sortCriteria === "views") {
-      return Number(b.views) - Number(a.views); // 조회수 기준 내림차순
-    } else if (sortCriteria === "likes") {
-      return Number(b.likes) - Number(a.likes); // 좋아요 기준 내림차순
-    } else if (sortCriteria === "publishedAt") {
+    if (isOn) {
+      return Number(b.recommend) - Number(a.recommend); // recommend 기준 내림차순
+    } else {
       return new Date(b.publishedAt) - new Date(a.publishedAt); // 업로드 날짜 기준 최신순
     }
-    return 0;
   });
 
 
@@ -234,7 +229,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="flex items-center space-x-2 justify-end p-1 pr-4">
+      <div className="flex items-center space-x-2 justify-end p-1 pr-8">
         <Switch checked={isOn} onCheckedChange={(checked) => handleToggleMode(checked)} />
         <span>{isOn ? "Public" : "Private"}</span>
       </div>
@@ -321,21 +316,6 @@ export default function Dashboard() {
             </Card>
           ))}
       </div>
-
-
-      <div className="flex justify-end mb-4">
-        <select 
-          value={sortCriteria} 
-          onChange={(e) => setSortCriteria(e.target.value)} 
-          className="border rounded px-3 py-1 bg-white text-gray-700"
-        >
-          <option value="publishedAt">최신순</option>
-          <option value="views">조회수 순</option>
-          <option value="likes">좋아요 순</option>
-        </select>
-      </div>
-
-
     </div>
   );
 }
