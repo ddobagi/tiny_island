@@ -173,7 +173,7 @@ export default function VideoDetail() {
       await updateDoc(docRef1, { essay });
 
       const galleryVideoId = await findGalleryVideoId();
-      const docRef2 = doc(db, "users", userId, "videos", galleryVideoId);
+      const docRef2 = doc(db, "gallery", galleryVideoId);
       await updateDoc(docRef2, { essay });
 
 
