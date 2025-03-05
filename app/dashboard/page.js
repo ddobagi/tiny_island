@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { auth, provider, db } from "@/lib/firebase";
 import { signInWithPopup, onAuthStateChanged, signOut } from "firebase/auth";
-import { query, orderBy, collection, onSnapshot, addDoc, deleteDoc, doc, getDoc, setDoc, serverTimestamp, writeBatch } from "firebase/firestore";
+import { query, orderBy, collection, onSnapshot, addDoc, deleteDoc, doc, getDoc, setDoc, serverTimestamp, writeBatch, where } from "firebase/firestore";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
