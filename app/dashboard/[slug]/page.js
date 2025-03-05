@@ -63,7 +63,6 @@ export default function VideoDetail() {
   useEffect(() => {
     if (document.referrer.includes("/dashboard/likes")) {
       setPreviousPage("/dashboard/likes");
-      setIsOn(true);
     }
   }, []);
 

@@ -21,6 +21,7 @@ export default function LikesDashboard() {
       if (currentUser) {
         setUser(currentUser);
         setUserEmail(currentUser.email);
+        setIsOn(true);
       } else {
         router.push("/");
         setUserEmail("")
@@ -63,6 +64,18 @@ export default function LikesDashboard() {
     if (!email || typeof email !== "string") return "";
     return email.split("@")[0];
   }
+
+
+
+
+
+
+
+
+
+
+
+
 
   
   if (loading) return <p>Loading...</p>;
