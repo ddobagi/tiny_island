@@ -22,6 +22,8 @@ export default function VideoDetail() {
   const [isEditing, setIsEditing] = useState(false);
   const [isPosted, setIsPosted] = useState(false);
   const [isOn, setIsOn] = useState(false);
+  const [liked, setLiked] = useState(false);
+  const [likes, setLikes] = useState(1);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -229,7 +231,20 @@ export default function VideoDetail() {
             {/* Essay 입력 및 수정 */}
 
             <div className="mt-4 flex flex-col">
-              <h2 className="text-lg font-semibold font-nanum_pen">Essay</h2>
+              <div>
+                <h2 className="text-lg font-semibold font-nanum_pen">Essay</h2>
+                { isOn && (
+                  <button className="flex items-center p-2 rounded-lg transition" onClick={handleLike}>
+                    {liked ? (
+                      <Heart className="w-6 h-6 text-red-500" fill="currentColor"/>
+                    ) : (
+                      <Heart className="w-6 h-6 text-red-500"  />
+                    )}
+                    <span className="ml-2 text-lg font-semibold">{likes}</span>
+                  </button>
+                )}
+              </div>
+
 
               {!isOn ? (
                 // 🔥 isOn이 false일 때 (편집 가능)
