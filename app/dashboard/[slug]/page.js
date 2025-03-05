@@ -62,7 +62,7 @@ export default function VideoDetail() {
     try {
         setLoading(true);
         let docRef = mode
-          ? doc(db, "gallery", slug) : doc(db, "users", auth.currentUser?.uid, "videos", slug)
+          ? doc(db, "gallery", slug) : doc(db, "users", user?.uid, "videos", slug)
 
         const docSnap = await getDoc(docRef);
 
@@ -80,8 +80,8 @@ export default function VideoDetail() {
           setLikes(videoData.recommend || 0);
 
           const [userLikeSnap, userDocSnap] = await Promise.all([
-            getDoc(doc(db, "gallery", slug, "likes", currentUser.uid)),
-            getDoc(doc(db, "users", currentUser.uid))
+            getDoc(doc(db, "gallery", slug, "likes", user.uid)),
+            getDoc(doc(db, "users", user.uid))
           ]);
 
           setLiked(userLikeSnap.exists());
@@ -102,7 +102,7 @@ export default function VideoDetail() {
 
   const handleTogglePost = async () => {
     if (!video) return alert("비디오 데이터가 없습니다.");
-    if (!auth.currentUser) return alert("로그인 후 이용해주세요");
+    if (!user) return alert("로그인 후 이용해주세요");
 
     try {
       if (isPosted) {
@@ -140,10 +140,10 @@ export default function VideoDetail() {
   };
 
   const handleSaveEssay = async () => {
-    if (!auth.currentUser) return alert("사용자 인증이 필요합니다.");
+    if (!user) return alert("사용자 인증이 필요합니다.");
 
     try {
-      const docRef = doc(db, "users", auth.currentUser.uid, "videos", slug);
+      const docRef = doc(db, "users", user.uid, "videos", slug);
       await updateDoc(docRef, { essay });
 
 
@@ -230,21 +230,23 @@ export default function VideoDetail() {
             
             {/* Essay 입력 및 수정 */}
 
-            <div className="mt-4 flex flex-col">
-              <div>
+            <div className="mt-4 flex justify-between items-center">
+              <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold font-nanum_pen">Essay</h2>
-                { isOn && (
-                  <button className="flex items-center p-2 rounded-lg transition" onClick={handleLike}>
-                    {liked ? (
-                      <Heart className="w-6 h-6 text-red-500" fill="currentColor"/>
-                    ) : (
-                      <Heart className="w-6 h-6 text-red-500"  />
-                    )}
+
+                {isOn && (
+                  <button
+                    className="flex items-center p-2 rounded-lg transition"
+                    onClick={handleLike}
+                  >
+                    <Heart
+                      className="w-6 h-6 text-red-500"
+                      fill={liked ? "currentColor" : "none"} // 🔥 불필요한 삼항 연산자 제거
+                    />
                     <span className="ml-2 text-lg font-semibold">{likes}</span>
                   </button>
                 )}
               </div>
-
 
               {!isOn ? (
                 // 🔥 isOn이 false일 때 (편집 가능)
