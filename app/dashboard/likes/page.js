@@ -17,6 +17,25 @@ export default function LikesDashboard() {
   const [userEmail, setUserEmail] = useState("");
 
   useEffect(() => {
+    const updateUserMode = async () => {
+      if (!auth.currentUser) return; // 로그인한 사용자가 없으면 실행 안 함
+
+      const userId = auth.currentUser.uid;
+      const userDocRef = doc(db, "users", userId);
+
+      try {
+        await setDoc(userDocRef, { Mode: "public" }, { merge: true }); // ✅ Firestore에 Mode 저장
+        console.log("🔥 Mode 값이 'public'으로 설정됨!");
+      } catch (error) {
+        console.error("Firestore 모드 업데이트 오류:", error);
+      }
+    };
+
+    updateUserMode(); // ✅ useEffect 실행 시 Firestore 업데이트 실행!
+  }, []); // ✅ 빈 배열이므로 페이지가 처음 열릴 때 한 번만 실행됨
+
+
+  useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
@@ -63,18 +82,6 @@ export default function LikesDashboard() {
     if (!email || typeof email !== "string") return "";
     return email.split("@")[0];
   }
-
-
-
-
-
-
-
-
-
-
-
-
 
   
   if (loading) return <p>Loading...</p>;
