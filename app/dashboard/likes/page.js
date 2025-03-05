@@ -79,7 +79,7 @@ export default function LikesDashboard() {
         </div>
       </div>      
 
-      <div className="grid grid-cols-1 gap-6 mt-6 w-full max-w-6xl">
+      <div className="grid grid-cols-1 gap-6 mt-0 w-full max-w-6xl">
         {videos.map((video) => (
           <Card key={video.id} className="w-full max-w-[600px] rounded-lg shadow-lg cursor-pointer hover:shadow-2xl transition relative">
             <Link href={`/dashboard/${video.id}`} passHref>
