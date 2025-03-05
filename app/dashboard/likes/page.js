@@ -7,7 +7,6 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 import { query, collection, onSnapshot, orderBy, doc, deleteDoc } from "firebase/firestore";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { LogOut, Trash2 } from "lucide-react";
 
 export default function LikesDashboard() {
@@ -32,8 +31,8 @@ export default function LikesDashboard() {
     if (!user) return;
     
     const userId = user.uid;
-    const collectionPath = collection(db, "gallery", "videos", "likes");
-    const q = query(collectionPath, orderBy("recommend", "desc"));
+    const collectionPath = collection(db, "gallery", videoId, "likes");
+    const q = query(collectionPath);
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const likedVideos = snapshot.docs

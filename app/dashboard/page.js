@@ -273,7 +273,7 @@ export default function Dashboard() {
       )}
 
 
-      <div className="grid grid-cols-1 gap-6 mt-6 w-full max-w-6xl">
+      <div className="grid grid-cols-1 gap-6 mt-2 w-full max-w-6xl">
         {sortedVideos
           .filter((video) => video.name.toLowerCase().includes(search.toLowerCase()))
           .map((video) => (
