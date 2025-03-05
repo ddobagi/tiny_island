@@ -15,7 +15,6 @@ export default function LikesDashboard() {
   const [videos, setVideos] = useState([]);
   const router = useRouter();
   const [userEmail, setUserEmail] = useState("");
-  const [isOn, setIsOn] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -29,7 +28,7 @@ export default function LikesDashboard() {
       setLoading(false);
     });
     return () => unsubscribe();
-  }, [router.pathname]);
+  }, [router]);
 
   useEffect(() => {
     if (!auth.currentUser) return;
