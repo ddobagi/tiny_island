@@ -36,7 +36,10 @@ export default function LikesDashboard() {
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const likedVideos = snapshot.docs
-        .filter((doc) => doc.data().likes?.includes(userId)) // 현재 사용자가 좋아요 누른 영상만 필터링
+        .filter((doc) => {
+          const likes = doc.data().likes || {}; // likes 객체 가져오기
+          return likes[userId] === true; // 현재 사용자가 좋아요를 눌렀는지 확인
+        })
         .map((doc) => ({ id: doc.id, ...doc.data() }));
       setVideos(likedVideos);
     });
