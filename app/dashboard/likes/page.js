@@ -28,9 +28,9 @@ export default function LikesDashboard() {
   }, [router]);
 
   useEffect(() => {
-    if (!user) return;
+    if (!auth.currentUser) return;
   
-    const userId = user.uid;
+    const userId = auth.currentUser.uid;
     const galleryRef = collection(db, "gallery");
   
     const unsubscribe = onSnapshot(galleryRef, async (snapshot) => {
@@ -60,6 +60,11 @@ export default function LikesDashboard() {
 
   return (
     <div className="rounded-lg shadow-lg max-w-2xl w-full flex flex-col p-6 relative mx-auto">
+      <div className="w-full max-w-2xl flex justify-start">
+        <Link href="/dashboard" className="flex items-center mb-2">
+          <ArrowLeft className="w-6 h-6 mr-2" />
+        </Link>
+      </div>
       <div className="flex items-center justify-between w-full h-16 px-4 border border-gray-500 rounded text-white">
         <h1 className="text-lg font-bold">Liked Videos</h1>
         {user && (

@@ -22,6 +22,7 @@ export default function Dashboard() {
   const [isOn, setIsOn] = useState(false);
   const fabRef = useRef(null);
   const router = useRouter();
+  const [userEmail, setUserEmail] = useState("");
 
   const [searchMode, setSearchMode] = useState(false);
 
@@ -33,6 +34,7 @@ export default function Dashboard() {
     const unsubscribe = onAuthStateChanged(auth, async(currentUser) => {
       if (currentUser) {
         setUser(currentUser);
+        setUserEmail(currentUser.email)
 
 
         try {
@@ -53,6 +55,7 @@ export default function Dashboard() {
         
       } else {
         router.push("/");
+        setUserEmail("")
       }
       setLoading(false);
     });
@@ -193,9 +196,16 @@ export default function Dashboard() {
     }
   });
 
+  function getEmailUsername(email) {
+    if (!email || typeof email !== "string") return "";
+    return email.split("@")[0];
+  }
 
   return (
     <div className="rounded-lg shadow-lg max-w-2xl w-full flex flex-col p-6 relative mx-auto">
+      <div className="flex items-center max-w-[600px] w-full h-10 space-x-2 justify-end">
+        <p className="text-sm">{getEmailUsername(userEmail)} 님</p>
+      </div>
       <div className="flex items-center justify-between max-w-[600px] w-full h-16 px-4 bg-transparent border border-gray-500 rounded text-white">
         {/* 왼쪽 아이콘 */}
         {searchMode ? (
