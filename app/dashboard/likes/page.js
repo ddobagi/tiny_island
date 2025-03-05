@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { auth, db } from "@/lib/firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { query, collection, onSnapshot, orderBy, doc, deleteDoc, where } from "firebase/firestore";
+import { query, collection, getDocs, onSnapshot, orderBy, doc, deleteDoc, where } from "firebase/firestore";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { LogOut, Trash2 } from "lucide-react";
@@ -29,24 +29,33 @@ export default function LikesDashboard() {
 
   useEffect(() => {
     if (!user) return;
-    
+  
     const userId = user.uid;
-    const collectionPath = collection(db, "gallery"); // 모든 비디오 컬렉션 가져오기
-    const q = query(collectionPath, orderBy("createdAt", "desc")); // 최신순 정렬
-
-    const unsubscribe = onSnapshot(q, (snapshot) => {
+    const galleryRef = collection(db, "gallery");
+  
+    const unsubscribe = onSnapshot(galleryRef, async (snapshot) => {
+      const likedVideoIds = [];
+  
+      for (const doc of snapshot.docs) {
+        const likesRef = collection(db, "gallery", doc.id, "likes");
+        const likeQuery = query(likesRef, where("__name__", "==", userId));
+        const likeSnapshot = await getDocs(likeQuery);
+  
+        if (!likeSnapshot.empty) {
+          likedVideoIds.push(doc.id);
+        }
+      }
+  
       const likedVideos = snapshot.docs
-        .filter((doc) => {
-          const likes = doc.data().likes || {}; // likes 객체 가져오기
-          return likes[userId] === true; // 현재 사용자가 좋아요를 눌렀는지 확인
-        })
+        .filter((doc) => likedVideoIds.includes(doc.id))
         .map((doc) => ({ id: doc.id, ...doc.data() }));
+  
       setVideos(likedVideos);
     });
-
+  
     return () => unsubscribe();
   }, [user]);
-
+  
   if (loading) return <p>Loading...</p>;
 
   return (
