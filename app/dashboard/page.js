@@ -34,7 +34,7 @@ export default function Dashboard() {
     const unsubscribe = onAuthStateChanged(auth, async(currentUser) => {
       if (currentUser) {
         setUser(currentUser);
-        setUserEmail(currentUser.email)
+        setUserEmail(currentUser.email);
 
 
         try {
@@ -247,7 +247,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="flex items-center max-w-[600px] w-full h-10 space-x-2 justify-start">
+      <div className="flex items-center max-w-[600px] w-full h-10 space-x-2 justify-end">
         <Switch checked={isOn} onCheckedChange={(checked) => handleToggleMode(checked)} />
         <span>{isOn ? "Public" : "Private"}</span>
       </div>

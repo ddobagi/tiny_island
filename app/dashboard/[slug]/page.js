@@ -24,6 +24,8 @@ export default function VideoDetail() {
   const [isOn, setIsOn] = useState(false);
   const [liked, setLiked] = useState(false);
   const [likes, setLikes] = useState(1);
+  const [userEmail, setUserEmail] = useState("");
+
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -31,6 +33,7 @@ export default function VideoDetail() {
             console.log("✅ 로그인된 사용자:", currentUser);
             setUser(currentUser);
             setLoading(true);
+            setUserEmail(currentUser.email);
 
             try {
                 const userDocRef = doc(db, "users", currentUser.uid);
@@ -48,6 +51,7 @@ export default function VideoDetail() {
             console.log("❌ 로그인되지 않음");
             router.push("/");
             setLoading(false);
+            setUserEmail("");
             return;
         }
     });
@@ -205,15 +209,28 @@ export default function VideoDetail() {
     }
   };
 
+  function getEmailUsername(email) {
+    if (!email || typeof email !== "string") return "";
+    return email.split("@")[0];
+  }
+
   if (loading) return <p className="text-center mt-10">로딩 중...</p>;
   if (error) return <p className="text-center mt-10 text-red-500">{error}</p>;
 
   return (
     <div className="flex flex-col items-center w-full p-6">
-      <div className="w-full max-w-2xl flex justify-start">
+      <div className="flex items-center max-w-[600px] w-full h-10 space-x-2 justify-end">
+        <p className="text-gray-500 text-sm font-pretendard">{getEmailUsername(userEmail)} 님</p>
+        <p onClick={() => signOut(auth)} className="cursor-pointer text-gray-500 text-sm font-pretendard underline">로그아웃</p>
+      </div>
+      <div className="w-full max-w-2xl flex justify-between">
         <Link href="/dashboard" className="flex items-center mb-2">
           <ArrowLeft className="w-6 h-6 mr-2" />
         </Link>
+        <div className="flex items-center max-w-[600px] w-full h-10 space-x-2 justify-end">
+          <p className="text-gray-500 text-sm font-pretendard">{getEmailUsername(userEmail)} 님</p>
+          <p onClick={() => signOut(auth)} className="cursor-pointer text-gray-500 text-sm font-pretendard underline">로그아웃</p>
+        </div>
       </div>
 
       {video && (
