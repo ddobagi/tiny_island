@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth, db } from "@/lib/firebase";
 import { doc, getDoc, updateDoc, addDoc, collection, serverTimestamp, query, where, getDocs, deleteDoc, writeBatch, setDoc, increment } from "firebase/firestore";
 import Link from "next/link";
@@ -219,10 +219,6 @@ export default function VideoDetail() {
 
   return (
     <div className="flex flex-col items-center w-full p-6">
-      <div className="flex items-center max-w-[600px] w-full h-10 space-x-2 justify-end">
-        <p className="text-gray-500 text-sm font-pretendard">{getEmailUsername(userEmail)} 님</p>
-        <p onClick={() => signOut(auth)} className="cursor-pointer text-gray-500 text-sm font-pretendard underline">로그아웃</p>
-      </div>
       <div className="w-full max-w-2xl flex justify-between">
         <Link href="/dashboard" className="flex items-center mb-2">
           <ArrowLeft className="w-6 h-6 mr-2" />

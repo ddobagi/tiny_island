@@ -7,7 +7,7 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 import { query, collection, getDocs, onSnapshot, orderBy, doc, deleteDoc, where } from "firebase/firestore";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
-import { LogOut, Trash2 } from "lucide-react";
+import { LogOut, Trash2, ArrowLeft } from "lucide-react";
 
 export default function LikesDashboard() {
   const [user, setUser] = useState(null);
