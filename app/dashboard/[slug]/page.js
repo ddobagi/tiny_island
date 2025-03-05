@@ -260,34 +260,35 @@ export default function VideoDetail() {
                   </button>
                 )}
               </div>
-
-              <div>
-                {!isOn ? (
-                  // 🔥 isOn이 false일 때 (편집 가능)
-                  isEditing ? (
-                    <textarea
-                      className="w-full p-2 border rounded mt-2 font-nanum_pen"
-                    value={essay}
-                    onChange={(e) => setEssay(e.target.value)}
-                  />
-                  ) : (
-                    <p className="mt-2 p-2 border rounded bg-gray-100 font-nanum_pen">
-                      {essay || "작성된 내용이 없습니다."}
-                    </p>
-                  )
+            </div>
+            <div>
+              {!isOn ? (
+                // 🔥 isOn이 false일 때 (편집 가능)
+                isEditing ? (
+                  <textarea
+                    className="w-full p-2 border rounded mt-2 font-nanum_pen"
+                  value={essay}
+                  onChange={(e) => setEssay(e.target.value)}
+                />
                 ) : (
-                  // 🔥 isOn이 true일 때 (읽기 전용)
-                  <div className="flex-1">
-                    <p className="mt-2 p-2 border rounded bg-gray-100 font-nanum_pen">
-                      {video.essay || "작성된 내용이 없습니다."}
-                    </p>
-                  </div>
-                )}
-              </div>
-
+                  <p className="mt-2 p-2 border rounded bg-gray-100 font-nanum_pen">
+                    {essay || "작성된 내용이 없습니다."}
+                  </p>
+                )
+              ) : (
+                // 🔥 isOn이 true일 때 (읽기 전용)
+                <div className="flex-1">
+                  <p className="mt-2 p-2 border rounded bg-gray-100 font-nanum_pen">
+                    {video.essay || "작성된 내용이 없습니다."}
+                  </p>
+                </div>
+              )}
+            </div>
+              
+            <div flex mt-2 space-x-2 font-pretendard justify-end>
               {/* 🔥 isOn이 false일 때만 버튼 표시 */}
               {!isOn && (
-                <div className="flex mt-2 space-x-2 font-pretendard justify-end">
+                <div >
                   {isEditing ? (
                     <Button onClick={handleSaveEssay}>저장</Button>
                   ) : (

@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, X, Trash2, Search, ArrowLeft, LogOut  } from "lucide-react";
 import { motion } from "framer-motion";
+import { Switch } from "@/components/ui/switch";
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
@@ -330,6 +331,10 @@ export default function Dashboard() {
               )}
             </Card>
           ))}
+      </div>
+      <div className="flex items-center space-x-2">
+        <span>{isOn ? "Public" : "Private"}</span>
+        <Switch checked={isOn} onCheckedChange={setIsOn} />
       </div>
 
     </div>
