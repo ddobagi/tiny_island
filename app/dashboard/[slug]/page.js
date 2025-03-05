@@ -33,6 +33,7 @@ export default function VideoDetail() {
 
             try {
                 const userDocRef = doc(db, "users", currentUser.uid);
+                console.log("1번 uid 통과");
                 const userDocSnap = await getDoc(userDocRef);
                 const mode = userDocSnap.exists() && userDocSnap.data().Mode === "public";
 
@@ -59,11 +60,14 @@ export default function VideoDetail() {
 
   // ✅ `isOn`이 변경될 때 fetchVideoData를 실행하지 않고, 위 `useEffect`에서 직접 실행함
   const fetchVideoData = async (slug, mode) => {
-    if (!user?.uid) return alert(" ");
+    if (!user) return alert(" ");
     try {
         setLoading(true);
+        const userId = auth.currentUser?.uid;
+        console.log("2번 uid 통과");
+
         let docRef = mode
-          ? doc(db, "gallery", slug) : doc(db, "users", user?.uid, "videos", slug)
+          ? doc(db, "gallery", slug) : doc(db, "users", userId, "videos", slug)
 
         const docSnap = await getDoc(docRef);
 
@@ -80,10 +84,13 @@ export default function VideoDetail() {
           const videoData = docSnap.data();
           setLikes(videoData.recommend || 0);
 
+          const userId = auth.currentUser?.uid;
+
           const [userLikeSnap, userDocSnap] = await Promise.all([
-            getDoc(doc(db, "gallery", slug, "likes", user.uid)),
-            getDoc(doc(db, "users", user.uid))
+            getDoc(doc(db, "gallery", slug, "likes", userId)),
+            getDoc(doc(db, "users", userId))
           ]);
+          console.log("3번 uid 통과");
 
           setLiked(userLikeSnap.exists());
 
@@ -144,8 +151,10 @@ export default function VideoDetail() {
     if (!user) return alert("사용자 인증이 필요합니다.");
 
     try {
-      const docRef = doc(db, "users", user.uid, "videos", slug);
+      const userId = auth.currentUser?.uid;
+      const docRef = doc(db, "users", userId, "videos", slug);
       await updateDoc(docRef, { essay });
+      console.log("4번 uid 통과");
 
 
       // 🔥 추가된 코드: gallery 컬렉션에서 해당 영상 삭제
@@ -166,7 +175,7 @@ export default function VideoDetail() {
   
   const handleLike = async () => {
     if (!video || !userId) return;
-    if (!user?.uid) return alert(" ");
+    if (!user) return alert(" ");
 
     const docRef = doc(db, "gallery", slug);
     const userLikeRef = doc(db, "gallery", slug, "likes", userId);
