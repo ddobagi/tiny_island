@@ -15,14 +15,23 @@ export default function LikesDashboard() {
   const [videos, setVideos] = useState([]);
   const router = useRouter();
   const [userEmail, setUserEmail] = useState("");
-  const [isOn, setIsOn] = useState(true);
 
   useEffect(() => {
+        
+
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
         setUserEmail(currentUser.email);
-        setIsOn(true);
+
+        const userId = currentUser.uid;
+        const userDocRef = doc(db, "users", userId); // ✅ Firestore에서 해당 유저 문서 참조
+      
+        try {
+          await setDoc(userDocRef, { Mode: "public" }, { merge: true }); // ✅ Firestore에 Mode 필드 저장 (merge: true 옵션으로 기존 데이터 유지)
+        } catch (error) {
+          console.error("Firestore 모드 업데이트 오류:", error);
+        }
       } else {
         router.push("/");
         setUserEmail("")

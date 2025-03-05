@@ -319,15 +319,47 @@ export default function Dashboard() {
                 </Link>
               </CardContent>
               {!isOn && (
-                <button onClick={() => {
-                  deleteDoc(doc(db, "users", user.uid, "videos", video.id));
-                  deleteDoc(doc(db, "gallery", video.id));
-                  router.push("/dashboard");
-                }} 
-                className="z-5 absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full shadow-md hover:bg-red-600"
+                <button
+                  onClick={async () => {
+                    if (!video || !video.video) return alert("삭제할 비디오 데이터가 없습니다.");
+                    if (!user?.uid) return alert("사용자 정보가 없습니다.");
+
+                    try {
+                      const batch = writeBatch(db);
+
+                      // 🔥 users/{user.uid}/videos에서 video.video와 일치하는 문서 찾기
+                      const userVideosRef = collection(db, "users", user.uid, "videos");
+                      const userQuery = query(userVideosRef, where("video", "==", video.video));
+                      const userQuerySnapshot = await getDocs(userQuery);
+
+                      userQuerySnapshot.forEach((doc) => {
+                        batch.delete(doc.ref); // 🔥 users/{user.uid}/videos 문서 삭제
+                      });
+
+                      // 🔥 gallery에서 video.video와 일치하는 문서 찾기
+                      const galleryRef = collection(db, "gallery");
+                      const galleryQuery = query(galleryRef, where("video", "==", video.video));
+                      const galleryQuerySnapshot = await getDocs(galleryQuery);
+
+                      galleryQuerySnapshot.forEach((doc) => {
+                        batch.delete(doc.ref); // 🔥 gallery 문서 삭제
+                      });
+
+                      // 🔥 모든 삭제 작업 실행
+                      await batch.commit();
+
+                      alert("비디오가 삭제되었습니다.");
+                      router.push("/dashboard");
+                    } catch (error) {
+                      console.error("비디오 삭제 중 오류 발생: ", error);
+                      alert("삭제 중 오류가 발생했습니다.");
+                    }
+                  }}
+                  className="z-5 absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full shadow-md hover:bg-red-600"
                 >
                   <Trash2 size={32} />
                 </button>
+
               )}
             </Card>
           ))}
