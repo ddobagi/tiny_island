@@ -236,7 +236,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="flex items-center space-x-2 justify-end p-0 pr-7">
+      <div className="flex items-center max-w-[600px] w-full h-10 space-x-2 justify-end">
         <Switch checked={isOn} onCheckedChange={(checked) => handleToggleMode(checked)} />
         <span>{isOn ? "Public" : "Private"}</span>
       </div>
@@ -246,7 +246,6 @@ export default function Dashboard() {
         <div className="z-10 fixed bottom-6 right-6 flex flex-col items-end" ref={fabRef}>
           {fabOpen && (
             <div className="relative px-4 py-2 w-[350px] transition-transform transform translate-y-2 opacity-100 mb-2">
-              <p className="font-pretendard font-semibold text-gray-700">URL</p>
               <div className="relative flex items-center bg-gray-100 rounded-lg px-4 py-2">
                 <Input 
                   type="text" 
