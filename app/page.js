@@ -53,21 +53,24 @@ export default function Home() {
     }
   };
 
+
+
+  const runPython = () => {
+    fetch('https://for-jieun.onrender.com/run-selenium', {
+      method: 'POST'
+    })
+      .then(res => res.text())
+      .then(msg => alert("응답: " + msg))
+      .catch(err => alert("에러: " + err));
+  };
+
+
+
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 px-4">
 
-      <button onclick="runPython()">파이썬 실행</button>
-
-      <script>
-      function runPython() {
-        fetch('https://for-jieun.onrender.com/run-selenium', {
-          method: 'POST'
-        })
-        .then(res => res.text())
-        .then(msg => alert("응답: " + msg))
-        .catch(err => alert("에러: " + err))
-      }
-      </script>
+      <button onClick={runPython}>파이썬 실행</button>
 
 
       <div className="flex items-center mb-6 space-x-3">
