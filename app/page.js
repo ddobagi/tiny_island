@@ -55,6 +55,21 @@ export default function Home() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 px-4">
+
+      <button onclick="runPython()">파이썬 실행</button>
+
+      <script>
+      function runPython() {
+        fetch('https://for-jieun.onrender.com/run-selenium', {
+          method: 'POST'
+        })
+        .then(res => res.text())
+        .then(msg => alert("응답: " + msg))
+        .catch(err => alert("에러: " + err))
+      }
+      </script>
+
+
       <div className="flex items-center mb-6 space-x-3">
         <div className="w-16 h-16 px-2 py-2 bg-black rounded-full overflow-hidden border border-gray-300">
           <Image src="/deep_logo.png" alt="띱 로고" className="object-contain" />
